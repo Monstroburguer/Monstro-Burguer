@@ -266,12 +266,11 @@ function carregarConfiguracoesDaLoja(){
     const banner = localStorage.getItem("bannerPersonalizado");
     const bannerPromo = localStorage.getItem("bannerPromoPersonalizado");
 
-    // Exibe o Mascote/Logo
-    if(mascote || logo){
-        const img = document.getElementById('logo-principal');
-        img.src = mascote || logo;
-        img.style.display = 'block';
-    }
+    // ✅ MASCOTE FIXO — APARECE PRA TODO MUNDO!
+const img = document.getElementById('logo-principal');
+img.src = "https://raw.githubusercontent.com/Monstroburguer/Monstro-Burguer/main/mascote.jpg";
+img.style.display = 'block';
+
     // Exibe o Banner Principal
     if(banner){
         const b = document.getElementById('banner-principal-img');
