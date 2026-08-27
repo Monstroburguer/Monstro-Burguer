@@ -4,118 +4,126 @@
 <meta charset="UTF‑8">
 <meta name="viewport" content="width=device‑width, initial‑scale=1.0">
 <title>🍔 MONSTRO BURGUER — Início</title>
+<meta http‑equiv="Cache‑Control" content="no‑cache, no‑store, must‑revalidate">
+<meta http‑equiv="Pragma" content="no‑cache">
+<meta http‑equiv="Expires" content="0">
 <style>
-*{margin:0;padding:0;box‑sizing:border‑box;font‑family:'Segoe UI',sans‑serif}
+html, body {
+  margin: 0 !important; padding: 0 !important;
+  background‑color: #000000 !important; background: #000000 !important;
+  color: #ffffff !important; min‑height: 100vh;
+  font‑family: 'Segoe UI', Roboto, system‑ui, sans‑serif !important;
+}
 :root{
   --roxo: #BF00FF;
   --verde: #00FF41;
   --azul: #00CCFF;
-  --fundo: #000000;
-  --texto: #ffffff;
   --whatsapp: #25D366;
 }
-body{background:var(--fundo);color:var(--texto);min‑height:100vh;padding‑bottom:40px}
 
-/* 🟢 STATUS — canto esquerdo */
+/* 🟢 STATUS LOJA — esquerdo, SEMPRE ATRÁS */
 .status‑loja{
-  position:fixed; top:15px; left:15px; z‑index:900;
-  display:flex; align‑items:center; gap:6px;
-  background:rgba(0,0,0,.8); padding:7px 14px;
-  border‑radius:30px; border:1px solid #444;
+  position:fixed !important; top:15px !important; left:15px !important; z‑index: 90 !important;
+  display:flex !important; align‑items:center !important; gap:6px !important;
+  background:rgba(0,0,0,.85) !important; padding:7px 14px !important;
+  border‑radius:30px !important; border:1px solid #444 !important;
 }
-.status‑bolinha{width:10px; height:10px; border‑radius:50%; animation:pulsar 2s infinite alternate;}
-.status‑texto{font‑size:13px; font‑weight:600;}
-.loja‑aberta .status‑bolinha{background:var(--verde); box‑shadow:0 0 8px var(--verde);}
-.loja‑fechada .status‑bolinha{background:#555; box‑shadow:none;}
+.status‑bolinha{width:10px !important; height:10px !important; border‑radius:50% !important; animation:pulsar 2s infinite alternate !important;}
+.status‑texto{font‑size:13px !important; font‑weight:600 !important; color:#fff !important;}
+.loja‑aberta .status‑bolinha{background:var(--verde) !important; box‑shadow:0 0 8px var(--verde) !important;}
+.loja‑fechada .status‑bolinha{background:#555 !important; box‑shadow:none !important;}
 @keyframes pulsar{0%{opacity:.7}100%{opacity:1}}
 
-/* ⚙️ ADMIN — canto direito, SEMPRE separado */
+/* ⚙️ ENGRENAGEM — DIREITA, SEMPRE POR CIMA, NUNCA ENCOSTA */
 .botao‑adm{
-  position:fixed; top:13px; right:15px; z‑index:999;
-  width:40px; height:40px; border‑radius:50%;
-  background:rgba(0,0,0,.8); border:2px solid var(--roxo);
-  color:var(--roxo); font‑size:18px; cursor:pointer;
-  display:flex; align‑items:center; justify‑content:center;
-  box‑shadow:0 0 10px var(--roxo); transition:all .3s;
+  position:fixed !important; top:15px !important; right:15px !important; z‑index: 999 !important;
+  width:40px !important; height:40px !important; border‑radius:50% !important;
+  background:rgba(0,0,0,.85) !important; border:2px solid var(--roxo) !important;
+  color:var(--roxo) !important; font‑size:18px !important; cursor:pointer !important;
+  display:flex !important; align‑items:center !important; justify‑content:center !important;
+  box‑shadow:0 0 10px var(--roxo) !important; transition:all .3s !important;
 }
-.botao‑adm:hover{background:var(--roxo); color:#000; transform:rotate(45deg);}
+.botao‑adm:hover{background:var(--roxo) !important; color:#000 !important; transform:rotate(45deg) !important;}
 
-/* CABEÇALHO & LOGO */
-header{text‑align:center; padding:65px 15px 15px;}
+/* CABEÇALHO — ESPAÇO RESERVADO → NADA SE SOBREPÕE */
+header{text‑align:center !important; padding:65px 15px 20px !important; position:relative !important; z‑index: 1 !important;}
 .logo‑principal{
-  width:260px; max‑width:85%; height:auto; margin:0 auto; display:block;
-  background:transparent; border:none; box‑shadow:none; object‑fit:contain;
+  width:260px !important; max‑width:85% !important; height:auto !important; margin:0 auto !important; display:block !important;
+  background:transparent !important; border:none !important; box‑shadow:none !important; object‑fit:contain !important; min‑height:40px;
 }
-.slogan{color:#888; font‑size:14px; margin:6px 0 24px;}
+.slogan{color:#888 !important; font‑size:14px !important; margin:6px 0 24px !important;}
 
-/* 🎯 CATEGORIAS — 5 botões que funcionavam direitinho */
+/* 🎯 CATEGORIAS — FORÇA ABSOLUTA DE ESTILOS */
 .categorias{
-  display:grid; grid‑template‑columns:repeat(2, 1fr); gap:12px;
-  padding:0 15px 25px; max‑width:440px; margin:0 auto;
+  display:grid !important; grid‑template‑columns:repeat(2, 1fr) !important; gap:12px !important;
+  padding:0 15px 25px !important; max‑width:440px !important; margin:0 auto !important; position:relative; z‑index: 1;
 }
 .cat‑btn{
-  padding:15px 10px; border‑radius:50px; border:2px solid var(--azul);
-  background:linear‑gradient(90deg, rgba(0,204,255,.14), rgba(191,0,255,.14));
-  color:var(--texto); font‑size:16px; font‑weight:bold; cursor:pointer;
-  transition:all .3s; text‑align:center;
-  animation:pulsarBtn 2.5s infinite alternate;
+  padding:15px 10px !important; border‑radius:50px !important;
+  border:2px solid var(--azul) !important;
+  background:linear‑gradient(90deg, rgba(0,204,255,.14), rgba(191,0,255,.14)) !important;
+  color:#ffffff !important; font‑size:16px !important; font‑weight:bold !important;
+  cursor:pointer !important; text‑align:center !important; transition:all .3s !important;
+  animation:pulsarBtn 2.5s infinite alternate !important;
 }
 .cat‑btn.ativo{
-  border‑color:var(--roxo);
-  background:linear‑gradient(90deg, rgba(0,204,255,.3), rgba(191,0,255,.38));
-  box‑shadow:0 0 14px var(--roxo), inset 0 0 8px rgba(191,0,255,.2);
-  transform:scale(1.03); animation:none;
+  border‑color:var(--roxo) !important;
+  background:linear‑gradient(90deg, rgba(0,204,255,.3), rgba(191,0,255,.38)) !important;
+  box‑shadow:0 0 14px var(--roxo), inset 0 0 8px rgba(191,0,255,.2) !important;
+  transform:scale(1.03) !important; animation:none !important;
 }
 @keyframes pulsarBtn{
   0%{border‑color:rgba(0,204,255,.5); box‑shadow:0 0 6px rgba(0,204,255,.25);}
   100%{border‑color:rgba(191,0,255,.7); box‑shadow:0 0 12px rgba(191,0,255,.35);}
 }
-.cat‑btn:active{transform:scale(.97);}
-.btn‑1col{grid‑column:1/‑1; max‑width:260px; margin:0 auto;}
+.cat‑btn:active{transform:scale(.97) !important;}
+.btn‑1col{grid‑column:1/‑1 !important; max‑width:260px !important; margin:0 auto !important;}
 
-/* ÁREA INFERIOR — WhatsApp + VER CARDÁPIO */
+/* ÁREA INFERIOR */
 .area‑botoes{
-  display:flex; align‑items:center; justify‑content:center; gap:14px;
-  padding:10px 15px 30px; max‑width:440px; margin:0 auto;
+  display:flex !important; align‑items:center !important; justify‑content:center !important; gap:14px !important;
+  padding:10px 15px 30px !important; max‑width:440px !important; margin:0 auto !important; position:relative; z‑index: 1;
 }
 .btn‑whatsapp{
-  width:50px; height:50px; border‑radius:50%; border:2px solid var(--whatsapp);
-  background:radial‑gradient(circle, rgba(37,211,102,.32), rgba(37,211,102,.08));
-  color:var(--whatsapp); cursor:pointer; display:flex; align‑items:center; justify‑content:center;
-  box‑shadow:0 0 12px rgba(37,211,102,.35); transition:all .3s; text‑decoration:none;
+  width:50px !important; height:50px !important; border‑radius:50% !important;
+  border:2px solid var(--whatsapp) !important;
+  background:radial‑gradient(circle, rgba(37,211,102,.32), rgba(37,211,102,.08)) !important;
+  color:var(--whatsapp) !important; cursor:pointer !important;
+  display:flex !important; align‑items:center !important; justify‑content:center !important;
+  box‑shadow:0 0 12px rgba(37,211,102,.35) !important; transition:all .3s !important; text‑decoration:none !important;
 }
-.btn‑whatsapp:active{transform:scale(.9);}
+.btn‑whatsapp svg{width:24px; height:24px; display:block;}
+.btn‑whatsapp:active{transform:scale(.9) !important;}
 
 .btn‑cardapio{
-  flex:1; padding:13px 20px; border‑radius:50px; border:none;
-  background:linear‑gradient(90deg, var(--azul), var(--roxo));
-  color:white; font‑weight:bold; font‑size:16px; cursor:pointer;
-  box‑shadow:0 0 14px rgba(0,204,255,.4), 0 0 22px rgba(191,0,255,.25);
-  transition:all .3s; text‑align:center; text‑decoration:none;
+  flex:1 !important; padding:13px 20px !important; border‑radius:50px !important; border:none !important;
+  background:linear‑gradient(90deg, var(--azul), var(--roxo)) !important;
+  color:#ffffff !important; font‑weight:bold !important; font‑size:16px !important; cursor:pointer !important;
+  box‑shadow:0 0 14px rgba(0,204,255,.4), 0 0 22px rgba(191,0,255,.25) !important;
+  transition:all .3s !important; text‑align:center !important; text‑decoration:none !important;
 }
-.btn‑cardapio:active{transform:scale(.96);}
+.btn‑cardapio:active{transform:scale(.96) !important;}
 </style>
 </head>
 <body>
 
-<!-- 🟢 STATUS -->
+<!-- 🟢 STATUS PRIMEIRO → SEMPRE EMBAIXO -->
 <div id="status‑loja" class="status‑loja loja‑fechada">
   <div class="status‑bolinha"></div>
   <span class="status‑texto">FECHADO</span>
 </div>
 
-<!-- ⚙️ ENGRENAGEM ADMIN -->
+<!-- ⚙️ DEPOIS → POR CIMA NATURALMENTE -->
 <button class="botao‑adm" onclick="window.location.href='admin.html'">⚙️</button>
 
-<!-- 🖼️ LOGO / MASCOTE — LINKS DE SEMPRE -->
 <header>
+  <!-- ✅ 2 LINKS + ANTI‑CACHE → SEMPRE CARREGA NOVO -->
   <img id="logo‑principal" class="logo‑principal" alt="MONSTRO BURGUER"
-    src="https://raw.githubusercontent.com/Monstroburguer/Monstro‑Burguer/main/mascote.jpg"
-    onerror="this.src='https://github.com/Monstroburguer/Monstro‑Burguer/raw/main/mascote.jpg'">
+    src="https://raw.githubusercontent.com/Monstroburguer/Monstro‑Burguer/main/mascote.jpg?v=2"
+    onerror="this.src='https://github.com/Monstroburguer/Monstro‑Burguer/raw/main/mascote.jpg?v=2'">
   <p class="slogan">O sabor monstruoso que você merece!</p>
 </header>
 
-<!-- 🍔 AS 5 CATEGORIAS EXATAMENTE COMO TINHA -->
 <div class="categorias">
   <button class="cat‑btn ativo" onclick="irParaCardapio('todos')">🍔 Todos</button>
   <button class="cat‑btn" onclick="irParaCardapio('lanches')">🍔 Lanches</button>
@@ -124,31 +132,20 @@ header{text‑align:center; padding:65px 15px 15px;}
   <button class="cat‑btn btn‑1col" onclick="irParaCardapio('combos')">📦 Combos</button>
 </div>
 
-<!-- 💬 WHATSAPP + BOTÃO PRINCIPAL -->
 <div class="area‑botoes">
   <a href="https://wa.me/5514996619487" target="_blank" class="btn‑whatsapp">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M17.472 14.382c‑.36‑.18‑2.17‑1.07‑2.51‑1.19‑.34‑.12‑.59‑.18‑.84.18‑.25.36‑.97 1.19‑1.19 1.44‑.22.25‑.44.28‑.81.1‑.37‑.18‑1.56‑.57‑2.97‑1.81‑1.1‑.98‑1.84‑2.19‑2.06‑2.56‑.18‑.34‑.19‑.54‑.01‑.71.18‑.18.4‑.47.6‑.71.2‑.24.27‑.42.4‑.7.13‑.28.06‑.52‑.03‑.71‑.09‑.19‑.81‑1.95‑1.11‑2.67‑.29‑.72‑.59‑.62‑.84‑.63‑.22 0‑.47‑.01‑.72‑.01‑.25 0‑.65.07‑.99.49‑.34.42‑1.29 1.26‑1.29 3.04 0 1.78 1.33 3.51 1.51 3.77.18.26 2.59 3.95 6.23 5.53.87.37 1.55.6 2.07.77.87.26 1.67.22 2.29.14.7‑.09 2.17‑.88 2.48‑1.73.31‑.85.31‑1.57.22‑1.73‑.09‑.16‑.33‑.26‑.69‑.42z"/>
-      <path fill‑rule="evenodd" d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.13 1.512 5.888L.266 23.654a.5.5 0 00.635.582l5.886‑2.173A11.942 11.942 0 0012 24c6.627 0 12‑5.373 12‑12S18.627 0 12 0zm0 22a9.937 9.937 0 01‑5.169‑1.424l‑.373‑.224‑3.487 1.285 1.327‑3.403‑.243‑.387A9.933 9.933 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10‑4.477 10‑10 10z"/>
-    </svg>
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c‑.36‑.18‑2.17‑1.07‑2.51‑1.19‑.34‑.12‑.59‑.18‑.84.18‑.25.36‑.97 1.19‑1.19 1.44‑.22.25‑.44.28‑.81.1‑.37‑.18‑1.56‑.57‑2.97‑1.81‑1.1‑.98‑1.84‑2.19‑2.06‑2.56‑.18‑.34‑.19‑.54‑.01‑.71.18‑.18.4‑.47.6‑.71.2‑.24.27‑.42.4‑.7.13‑.28.06‑.52‑.03‑.71‑.09‑.19‑.81‑1.95‑1.11‑2.67‑.29‑.72‑.59‑.62‑.84‑.63‑.22 0‑.47‑.01‑.72‑.01‑.25 0‑.65.07‑.99.49‑.34.42‑1.29 1.26‑1.29 3.04 0 1.78 1.33 3.51 1.51 3.77.18.26 2.59 3.95 6.23 5.53.87.37 1.55.6 2.07.77.87.26 1.67.22 2.29.14.7‑.09 2.17‑.88 2.48‑1.73.31‑.85.31‑1.57.22‑1.73‑.09‑.16‑.33‑.26‑.69‑.42z"/><path fill‑rule="evenodd" d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.13 1.512 5.888L.266 23.654a.5.5 0 00.635.582l5.886‑2.173A11.942 11.942 0 0012 24c6.627 0 12‑5.373 12‑12S18.627 0 12 0zm0 22a9.937 9.937 0 01‑5.169‑1.424l‑.373‑.224‑3.487 1.285 1.327‑3.403‑.243‑.387A9.933 9.933 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10‑4.477 10‑10 10z"/></svg>
   </a>
   <a href="cardapio.html" class="btn‑cardapio">VER CARDÁPIO</a>
 </div>
 
 <script>
 window.onload = function(){
-  carregarConfiguracoesDaLoja();
   atualizarStatusLoja();
+  // Força recarregar imagem limpando cache
+  const logo = document.getElementById('logo‑principal');
+  logo.src = logo.src;
 };
-
-function carregarConfiguracoesDaLoja(){
-  const mascote = localStorage.getItem("mascotePersonalizado");
-  const logo = localStorage.getItem("logoPersonalizada");
-  const IMG_PADRAO = "https://raw.githubusercontent.com/Monstroburguer/Monstro‑Burguer/main/mascote.jpg";
-
-  const imgLogo = document.getElementById('logo‑principal');
-  imgLogo.src = mascote || logo || IMG_PADRAO;
-}
 
 function atualizarStatusLoja(){
   const lojaAberta = localStorage.getItem("lojaAberta") !== "false";
@@ -164,6 +161,5 @@ function irParaCardapio(categoria){
   window.location.href = 'cardapio.html';
 }
 </script>
-
 </body>
 </html>
