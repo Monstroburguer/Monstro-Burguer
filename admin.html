@@ -23,11 +23,18 @@ button{background:linear-gradient(90deg,var(--roxo),var(--azul));color:white;bor
 button:hover{transform:scale(1.05);box-shadow:0 0 20px var(--azul)}
 button.verde{background:linear-gradient(90deg,#00aa66,var(--verde));box-shadow:0 0 8px var(--verde)}
 button.vermelho{background:linear-gradient(90deg,#aa0000,var(--vermelho));box-shadow:0 0 8px var(--vermelho)}
+button.ativo{box-shadow:0 0 20px var(--verde);transform:scale(1.05)}
 input,select{width:100%;padding:12px;margin:8px 0;background:#222;border:1px solid #444;border-radius:10px;color:white;font-size:16px}
-.status{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:15px 0}
-.caixa-status{background:#222;padding:15px;border-radius:12px;text-align:center}
-.caixa-status h3{font-size:14px;margin-bottom:10px}
-.pedido{background:#333;padding:10px;border-radius:8px;margin:8px 0;font-size:14px}
+
+/* ✅ 4 BOTÕES ALINHADOS PERFEITAMENTE — TODOS IGUAIS! */
+.status-botoes{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:15px 0}
+.status-botoes button{width:100%;padding:15px 8px;font-size:14px;border-radius:12px;margin:0}
+
+.pedidos-container{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:15px}
+.caixa-status{background:#222;padding:15px;border-radius:12px;min-height:120px}
+.caixa-status h3{font-size:14px;margin-bottom:10px;text-align:center}
+.pedido{background:#333;padding:10px;border-radius:8px;margin:8px 0;font-size:13px;cursor:pointer;transition:all 0.2s}
+.pedido:hover{background:#444;transform:scale(1.02)}
 .aberto-fechado{text-align:center;margin:20px 0}
 .botao-grande{font-size:22px;padding:20px 40px;border-radius:16px;width:100%}
 .aberto{background:linear-gradient(90deg,#00aa44,var(--verde));box-shadow:0 0 15px var(--verde)}
@@ -40,12 +47,13 @@ input,select{width:100%;padding:12px;margin:8px 0;background:#222;border:1px sol
 
 <!-- 🔒 SISTEMA DE SENHA -->
 <script>
-const SENHA_CORRETA = "monstro123"; // 🔑 TROCA ESSA SENHA PELA QUE VOCÊ QUISER!
+const SENHA_CORRETA = "monstro123"; // 🔑 TROCA ESSA SENHA!
 
 function verificarSenha(){
   const senha = prompt("🔒 ÁREA RESTRITA — Digite a senha:");
   if(senha === SENHA_CORRETA){
     document.getElementById("painel").style.display = "block";
+    carregarPedidos();
   }else{
     alert("❌ Senha incorreta! Acesso negado!");
     window.location.href = "index.html";
@@ -66,7 +74,7 @@ function verificarSenha(){
   </div>
 </div>
 
-<!-- 🖼️ PERSONALIZAÇÃO DA MARCA -->
+<!-- 🎨 PERSONALIZAÇÃO DA MARCA -->
 <div class="secao">
   <h2>🎨 PERSONALIZAÇÃO DA MARCA</h2>
   <label>Link da Logo:</label>
@@ -82,10 +90,20 @@ function verificarSenha(){
   <button class="verde" onclick="salvarBanner()">💾 Salvar Banner</button>
 </div>
 
-<!-- 📋 CONTROLE DE PEDIDOS -->
+<!-- 📋 PEDIDOS — BOTÕES ALINHADOS E FUNCIONANDO! -->
 <div class="secao">
-  <h2>📋 PEDIDOS</h2>
-  <div class="status">
+  <h2>📋 CONTROLE DE PEDIDOS</h2>
+  
+  <!-- ✅ 4 BOTÕES ALINHADOS PERFEITAMENTE — TODOS MESMO TAMANHO! -->
+  <div class="status-botoes">
+    <button class="verde" onclick="mudarStatusTodos('novo')">🆕 NOVO</button>
+    <button onclick="mudarStatusTodos('preparando')">🔥 PREPARANDO</button>
+    <button onclick="mudarStatusTodos('pronto')">✅ PRONTO</button>
+    <button class="verde" onclick="mudarStatusTodos('entregue')">🚀 ENTREGUE</button>
+  </div>
+
+  <!-- ✅ CAIXAS DOS PEDIDOS -->
+  <div class="pedidos-container">
     <div class="caixa-status">
       <h3>🆕 NOVO</h3>
       <div id="pedidos-novo"></div>
@@ -151,17 +169,63 @@ function atualizarBotaoLoja(){
 function salvarLogo(){
   const link = document.getElementById("link-logo").value;
   localStorage.setItem("logoPersonalizada", link);
-  alert("✅ Logo salva! Atualize a página inicial pra ver!");
+  alert("✅ Logo salva! Atualize a página inicial!");
 }
 function salvarMascote(){
   const link = document.getElementById("link-mascote").value;
   localStorage.setItem("mascotePersonalizado", link);
-  alert("✅ Mascote salvo! Atualize a página inicial pra ver!");
+  alert("✅ Mascote salvo! Atualize a página inicial!");
 }
 function salvarBanner(){
   const link = document.getElementById("link-banner").value;
   localStorage.setItem("bannerPersonalizado", link);
-  alert("✅ Banner salvo! Atualize a página inicial pra ver!");
+  alert("✅ Banner salvo! Atualize a página inicial!");
+}
+
+// 📋 PEDIDOS — FUNÇÃO REAL!
+function carregarPedidos(){
+  const pedidos = JSON.parse(localStorage.getItem("pedidosMonstro") || "[]");
+  const status = ['novo', 'preparando', 'pronto', 'entregue'];
+  const ids = {
+    novo: 'pedidos-novo',
+    preparando: 'pedidos-preparando',
+    pronto: 'pedidos-pronto',
+    entregue: 'pedidos-entregue'
+  };
+  
+  status.forEach(s => {
+    const div = document.getElementById(ids[s]);
+    div.innerHTML = '';
+    pedidos.filter(p => p.status === s).forEach((pedido, indice) => {
+      const idxReal = pedidos.indexOf(pedido);
+      div.innerHTML += `
+        <div class="pedido" onclick="avancarPedido(${idxReal})">
+          <strong>#${pedido.id}</strong><br>
+          ${pedido.itens}<br>
+          <small>R$ ${pedido.total.toFixed(2)}</small>
+        </div>
+      `;
+    });
+  });
+}
+
+function avancarPedido(indice){
+  const pedidos = JSON.parse(localStorage.getItem("pedidosMonstro") || "[]");
+  const ordem = ['novo', 'preparando', 'pronto', 'entregue'];
+  const atual = ordem.indexOf(pedidos[indice].status);
+  if(atual < ordem.length - 1){
+    pedidos[indice].status = ordem[atual + 1];
+    localStorage.setItem("pedidosMonstro", JSON.stringify(pedidos));
+    carregarPedidos();
+  }
+}
+
+function mudarStatusTodos(novoStatus){
+  if(!confirm("Mudar todos os pedidos para essa etapa?")) return;
+  const pedidos = JSON.parse(localStorage.getItem("pedidosMonstro") || "[]");
+  pedidos.forEach(p => p.status = novoStatus);
+  localStorage.setItem("pedidosMonstro", JSON.stringify(pedidos));
+  carregarPedidos();
 }
 
 // 🍽️ GERENCIAR ITENS
