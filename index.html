@@ -10,31 +10,35 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: Arial, "Segoe UI", Roboto, sans-serif;
+      font-family: Arial, "Segoe UI", sans-serif;
     }
 
     :root {
       --azul: #00ccff;
       --roxo: #bf00ff;
       --verde: #00ff41;
-      --cinza: #151515;
-      --cinza2: #202020;
     }
 
     body {
+      min-height: 100vh;
       background:
-        radial-gradient(circle at 50% 0%, rgba(0, 204, 255, .08), transparent 35%),
+        radial-gradient(circle at 50% 25%,
+          rgba(0, 204, 255, .13),
+          transparent 28%),
+        radial-gradient(circle at 50% 48%,
+          rgba(191, 0, 255, .08),
+          transparent 38%),
         #050505;
       color: white;
-      min-height: 100vh;
-      padding: 16px;
+      padding: 14px;
+      overflow-x: hidden;
     }
 
     /* TOPO */
 
     .topo {
       max-width: 430px;
-      margin: 0 auto;
+      margin: auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -44,11 +48,11 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      background: #111;
-      border: 1px solid #292929;
-      border-radius: 20px;
       padding: 7px 11px;
-      font-size: 12px;
+      border-radius: 30px;
+      background: rgba(10,10,10,.85);
+      border: 1px solid #292929;
+      font-size: 11px;
       font-weight: bold;
     }
 
@@ -73,56 +77,93 @@
     .botao-engrenagem {
       width: 34px;
       height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       border-radius: 50%;
       border: 1px solid #333;
       background: #111;
-      color: #aaa;
+      color: #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-decoration: none;
       font-size: 17px;
-      transition: .2s;
     }
 
-    .botao-engrenagem:hover {
-      color: var(--azul);
-      border-color: var(--azul);
-      box-shadow: 0 0 10px rgba(0,204,255,.3);
-    }
+    /* MASCOTE */
 
-    /* LOGO */
-
-    .bloco-logo {
+    .area-mascote {
       max-width: 430px;
-      margin: 15px auto 22px;
+      margin: 5px auto 8px;
       text-align: center;
+      position: relative;
+      padding: 4px 0 0;
     }
 
-    .logo-marca {
+    .area-mascote::before {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 190px;
+      left: 50%;
+      top: 25px;
+      transform: translateX(-50%);
+      background: radial-gradient(
+        ellipse,
+        rgba(0,204,255,.16),
+        rgba(191,0,255,.07),
+        transparent 70%
+      );
+      filter: blur(12px);
+      z-index: -1;
+    }
+
+    .mascote {
       width: 78%;
       max-width: 310px;
+      max-height: 270px;
+      object-fit: contain;
       display: block;
       margin: auto;
+      filter:
+        drop-shadow(0 0 7px rgba(0,204,255,.22))
+        drop-shadow(0 0 18px rgba(191,0,255,.10));
+      animation: respirar 4s ease-in-out infinite;
     }
 
-    .frase-marca {
-      color: #777;
+    @keyframes respirar {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.015);
+      }
+    }
+
+    .frase {
+      margin-top: -2px;
+      color: #aaa;
       font-size: 12px;
-      margin-top: 4px;
+      letter-spacing: 1px;
+      font-weight: bold;
     }
 
-    /* CATEGORIAS */
+    /* TÍTULO */
 
     .titulo {
       max-width: 430px;
-      margin: 0 auto 10px;
-      color: #aaa;
-      font-size: 12px;
-      font-weight: bold;
+      margin: 20px auto 11px;
+      text-align: center;
+      font-family: "Trebuchet MS", Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      color: #fff;
+      text-shadow:
+        0 0 5px rgba(0,204,255,.45),
+        0 0 12px rgba(191,0,255,.18);
     }
+
+    /* CATEGORIAS */
 
     .grade-botoes {
       max-width: 430px;
@@ -133,111 +174,161 @@
     }
 
     .botao-cat {
-      min-height: 72px;
-      border: 1px solid #292929;
-      border-radius: 15px;
-      background: linear-gradient(145deg, #151515, #0d0d0d);
-      color: white;
+      min-height: 68px;
+      border-radius: 23px;
+      border: 1px solid rgba(0,204,255,.22);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(0,204,255,.07),
+          rgba(191,0,255,.06)
+        ),
+        #101010;
+      color: #eee;
       cursor: pointer;
+
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 5px;
+
       font-size: 13px;
       font-weight: bold;
-      transition: .2s;
+
+      transition:
+        transform .15s ease,
+        border-color .15s ease,
+        box-shadow .15s ease,
+        background .15s ease;
     }
 
     .botao-cat .icone {
-      font-size: 22px;
+      font-size: 21px;
       line-height: 1;
     }
 
-    .botao-cat.ativo {
-      border-color: var(--azul);
-      background:
-        linear-gradient(145deg,
-        rgba(0,204,255,.16),
-        rgba(191,0,255,.10));
-      box-shadow: 0 0 14px rgba(0,204,255,.12);
-    }
+    /* TOQUE / CLIQUE */
 
-    .botao-cat:active {
+    .botao-cat:active,
+    .botao-cat.ativo {
       transform: scale(.96);
+      border-color: var(--azul);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(0,204,255,.20),
+          rgba(191,0,255,.13)
+        ),
+        #101010;
+
+      box-shadow:
+        0 0 7px rgba(0,204,255,.42),
+        0 0 17px rgba(0,204,255,.16),
+        inset 0 0 10px rgba(0,204,255,.08);
     }
 
     .botao-linha-cheia {
       grid-column: span 2;
-      min-height: 58px;
+      min-height: 54px;
       flex-direction: row;
-      gap: 8px;
+      gap: 7px;
     }
 
-    /* BOTÃO PRINCIPAL */
+    /* AÇÕES */
+
+    .acoes {
+      max-width: 430px;
+      margin: 18px auto 0;
+      display: flex;
+      gap: 9px;
+      align-items: center;
+    }
 
     .botao-ver {
-      max-width: 430px;
-      margin: 22px auto 9px;
-      min-height: 54px;
-      border-radius: 14px;
-      background: linear-gradient(100deg, var(--azul), var(--roxo));
+      flex: 1;
+      min-height: 51px;
+      border-radius: 24px;
+      background: linear-gradient(
+        100deg,
+        #00aee0,
+        #8d00c7
+      );
       color: white;
-      font-size: 14px;
-      font-weight: bold;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .4px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-decoration: none;
-      box-shadow: 0 5px 20px rgba(0,204,255,.15);
-      transition: .2s;
+
+      box-shadow:
+        0 0 12px rgba(0,204,255,.20);
+
+      transition: .15s;
     }
 
     .botao-ver:active {
-      transform: scale(.97);
+      transform: scale(.96);
+      box-shadow:
+        0 0 20px rgba(0,204,255,.45);
     }
 
     /* WHATSAPP */
 
-    .botao-fale {
-      max-width: 430px;
-      margin: 0 auto;
-      min-height: 44px;
-      border-radius: 12px;
-      border: 1px solid #292929;
-      background: #101010;
-      color: #ddd;
-      font-size: 13px;
-      font-weight: bold;
+    .botao-whatsapp {
+      width: 51px;
+      height: 51px;
+      flex: 0 0 51px;
+
+      border-radius: 50%;
+      border: 1px solid rgba(0,255,65,.45);
+
+      background: rgba(0,255,65,.07);
+      color: var(--verde);
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       text-decoration: none;
-      transition: .2s;
+      font-size: 24px;
+
+      box-shadow:
+        0 0 8px rgba(0,255,65,.12);
+
+      transition: .15s;
     }
 
-    .botao-fale:active {
-      transform: scale(.97);
-    }
+    .botao-whatsapp:active {
+      transform: scale(.90);
 
-    /* CELULARES PEQUENOS */
+      background: rgba(0,255,65,.18);
+
+      box-shadow:
+        0 0 10px rgba(0,255,65,.65),
+        0 0 22px rgba(0,255,65,.28);
+    }
 
     @media (max-width: 360px) {
 
       body {
-        padding: 12px;
+        padding: 11px;
       }
 
-      .logo-marca {
+      .mascote {
         width: 72%;
+        max-height: 230px;
+      }
+
+      .titulo {
+        font-size: 14px;
       }
 
       .botao-cat {
-        min-height: 65px;
-      }
-
-      .botao-cat .icone {
-        font-size: 20px;
+        min-height: 63px;
       }
     }
   </style>
@@ -246,6 +337,7 @@
 <body>
 
   <!-- TOPO -->
+
   <div class="topo">
 
     <div class="status-box aberto">
@@ -258,25 +350,28 @@
   </div>
 
 
-  <!-- LOGO -->
-  <div class="bloco-logo">
+  <!-- MASCOTE -->
+
+  <div class="area-mascote">
 
     <img
-      class="logo-marca"
-      alt="MONSTRO BURGUER"
+      id="mascote"
+      class="mascote"
+      alt="Monstro Burguer"
       src="https://i.imgur.com/9WLN0Dv.png"
     >
 
-    <p class="frase-marca">
-      O sabor monstruoso que você merece!
-    </p>
+    <div class="frase">
+      A FOME CHAMOU.
+    </div>
 
   </div>
 
 
   <!-- CATEGORIAS -->
+
   <div class="titulo">
-    Escolha uma categoria
+    ESCOLHA O TAMANHO DA SUA FOME
   </div>
 
   <div class="grade-botoes">
@@ -301,7 +396,10 @@
       <span>Adicionais</span>
     </button>
 
-    <button class="botao-cat botao-linha-cheia" onclick="irPara('combos')">
+    <button
+      class="botao-cat botao-linha-cheia"
+      onclick="irPara('combos')"
+    >
       <span class="icone">📦</span>
       <span>Combos</span>
     </button>
@@ -309,22 +407,24 @@
   </div>
 
 
-  <!-- AÇÕES -->
+  <!-- BOTÃO PRINCIPAL + WHATSAPP -->
 
-  <a
-    class="botao-ver"
-    href="cardapio.html"
-  >
-    📋 &nbsp; VER CARDÁPIO
-  </a>
+  <div class="acoes">
 
-  <a
-    class="botao-fale"
-    href="https://wa.me/5514996619487"
-    target="_blank"
-  >
-    📞 &nbsp; Fale conosco
-  </a>
+    <a class="botao-ver" href="cardapio.html">
+      VER CARDÁPIO
+    </a>
+
+    <a
+      class="botao-whatsapp"
+      href="https://wa.me/5514996619487"
+      target="_blank"
+      aria-label="WhatsApp"
+    >
+      ☎
+    </a>
+
+  </div>
 
 
   <script>
@@ -334,7 +434,10 @@
       window.location.href = "cardapio.html";
     }
 
+
     window.onload = function() {
+
+      /* STATUS DA LOJA */
 
       const caixa = document.querySelector(".status-box");
       const texto = document.getElementById("texto-status");
@@ -348,6 +451,19 @@
         lojaAberta
           ? "LOJA ABERTA"
           : "LOJA FECHADA";
+
+
+      /* MASCOTE SALVO NO ADM */
+
+      const mascote = document.getElementById("mascote");
+
+      const mascoteSalvo =
+        localStorage.getItem("monstroMascote");
+
+      if (mascoteSalvo) {
+        mascote.src = mascoteSalvo;
+      }
+
     };
 
   </script>
