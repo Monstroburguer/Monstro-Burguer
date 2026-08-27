@@ -1,151 +1,310 @@
-📋 18 MELHORIAS — MONSTRO BURGUER
- 
-Regra‑ouro: 🚫 NUNCA VERMELHO — cores oficiais:  #BF00FF(roxo) | #00FF41(verde) | #00CCFF(azul) | PRETO/FUNDO PURO 
- 
-🟢 1. Status Loja Aberto / Fechado + Horário
- 
-- Bolinha pequena pulsante + texto no canto esquerdo superior
-​
-- Verde‑neon = ABERTO; cinza/escuro = FECHADO — sem vermelho
-​
-- Abaixo: dias + horário funcionamento → “Seg‑Sex 18h‑23h • Sáb/Dom 15h‑00h”, fácil trocar no Admin
-​
-- Botão rápido “Forçar Fechado/Chuva/Feriado” → liga/desliga 1‑clique
- 
-⚙️ 2. Painel Administrativo completo
- 
-- Ícone engrenagem canto‑direito, sobreposto sempre
-​
-- Senha simples depois → agora protege só clicando direito
-​
-- Tudo trocável SEM mexer código: Logo/Mascote/Banners/Preços/Horários/Status
- 
-🖼️ 3. Imagens: Logo + Mascote + Banners
- 
-- 3 lugares separados no Admin: troca cada um direto de fora
-​
-- Sem quadros/caixas — fundo sempre transparente/preto combinando
-​
-- Fallback automático: se uma quebrar, carrega outra garantida
-​
-- Tamanhos ajustados: logo no topo central, banners largos em cima
- 
-🎨 4. Design Neon fixo
- 
-- Fundo absolutamente preto  #000  — sem cinza herdado
-​
-- Botões: gradiente azul‑roxo pulsando suave, bordas brilhantes
-​
-- Ao clicar: muda cor → roxa forte, escala levemente “pressionado”, marca “✅ Adicionado”
-​
-- Tudo cantos arredondados estilo moderno — sem quadradões velhos
- 
-🏷️ 5. Categorias & Navegação
- 
-- Todos / Lanches / Bebidas / Adicionais / Combos — layout responsivo 2 colunas
-​
-- Botão “ativo” sempre destacado, brilha roxo — resto azul‑neon
-​
-- Desce suave, não pula — cabe certinho celular qualquer tamanho
- 
-📱 6. Perfeito celular primeiro
- 
-- Sempre testado 9:16 — botões ≥ 44×44px dedo grande aperta fácil
-​
-- Espaçamentos generosos, texto legível — sem sobrepor nada
-​
-- Botões fixos importantes sempre acessíveis sem rolar muito
- 
-📲 7. Contatos múltiplos funcionais
- 
-- WhatsApp principal:  +55 14 99661‑9487  — abre direto já montando mensagem completa
-​
-- Telefone/Ligação rápido: segundo ícone → abre discador
-​
-- Endereço + botão “Como chegar” → leva mapa direto
-​
-- iFood ou outro app futuro — só botãozinho adicionar
- 
-🛒 8. Carrinho visível & inteligente
- 
-- Ícone sempre visível, mostra quantidade pequeno círculo brilhando
-​
-- Soma valores atualiza‑tempo real
-​
-- Sempre que adiciona: vibra leve, botão muda cor “✅ Adicionado”
-​
-- Limpar tudo ou remover itens funcionando
- 
-✉️ 9. Mensagem WhatsApp montada automática
- 
-✅ Nome, itens Qtd×Nome = Preço unitário, subtotais → Valor TOTAL + troco/Pix/forma pagamento + observações + horário/data + código pedido sequencial
- 
-💳 10. Formas de pagamento visíveis & Pix
- 
-- Pix com chave  31792329865  e botão “Copiar Chave”
-​
-- Dinheiro/troco, cartão crédito/débito, vale refeição — ícones claros
-​
-- Futuro: pode receber direto sem intermediários — só mostrar instruções comprovação
- 
-📊 11. Controle & Códigos de Pedido
- 
-- Cada pedido ganha nº sequencial:  001‑27082026 
-​
-- Etapas visuais: ✅ Recebido → ⏳ Preparando → 🚚 Saiu → ✅ Entregue
-​
-- Painel separado no Admin pra acompanhar e mudar status
- 
-🏷️ 12. Destaque Promoções
- 
-- Produtos em oferta: preço maior/mais chamativo, cor diferente, rótulo “🔥 PROMO”
-​
-- Contador ou banner grande trocável todo dia/semana direto Admin — sem tocar código
- 
-⏱️ 13. Informações importantes
- 
-- Tempo preparo/entrega: “cerca 25‑40 minutos”
-​
-- Pedido mínimo / taxa entrega grátis ou valor
-​
-- Retirada vs entrega — valores distintos
- 
-📤 14. Exportar & Migrar tudo fácil
- 
-- Arquivos separados independentes:  index.html • cardapio.html • admin.html 
-​
-- Configurações salvam em “caixinha interna” — depois banco real
-​
-- Trocar hospedagem = copiar arquivos novos → igual “mudar casa” — não refaz trabalho
- 
-🧩 15. Estrutura pronta expandir
- 
-- Sem bagunça misturada: cores definidas 1x só no começo — mudar tudo trocando ali
-​
-- Joginho, ranking, avaliações… espaço reservado — não quebra funcionamento atual
- 
-🛡️ 16. Resistente & Recuperável
- 
-- Links imagens “plano B automático” — se um caminho quebrar tenta outro
-​
-- Cache limpo automático — navegador sempre pega versão nova
-​
-- Sempre guarda cópia anterior — volta rápido se precisar
- 
-🎮 17. Jogo‑Fidelidade planejado
- 
-- Login compra real → ganha acesso completo; visita sem comprar = demonstração
-​
-- Semanal missão diária / torneio classificação → prêmios descontos/brindes
-​
-- Ranking semanal reinicia mensal/trimestral/anual — acumula pontos separado
-​
-- Compra real = senha/código ganha — evita gente fora clientes brincar
- 
-🚀 18. Publicar & App celular
- 
-- Funciona em qualquer hospedagem gratuita: GitHub Pages / Netlify / Tiiny etc
-​
-- Adiciona na tela inicial → parece e abre igual aplicativo — sem Google Play custo/burocracia
-​
-- QR‑Code direto → todo mundo escaneia e já entra
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Monstro Burguer | O sabor monstruoso!</title>
+    <style>
+        :root {
+            --bg: #000000;
+            --purple: #BF00FF;
+            --green: #00FF41;
+            --blue: #00CCFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* 1. Status Loja Aberto / Fechado */
+        .top-bar {
+            width: 100%;
+            background: #050505;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--purple);
+            box-shadow: 0 0 10px rgba(191, 0, 255, 0.2);
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .dot-pulsing {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: pulse 1.5s infinite;
+        }
+
+        .dot-closed {
+            background-color: #444444;
+            box-shadow: none;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 65, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(0, 255, 65, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 65, 0); }
+        }
+
+        .horarios-top {
+            font-size: 11px;
+            color: #888888;
+            text-align: right;
+        }
+
+        /* 2. Engrenagem Admin */
+        .admin-gear {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 99;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid var(--blue);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--blue);
+            text-decoration: none;
+            font-size: 20px;
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.3);
+        }
+
+        /* Header / Identity */
+        header {
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            padding: 25px 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-img {
+            max-width: 160px;
+            max-height: 160px;
+            object-fit: contain;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 15px var(--purple));
+        }
+
+        .banner-promocional {
+            width: 100%;
+            max-width: 440px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid var(--blue);
+            margin: 15px 0;
+            box-shadow: 0 0 12px rgba(0, 204, 255, 0.2);
+            display: none;
+        }
+
+        h1 {
+            font-size: 26px;
+            color: #FFFFFF;
+            text-shadow: 0 0 8px var(--purple);
+            margin-bottom: 4px;
+        }
+
+        p.slogan {
+            color: var(--blue);
+            font-size: 14px;
+        }
+
+        /* Botoes e Açoes */
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .btn {
+            min-height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 16px;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-cardapio {
+            background: linear-gradient(135deg, var(--purple), var(--blue));
+            color: #FFFFFF;
+            box-shadow: 0 0 15px rgba(191, 0, 255, 0.4);
+        }
+
+        .btn-whatsapp {
+            background: var(--green);
+            color: #000000;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+        }
+
+        .btn-game {
+            background: #000000;
+            color: var(--blue);
+            border: 1px solid var(--blue);
+            box-shadow: 0 0 10px rgba(0, 204, 255, 0.2);
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+            filter: brightness(1.2);
+        }
+
+        .info-box {
+            background: #050505;
+            border: 1px solid #1a1a1a;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #aaaaaa;
+            text-align: center;
+        }
+
+        .info-box strong {
+            color: var(--blue);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            font-size: 11px;
+            color: #444444;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="admin.html" class="admin-gear" title="Painel Administrativo">⚙️</a>
+
+    <div class="top-bar">
+        <div class="status-badge">
+            <div id="dotStatus" class="dot-pulsing"></div>
+            <span id="txtStatus" style="color: var(--green);">LOJA ABERTA</span>
+        </div>
+        <div class="horarios-top" id="txtHorarioHeader">
+            Seg-Sex 18h-23h • Sáb/Dom 15h-00h
+        </div>
+    </div>
+
+    <header>
+        <img id="imgLogo" class="logo-img" src="" alt="Monstro Burguer" onerror="this.src='https://via.placeholder.com/160/000000/BF00FF?text=MONSTRO'">
+        <h1 id="txtNomeApp">MONSTRO BURGUER</h1>
+        <p class="slogan">O sabor monstruoso que você merece!</p>
+        <img id="imgBanner" class="banner-promocional" src="" alt="Promoção">
+    </header>
+
+    <div class="container">
+        <a href="cardapio.html" class="btn btn-cardapio">
+            🍔 ABRIR CARDÁPIO COMPLETO
+        </a>
+
+        <a id="btnWhatsDireto" href="#" class="btn btn-whatsapp">
+            💬 PEDIDO RÁPIDO WHATSAPP
+        </a>
+
+        <a href="cardapio.html?game=1" class="btn btn-game">
+            🎮 JOGO FIDELIDADE MONSTRO
+        </a>
+
+        <div class="info-box">
+            📍 <strong>Entregas Rápidas</strong> • Cerca 25-40 min<br>
+            💳 Pix, Cartão e Dinheiro | Chave Pix no Checkout
+        </div>
+    </div>
+
+    <footer>
+        Monstro Burguer © 2026 • Todos os direitos reservados
+    </footer>
+
+    <script>
+        // Carregamento de Configurações
+        function carregarConfiguracoes() {
+            const config = JSON.parse(localStorage.getItem("monstroConfig")) || {
+                whatsapp: "+5514996619487",
+                lojaAberta: true,
+                forcadoFechado: false,
+                horarioSegSex: "Seg-Sex 18h-23h",
+                horarioSabDom: "Sáb/Dom 15h-00h",
+                logoUrl: "",
+                bannerUrl: ""
+            };
+
+            // Status da Loja
+            const dot = document.getElementById("dotStatus");
+            const txt = document.getElementById("txtStatus");
+            
+            if (config.forcadoFechado || !config.lojaAberta) {
+                dot.className = "dot-pulsing dot-closed";
+                txt.innerText = "LOJA FECHADA";
+                txt.style.color = "#888888";
+            } else {
+                dot.className = "dot-pulsing";
+                txt.innerText = "LOJA ABERTA";
+                txt.style.color = "var(--green)";
+            }
+
+            // Horários
+            document.getElementById("txtHorarioHeader").innerText = `${config.horarioSegSex} • ${config.horarioSabDom}`;
+
+            // Link WhatsApp Direct
+            document.getElementById("btnWhatsDireto").href = `https://wa.me/${config.whatsapp.replace(/\D/g,'')}?text=Olá,%20gostaria%20de%20fazer%20um%20pedido!`;
+
+            // Imagens com Fallback Inteligente
+            if (config.logoUrl) {
+                document.getElementById("imgLogo").src = config.logoUrl;
+            }
+            if (config.bannerUrl) {
+                const banner = document.getElementById("imgBanner");
+                banner.src = config.bannerUrl;
+                banner.style.display = "block";
+            }
+        }
+
+        window.onload = carregarConfiguracoes;
+    </script>
+</body>
+</html>
