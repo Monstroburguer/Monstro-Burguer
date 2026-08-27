@@ -50,13 +50,13 @@ header{
   transform:rotate(45deg);
 }
 
-/* 🖼️ LOGO */
+/* 🖼️ LOGO / MASCOTE */
 .logo-principal{
   width:280px;
   max-width:85%;
   height:auto;
   margin:5px auto;
-  display:none; /* Oculto por padrão até ser carregado */
+  display:none; /* Oculto até carregar */
   background:transparent !important;
   border:none !important;
   box-shadow:none !important;
@@ -183,9 +183,43 @@ header{
   box-shadow:0 0 12px rgba(191,0,255,.2);
 }
 .banner-promo.visivel{display:block}
+
+/* ===== STATUS LOJA ===== */
+.status-loja{
+  position:fixed;
+  top:10px;
+  left:15px;
+  z-index:9998;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(0,0,0,.7);
+  padding:6px 12px;
+  border-radius:30px;
+  border:1px solid #444;
+}
+.status-bolinha{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  animation:pulsarStatus 2s infinite alternate;
+}
+.status-texto{
+  font-size:13px;
+  font-weight:bold;
+}
+.loja-aberta .status-bolinha{background:var(--verde);box-shadow:0 0 8px var(--verde)}
+.loja-fechada .status-bolinha{background:var(--vermelho);box-shadow:0 0 8px var(--vermelho)}
+@keyframes pulsarStatus{from{opacity:.7}to{opacity:1}}
 </style>
 </head>
 <body>
+
+<!-- 🟢 STATUS LOJA -->
+<div id="status-loja" class="status-loja loja-fechada">
+  <div class="status-bolinha"></div>
+  <span class="status-texto">FECHADO</span>
+</div>
 
 <img id="banner-principal-img" class="banner-principal" alt="Banner Principal">
 <img id="banner-promo-img" class="banner-promo" alt="Banner Promoção">
@@ -198,7 +232,7 @@ header{
     <p class="slogan">O sabor monstruoso que você merece!</p>
 </header>
 
-<!-- CATEGORIAS → VAI DIRETO PRO CARDÁPIO FILTRADO -->
+<!-- CATEGORIAS -->
 <div class="categorias">
     <button class="cat-btn ativo" onclick="irParaCardapio('todos')">🍔 Todos</button>
     <button class="cat-btn" onclick="irParaCardapio('lanches')">🍔 Lanches</button>
@@ -221,31 +255,51 @@ header{
 <script>
 window.onload = function(){
     carregarConfiguracoesDaLoja();
+    atualizarStatusLoja();
 };
 
+// ✅ FUNÇÃO CORRIGIDA — BUSCA DIRETO DO QUE O ADMIN SALVA!
 function carregarConfiguracoesDaLoja(){
-    const s = localStorage.getItem('monstroConfiguracoes');
-    if(!s) return;
+    // Busca direto do localStorage onde o Admin salva!
+    const mascote = localStorage.getItem("mascotePersonalizado");
+    const logo = localStorage.getItem("logoPersonalizada");
+    const banner = localStorage.getItem("bannerPersonalizado");
+    const bannerPromo = localStorage.getItem("bannerPromoPersonalizado");
 
-    try {
-        const c = JSON.parse(s);
-        if(c.mascote){
-            const logo = document.getElementById('logo-principal');
-            logo.src = c.mascote;
-            logo.style.display = 'block';
-        }
-        if(c.banner){
-            const b = document.getElementById('banner-principal-img');
-            b.src = c.banner;
-            b.classList.add('visivel');
-        }
-        if(c.bannerPromo){
-            const bp = document.getElementById('banner-promo-img');
-            bp.src = c.bannerPromo;
-            bp.classList.add('visivel');
-        }
-    } catch (e) {
-        console.error("Erro ao carregar as configurações do localStorage:", e);
+    // Exibe o Mascote/Logo
+    if(mascote || logo){
+        const img = document.getElementById('logo-principal');
+        img.src = mascote || logo;
+        img.style.display = 'block';
+    }
+    // Exibe o Banner Principal
+    if(banner){
+        const b = document.getElementById('banner-principal-img');
+        b.src = banner;
+        b.classList.add('visivel');
+    }
+    // Exibe o Banner de Promoção
+    if(bannerPromo){
+        const bp = document.getElementById('banner-promo-img');
+        bp.src = bannerPromo;
+        bp.classList.add('visivel');
+    }
+}
+
+// ✅ STATUS DA LOJA — ABERTO/FECHADO
+function atualizarStatusLoja(){
+    const lojaAberta = localStorage.getItem("lojaAberta") !== "false";
+    const el = document.getElementById('status-loja');
+    const texto = el.querySelector('.status-texto');
+    
+    if(lojaAberta){
+        el.classList.remove('loja-fechada');
+        el.classList.add('loja-aberta');
+        texto.textContent = "ABERTO";
+    }else{
+        el.classList.remove('loja-aberta');
+        el.classList.add('loja-fechada');
+        texto.textContent = "FECHADO";
     }
 }
 
