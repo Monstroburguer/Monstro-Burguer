@@ -1,312 +1,644 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍔 MONSTRO BURGUER — Início</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-:root{
-  --roxo: #BF00FF;
-  --verde: #00FF41;
-  --azul: #00CCFF;
-  --fundo: #000000;
-  --texto: #ffffff;
-  --whatsapp: #25D366;
-}
-body{background:var(--fundo);color:var(--texto);min-height:100vh;padding-bottom:40px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADM | Monstro Burguer</title>
 
-/* ===== CABEÇALHO ===== */
-header{
-  text-align:center;
-  padding:15px 15px 10px;
-  position:relative;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-/* ⚙️ BOTÃO ADMIN — FIXO NO CANTO */
-.botao-adm{
-  position:fixed !important;
-  top:10px !important;
-  right:15px !important;
-  z-index:9999 !important;
-  width:40px;
-  height:40px;
-  background:transparent;
-  border:2px solid var(--roxo);
-  border-radius:50%;
-  color:var(--roxo);
-  font-size:18px;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 0 10px var(--roxo);
-  transition:all .3s;
-}
-.botao-adm:hover{
-  background:var(--roxo);
-  color:#000;
-  box-shadow:0 0 20px var(--roxo);
-  transform:rotate(45deg);
-}
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #080808;
+            color: white;
+            padding-bottom: 40px;
+        }
 
-/* 🖼️ LOGO / MASCOTE */
-.logo-principal{
-  width:280px;
-  max-width:85%;
-  height:auto;
-  margin:5px auto;
-  display:none; /* Oculto até carregar */
-  background:transparent !important;
-  border:none !important;
-  box-shadow:none !important;
-}
-.slogan{color:#888;font-size:14px;margin:5px 0 20px}
+        header {
+            background: #050505;
+            padding: 25px 15px;
+            text-align: center;
+            border-bottom: 2px solid #168cff;
+            box-shadow: 0 0 15px #168cff;
+        }
 
-/* ===== CATEGORIAS ===== */
-.categorias{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-  padding:0 15px 25px;
-  max-width:420px;
-  margin:0 auto;
-}
-.cat-btn{
-  padding:14px 10px;
-  background:linear-gradient(90deg,rgba(0,204,255,.15),rgba(191,0,255,.15));
-  border:2px solid var(--azul);
-  border-radius:50px;
-  color:var(--texto);
-  font-size:17px;
-  font-weight:bold;
-  cursor:pointer;
-  transition:all .3s;
-  text-align:center;
-  animation:pulsarSuave 2.5s infinite alternate;
-  text-shadow:0 0 5px var(--azul);
-}
-.cat-btn.ativo{
-  background:linear-gradient(90deg,rgba(0,204,255,.3),rgba(191,0,255,.4));
-  border-color:var(--roxo);
-  box-shadow:0 0 15px var(--roxo), inset 0 0 8px var(--roxo);
-  animation:none;
-  transform:scale(1.03);
-  text-shadow:0 0 8px var(--roxo);
-}
-.cat-btn:hover{border-color:var(--roxo);box-shadow:0 0 12px var(--roxo)}
+        header h1 {
+            margin: 0;
+            color: #168cff;
+            text-shadow: 0 0 10px #168cff, 0 0 25px #168cff;
+        }
 
-@keyframes pulsarSuave {
-  from {box-shadow:0 0 6px rgba(0,204,255,.3);border-color:rgba(0,204,255,.6);}
-  to   {box-shadow:0 0 12px rgba(191,0,255,.4);border-color:rgba(191,0,255,.8);}
-}
+        header p {
+            color: #aaa;
+        }
 
-.btn-1col{grid-column:1 / -1;max-width:240px;margin:0 auto}
+        .painel {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
 
-/* ===== ÁREA DE AÇÃO ===== */
-.area-botoes{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:15px;
-  padding:10px 15px 30px;
-  max-width:420px;
-  margin:0 auto;
-}
+        .titulo {
+            color: #168cff;
+            text-shadow: 0 0 8px #168cff;
+            border-bottom: 1px solid #168cff;
+            padding-bottom: 8px;
+        }
 
-/* 💚 WHATSAPP */
-.btn-whatsapp{
-  width:50px;
-  height:50px;
-  background:radial-gradient(circle, rgba(37,211,102,.3), rgba(37,211,102,.1));
-  border:2px solid var(--whatsapp);
-  border-radius:50%;
-  color:var(--whatsapp);
-  font-size:24px;
-  cursor:pointer;
-  box-shadow:0 0 12px var(--whatsapp), inset 0 0 5px rgba(37,211,102,.2);
-  transition:all .3s;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-decoration:none;
-  flex-shrink:0;
-  animation:brilhoWhatsapp 2s infinite alternate;
-}
-@keyframes brilhoWhatsapp {
-  from {box-shadow:0 0 8px var(--whatsapp), inset 0 0 3px rgba(37,211,102,.15);}
-  to   {box-shadow:0 0 18px var(--whatsapp), inset 0 0 8px rgba(37,211,102,.3);}
-}
-.btn-whatsapp:hover{transform:scale(1.15);background:rgba(37,211,102,.25)}
+        .formulario,
+        .whatsapp-box,
+        .aparencia-box {
+            background: #111;
+            padding: 18px;
+            border-radius: 15px;
+            border: 1px solid #168cff;
+            box-shadow: 0 0 12px rgba(22, 140, 255, 0.25);
+            margin-bottom: 20px;
+        }
 
-/* 📋 VER CARDÁPIO */
-.btn-cardapio{
-  flex:none;
-  width:270px;
-  max-width:75%;
-  padding:13px 20px;
-  background:linear-gradient(90deg,var(--azul),var(--roxo));
-  border:none;
-  border-radius:50px;
-  color:#fff;
-  font-weight:bold;
-  font-size:16px;
-  cursor:pointer;
-  box-shadow:0 0 12px var(--azul), 0 0 20px var(--roxo);
-  transition:all .3s;
-  animation:brilhoCardapio 2s infinite alternate;
-  text-decoration:none;
-  text-align:center;
-  white-space:nowrap;
-}
-@keyframes brilhoCardapio {
-  from {box-shadow:0 0 12px var(--azul), 0 0 20px var(--roxo);}
-  to   {box-shadow:0 0 20px var(--azul), 0 0 30px var(--roxo);}
-}
-.btn-cardapio:hover{transform:scale(1.03)}
+        label {
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
 
-/* ===== BANNERS ===== */
-.banner-principal,.banner-promo{
-  width:100%;
-  max-height:150px;
-  object-fit:cover;
-  display:none;
-  border-bottom:2px solid var(--azul);
-  box-shadow:0 0 15px rgba(0,204,255,.3);
-  background:transparent !important;
-  margin-bottom:10px;
-}
-.banner-principal.visivel{display:block}
-.banner-promo{
-  max-height:100px;
-  border-bottom:2px solid var(--roxo);
-  box-shadow:0 0 12px rgba(191,0,255,.2);
-}
-.banner-promo.visivel{display:block}
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #080808;
+            color: white;
+            font-size: 15px;
+        }
 
-/* ===== STATUS LOJA ===== */
-.status-loja{
-  position:fixed;
-  top:10px;
-  left:15px;
-  z-index:9998;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  background:rgba(0,0,0,.7);
-  padding:6px 12px;
-  border-radius:30px;
-  border:1px solid #444;
-}
-.status-bolinha{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  animation:pulsarStatus 2s infinite alternate;
-}
-.status-texto{
-  font-size:13px;
-  font-weight:bold;
-}
-.loja-aberta .status-bolinha{background:var(--verde);box-shadow:0 0 8px var(--verde)}
-.loja-fechada .status-bolinha{background:var(--vermelho);box-shadow:0 0 8px var(--vermelho)}
-@keyframes pulsarStatus{from{opacity:.7}to{opacity:1}}
-</style>
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 13px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-salvar {
+            background: #168cff;
+            box-shadow: 0 0 10px #168cff;
+        }
+
+        .btn-limpar {
+            background: #333;
+        }
+
+        .whatsapp-opcao {
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 12px;
+            background: #080808;
+        }
+
+        .whatsapp-opcao.ativo {
+            border-color: #00c96b;
+            box-shadow: 0 0 12px rgba(0, 201, 107, 0.35);
+        }
+
+        .whatsapp-numero {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .whatsapp-tipo {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .btn-whatsapp {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 9px;
+            background: #00a85a;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .status-whatsapp {
+            margin-top: 15px;
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            background: #050505;
+            color: #00ff88;
+            border: 1px solid #00a85a;
+        }
+
+        .aparencia-item {
+            background: #080808;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .aparencia-titulo {
+            color: #168cff;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .preview-aparencia {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            object-fit: contain;
+            background: #050505;
+            border-radius: 12px;
+            border: 1px solid #168cff;
+            display: none;
+            margin: 12px auto;
+        }
+
+        .sem-imagem {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            margin: 12px auto;
+            border-radius: 12px;
+            border: 1px dashed #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            text-align: center;
+        }
+
+        .btn-remover {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 8px;
+            background: #333;
+            color: white;
+            font-weight: bold;
+        }
+
+        .area-foto {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .previa-foto {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 2px solid #168cff;
+            display: none;
+            margin: 12px auto;
+        }
+
+        .sem-foto {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            margin: 12px auto;
+            border-radius: 14px;
+            border: 1px dashed #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+        }
+
+        .produtos {
+            margin-top: 25px;
+        }
+
+        .produto {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .produto-foto {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #168cff;
+        }
+
+        .produto h3 {
+            margin-top: 0;
+            color: #168cff;
+        }
+
+        .produto-info {
+            color: #bbb;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .acoes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .acoes button {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .editar {
+            background: #168cff;
+        }
+
+        .ativar {
+            background: #00a85a;
+        }
+
+        .desativar {
+            background: #555;
+        }
+
+        .excluir {
+            background: #8b0000;
+        }
+
+        .inativo {
+            opacity: 0.45;
+        }
+
+        .mensagem {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111;
+            border: 1px solid #168cff;
+            border-radius: 10px;
+            padding: 14px 20px;
+            box-shadow: 0 0 15px #168cff;
+            z-index: 9999;
+        }
+    </style>
 </head>
+
 <body>
 
-<!-- 🟢 STATUS LOJA -->
-<div id="status-loja" class="status-loja loja-fechada">
-  <div class="status-bolinha"></div>
-  <span class="status-texto">FECHADO</span>
-</div>
+    <header>
+        <h1>👹 MONSTRO BURGUER</h1>
+        <p>Painel Administrativo</p>
+    </header>
 
-<img id="banner-principal-img" class="banner-principal" alt="Banner Principal">
-<img id="banner-promo-img" class="banner-promo" alt="Banner Promoção">
+    <div class="painel">
 
-<!-- ⚙️ BOTÃO ADMIN -->
-<button class="botao-adm" onclick="window.location.href='admin.html'" title="Acessar Administrador">⚙️</button>
+        <!-- ==================================================
+             WHATSAPP
+        ================================================== -->
+        <h2 class="titulo">📲 WhatsApp dos Pedidos</h2>
 
-<header>
-    <img id="logo-principal" class="logo-principal" alt="MONSTRO BURGUER">
-    <p class="slogan">O sabor monstruoso que você merece!</p>
-</header>
+        <div class="whatsapp-box">
+            <div class="whatsapp-opcao" id="opcao1">
+                <div class="whatsapp-numero">📱 14 99661-9487</div>
+                <div class="whatsapp-tipo">WhatsApp Principal</div>
+                <button class="btn-whatsapp" onclick="selecionarWhatsApp('5514996619487')">
+                    USAR ESTE NÚMERO
+                </button>
+            </div>
 
-<!-- CATEGORIAS -->
-<div class="categorias">
-    <button class="cat-btn ativo" onclick="irParaCardapio('todos')">🍔 Todos</button>
-    <button class="cat-btn" onclick="irParaCardapio('lanches')">🍔 Lanches</button>
-    <button class="cat-btn" onclick="irParaCardapio('bebidas')">🥤 Bebidas</button>
-    <button class="cat-btn" onclick="irParaCardapio('adicionais')">➕ Adicionais</button>
-    <button class="cat-btn btn-1col" onclick="irParaCardapio('combos')">📦 Combos</button>
-</div>
+            <div class="whatsapp-opcao" id="opcao2">
+                <div class="whatsapp-numero">📱 14 98114-1871</div>
+                <div class="whatsapp-tipo">WhatsApp Secundário</div>
+                <button class="btn-whatsapp" onclick="selecionarWhatsApp('5514981141871')">
+                    USAR ESTE NÚMERO
+                </button>
+            </div>
 
-<!-- 💬 WHATSAPP + VER CARDÁPIO -->
-<div class="area-botoes">
-    <a href="https://wa.me/5514996619487" target="_blank" class="btn-whatsapp" title="Falar no WhatsApp">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17.472 14.382c-.36-.18-2.17-1.07-2.51-1.19-.34-.12-.59-.18-.84.18-.25.36-.97 1.19-1.19 1.44-.22.25-.44.28-.81.1-.37-.18-1.56-.57-2.97-1.81-1.1-.98-1.84-2.19-2.06-2.56-.18-.34-.19-.54-.01-.71.18-.18.4-.47.6-.71.2-.24.27-.42.4-.7.13-.28.06-.52-.03-.71-.09-.19-.81-1.95-1.11-2.67-.29-.72-.59-.62-.84-.63-.22 0-.47-.01-.72-.01-.25 0-.65.07-.99.49-.34.42-1.29 1.26-1.29 3.04 0 1.78 1.33 3.51 1.51 3.77.18.26 2.59 3.95 6.23 5.53.87.37 1.55.6 2.07.77.87.26 1.67.22 2.29.14.7-.09 2.17-.88 2.48-1.73.31-.85.31-1.57.22-1.73-.09-.16-.33-.26-.69-.42z"/>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.13 1.512 5.888L.266 23.654a.5.5 0 00.635.582l5.886-2.173A11.942 11.942 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a9.937 9.937 0 01-5.169-1.424l-.373-.224-3.487 1.285 1.327-3.403-.243-.387A9.933 9.933 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-        </svg>
-    </a>
-    <a href="cardapio.html" class="btn-cardapio">VER CARDÁPIO</a>
-</div>
+            <div id="statusWhatsApp" class="status-whatsapp">
+                Carregando...
+            </div>
+        </div>
 
-<script>
-window.onload = function(){
-    carregarConfiguracoesDaLoja();
-    atualizarStatusLoja();
-};
+        <!-- ==================================================
+             APARÊNCIA
+        ================================================== -->
+        <h2 class="titulo">🎨 Aparência do Monstro Burguer</h2>
 
-// ✅ FUNÇÃO CORRIGIDA — BUSCA DIRETO DO QUE O ADMIN SALVA!
-function carregarConfiguracoesDaLoja(){
-    // Busca direto do localStorage onde o Admin salva!
-    const mascote = localStorage.getItem("mascotePersonalizado");
-    const logo = localStorage.getItem("logoPersonalizada");
-    const banner = localStorage.getItem("bannerPersonalizado");
-    const bannerPromo = localStorage.getItem("bannerPromoPersonalizado");
+        <div class="aparencia-box">
+            <div class="aparencia-item">
+                <div class="aparencia-titulo">🖼️ Logo do Monstro Burguer</div>
+                <input type="file" id="logoADM" accept="image/*" onchange="selecionarLogo(event)">
 
-    // ✅ MASCOTE FIXO — APARECE PRA TODO MUNDO!
-const img = document.getElementById('logo-principal');
-img.src = "https://raw.githubusercontent.com/Monstroburguer/Monstro-Burguer/main/mascote.jpg";
-img.style.display = 'block';
+                <div id="areaLogo">
+                    <div id="semLogo" class="sem-imagem">🖼️ Nenhuma logo cadastrada</div>
+                    <img id="previaLogo" class="preview-aparencia">
+                </div>
 
-    // Exibe o Banner Principal
-    if(banner){
-        const b = document.getElementById('banner-principal-img');
-        b.src = banner;
-        b.classList.add('visivel');
-    }
-    // Exibe o Banner de Promoção
-    if(bannerPromo){
-        const bp = document.getElementById('banner-promo-img');
-        bp.src = bannerPromo;
-        bp.classList.add('visivel');
-    }
-}
+                <button class="btn-remover" onclick="removerLogo()">REMOVER LOGO</button>
+            </div>
 
-// ✅ STATUS DA LOJA — ABERTO/FECHADO
-function atualizarStatusLoja(){
-    const lojaAberta = localStorage.getItem("lojaAberta") !== "false";
-    const el = document.getElementById('status-loja');
-    const texto = el.querySelector('.status-texto');
-    
-    if(lojaAberta){
-        el.classList.remove('loja-fechada');
-        el.classList.add('loja-aberta');
-        texto.textContent = "ABERTO";
-    }else{
-        el.classList.remove('loja-aberta');
-        el.classList.add('loja-fechada');
-        texto.textContent = "FECHADO";
-    }
-}
+            <div class="aparencia-item">
+                <div class="aparencia-titulo">👹 Mascote do Monstro Burguer</div>
+                <input type="file" id="mascoteADM" accept="image/*" onchange="selecionarMascote(event)">
 
-function irParaCardapio(categoria){
-    localStorage.setItem('categoriaInicial', categoria);
-    window.location.href = 'cardapio.html';
-}
-</script>
+                <div id="areaMascote">
+                    <div id="semMascote" class="sem-imagem">👹 Nenhum mascote cadastrado</div>
+                    <img id="previaMascote" class="preview-aparencia">
+                </div>
 
-</body>
-</html>
+                <button class="btn-remover" onclick="removerMascote()">REMOVER MASCOTE</button>
+            </div>
+        </div>
+
+        <!-- ==================================================
+             PRODUTOS
+        ================================================== -->
+        <h2 class="titulo">🍔 Cadastro de Produto</h2>
+
+        <div class="formulario">
+            <input type="hidden" id="produtoId">
+
+            <label>Nome do produto</label>
+            <input type="text" id="nome" placeholder="Ex: X-Salada">
+
+            <label>Categoria</label>
+            <select id="categoria">
+                <option value="Lanches">🍔 Lanches</option>
+                <option value="Bebidas">🥤 Bebidas</option>
+                <option value="Adicionais">➕ Adicionais</option>
+                <option value="Combos">📦 Combos</option>
+            </select>
+
+            <label>Preço</label>
+            <input type="number" id="preco" placeholder="Ex: 17.90" step="0.01">
+
+            <label>Descrição</label>
+            <textarea id="descricao" placeholder="Descrição do produto"></textarea>
+
+            <label>📸 Foto do produto</label>
+            <input type="file" id="foto" accept="image/*" onchange="selecionarFoto(event)">
+
+            <div class="area-foto">
+                <div id="semFoto" class="sem-foto">📷 Nenhuma foto selecionada</div>
+                <img id="previaFoto" class="previa-foto">
+            </div>
+
+            <button class="btn btn-salvar" onclick="salvarProduto()">💾 SALVAR PRODUTO</button>
+            <button class="btn btn-limpar" onclick="limparFormulario()">LIMPAR</button>
+        </div>
+
+        <h2 class="titulo">📋 Produtos cadastrados</h2>
+        <div id="listaProdutos" class="produtos"></div>
+
+    </div>
+
+    <div id="mensagem" class="mensagem"></div>
+
+    <script>
+        /* ==================================================
+           WHATSAPP
+        ================================================== */
+        let whatsappAtivo = localStorage.getItem("monstroWhatsApp");
+
+        if (!whatsappAtivo) {
+            whatsappAtivo = "5514996619487";
+            localStorage.setItem("monstroWhatsApp", whatsappAtivo);
+        }
+
+        function atualizarWhatsAppVisual() {
+            let opcao1 = document.getElementById("opcao1");
+            let opcao2 = document.getElementById("opcao2");
+            let status = document.getElementById("statusWhatsApp");
+
+            opcao1.classList.remove("ativo");
+            opcao2.classList.remove("ativo");
+
+            if (whatsappAtivo === "5514996619487") {
+                opcao1.classList.add("ativo");
+                status.innerText = "🟢 Pedidos serão enviados para o PRINCIPAL";
+            } else {
+                opcao2.classList.add("ativo");
+                status.innerText = "🟢 Pedidos serão enviados para o SECUNDÁRIO";
+            }
+        }
+
+        function selecionarWhatsApp(numero) {
+            whatsappAtivo = numero;
+            localStorage.setItem("monstroWhatsApp", numero);
+            atualizarWhatsAppVisual();
+            mostrarMensagem("WhatsApp dos pedidos alterado!");
+        }
+
+        /* ==================================================
+           LOGO
+        ================================================== */
+        function selecionarLogo(event) {
+            let arquivo = event.target.files[0];
+            if (!arquivo) return;
+
+            let leitor = new FileReader();
+            leitor.onload = function(e) {
+                let img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    let canvas = document.createElement("canvas");
+                    let ctx = canvas.getContext("2d");
+                    let maxLargura = 400;
+                    let escala = maxLargura / img.width;
+
+                    if (escala < 1) {
+                        canvas.width = maxLargura;
+                        canvas.height = img.height * escala;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
+
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    let logoComprimida = canvas.toDataURL("image/jpeg", 0.8);
+
+                    localStorage.setItem("monstroLogo", logoComprimida);
+                    mostrarLogo(logoComprimida);
+                    mostrarMensagem("Logo salva!");
+                };
+            };
+            leitor.readAsDataURL(arquivo);
+        }
+
+        function mostrarLogo(imagem) {
+            let previa = document.getElementById("previaLogo");
+            let semLogo = document.getElementById("semLogo");
+            previa.src = imagem;
+            previa.style.display = "block";
+            semLogo.style.display = "none";
+        }
+
+        function removerLogo() {
+            localStorage.removeItem("monstroLogo");
+            document.getElementById("logoADM").value = "";
+            document.getElementById("previaLogo").style.display = "none";
+            document.getElementById("semLogo").style.display = "flex";
+            mostrarMensagem("Logo removida!");
+        }
+
+        /* ==================================================
+           MASCOTE
+        ================================================== */
+        function selecionarMascote(event) {
+            let arquivo = event.target.files[0];
+            if (!arquivo) return;
+
+            let leitor = new FileReader();
+            leitor.onload = function(e) {
+                let img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    let canvas = document.createElement("canvas");
+                    let ctx = canvas.getContext("2d");
+                    let maxLargura = 400;
+                    let escala = maxLargura / img.width;
+
+                    if (escala < 1) {
+                        canvas.width = maxLargura;
+                        canvas.height = img.height * escala;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
+
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    let mascoteComprimido = canvas.toDataURL("image/jpeg", 0.8);
+
+                    localStorage.setItem("monstroMascote", mascoteComprimido);
+                    mostrarMascote(mascoteComprimido);
+                    mostrarMensagem("Mascote salvo!");
+                };
+            };
+            leitor.readAsDataURL(arquivo);
+        }
+
+        function mostrarMascote(imagem) {
+            let previa = document.getElementById("previaMascote");
+            let semMascote = document.getElementById("semMascote");
+            previa.src = imagem;
+            previa.style.display = "block";
+            semMascote.style.display = "none";
+        }
+
+        function removerMascote() {
+            localStorage.removeItem("monstroMascote");
+            document.getElementById("mascoteADM").value = "";
+            document.getElementById("previaMascote").style.display = "none";
+            document.getElementById("semMascote").style.display = "flex";
+            mostrarMensagem("Mascote removido!");
+        }
+
+        /* ==================================================
+           CARREGAR APARÊNCIA
+        ================================================== */
+        function carregarAparencia() {
+            let logo = localStorage.getItem("monstroLogo");
+            let mascote = localStorage.getItem("monstroMascote");
+
+            if (logo) mostrarLogo(logo);
+            if (mascote) mostrarMascote(mascote);
+        }
+
+        /* ==================================================
+           PRODUTOS
+        ================================================== */
+        let produtos = JSON.parse(localStorage.getItem("monstroProdutos")) || [];
+        let fotoSelecionada = "";
+
+        // Seleciona a foto e comprime automaticamente para evitar estouro do LocalStorage
+        function selecionarFoto(event) {
+            let arquivo = event.target.files[0];
+            if (!arquivo) return;
+
+            let leitor = new FileReader();
+            leitor.onload = function(e) {
+                let img = new Image();
+                img.src = e.target.result;
+
+                img.onload = function() {
+                    let canvas = document.createElement("canvas");
+                    let ctx = canvas.getContext("2d");
+                    let maxLargura = 600;
+                    let escala = maxLargura / img.width;
+
+                    if (escala < 1) {
+                        canvas.width = maxLargura;
+                        canvas.height = img.height * escala;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
+
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    fotoSelecionada = canvas.toDataURL("image/jpeg", 0.7);
+
+                    let previa = document.getElementById("previaFoto");
+                    let semFoto = document.getElementById("semFoto");
+
+                    previa.src = fotoSelecionada;
+                    previa.style.display = "block";
+                    semFoto.style.display = "none";
+                };
+            };
+            leitor.readAsDataURL(arquivo);
+        }
+
+        function salvarProduto() {
+            let id = document.getElementById("produtoId").value;
+            let nome = document.getElementById("nome").value.trim();
+            let categoria = document.getElementById("categoria").value;
+            let preco = parseFloat(document.getElementById("preco").value);
+            let descricao = document.getElementById("descricao").value.trim();
+
+            if (!nome) {
+                mostrarMensagem("Digite o nome do produto.");
+                return;
+            }
+
+            if (isNaN(preco)) {
+                mostrarMensagem("Digite um preço válido.");
+                return;
+            }
+
+            if (id) {
+                let produto = produtos.find(item =>
