@@ -315,121 +315,240 @@
             box-shadow: 0 0 15px #168cff;
             z-index: 9999;
         }
+
+        /* ==================================================
+           TELA DE SENHA
+        ================================================== */
+        .tela-senha {
+            position: fixed;
+            inset: 0;
+            background: #050505;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            padding: 20px;
+        }
+
+        .caixa-senha {
+            background: #111;
+            border: 1px solid #168cff;
+            box-shadow: 0 0 20px rgba(22, 140, 255, 0.35);
+            border-radius: 16px;
+            padding: 30px 24px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .caixa-senha h2 {
+            color: #168cff;
+            text-shadow: 0 0 10px #168cff;
+            margin-bottom: 6px;
+        }
+
+        .caixa-senha p {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .caixa-senha input {
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .btn-entrar {
+            width: 100%;
+            padding: 13px;
+            margin-top: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #168cff;
+            box-shadow: 0 0 10px #168cff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .erro-senha {
+            color: #ff4d4d;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .painel-protegido {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
 
-    <header>
-        <h1>👹 MONSTRO BURGUER</h1>
-        <p>Painel Administrativo</p>
-    </header>
-
-    <div class="painel">
-
-        <!-- ==================================================
-             WHATSAPP
-        ================================================== -->
-        <h2 class="titulo">📲 WhatsApp dos Pedidos</h2>
-
-        <div class="whatsapp-box">
-            <div class="whatsapp-opcao" id="opcao1">
-                <div class="whatsapp-numero">📱 14 99661-9487</div>
-                <div class="whatsapp-tipo">WhatsApp Principal</div>
-                <button class="btn-whatsapp" onclick="selecionarWhatsApp('5514996619487')">
-                    USAR ESTE NÚMERO
-                </button>
-            </div>
-
-            <div class="whatsapp-opcao" id="opcao2">
-                <div class="whatsapp-numero">📱 14 98114-1871</div>
-                <div class="whatsapp-tipo">WhatsApp Secundário</div>
-                <button class="btn-whatsapp" onclick="selecionarWhatsApp('5514981141871')">
-                    USAR ESTE NÚMERO
-                </button>
-            </div>
-
-            <div id="statusWhatsApp" class="status-whatsapp">
-                Carregando...
-            </div>
+    <!-- ==================================================
+         TELA DE SENHA
+    ================================================== -->
+    <div class="tela-senha" id="telaSenha">
+        <div class="caixa-senha">
+            <h2>🔒 Acesso restrito</h2>
+            <p>Digite a senha para entrar no painel administrativo</p>
+            <input type="password" id="campoSenha" placeholder="Senha" autocomplete="off">
+            <button class="btn-entrar" onclick="verificarSenha()">ENTRAR</button>
+            <div class="erro-senha" id="erroSenha">Senha incorreta. Tente novamente.</div>
         </div>
+    </div>
 
-        <!-- ==================================================
-             APARÊNCIA
-        ================================================== -->
-        <h2 class="titulo">🎨 Aparência do Monstro Burguer</h2>
+    <div id="painelProtegido" class="painel-protegido">
 
-        <div class="aparencia-box">
-            <div class="aparencia-item">
-                <div class="aparencia-titulo">🖼️ Logo do Monstro Burguer</div>
-                <input type="file" id="logoADM" accept="image/*" onchange="selecionarLogo(event)">
+        <header>
+            <h1>👹 MONSTRO BURGUER</h1>
+            <p>Painel Administrativo</p>
+        </header>
 
-                <div id="areaLogo">
-                    <div id="semLogo" class="sem-imagem">🖼️ Nenhuma logo cadastrada</div>
-                    <img id="previaLogo" class="preview-aparencia">
+        <div class="painel">
+
+            <!-- ==================================================
+                 WHATSAPP
+            ================================================== -->
+            <h2 class="titulo">📲 WhatsApp dos Pedidos</h2>
+
+            <div class="whatsapp-box">
+                <div class="whatsapp-opcao" id="opcao1">
+                    <div class="whatsapp-numero">📱 14 99661-9487</div>
+                    <div class="whatsapp-tipo">WhatsApp Principal</div>
+                    <button class="btn-whatsapp" onclick="selecionarWhatsApp('5514996619487')">
+                        USAR ESTE NÚMERO
+                    </button>
                 </div>
 
-                <button class="btn-remover" onclick="removerLogo()">REMOVER LOGO</button>
-            </div>
-
-            <div class="aparencia-item">
-                <div class="aparencia-titulo">👹 Mascote do Monstro Burguer</div>
-                <input type="file" id="mascoteADM" accept="image/*" onchange="selecionarMascote(event)">
-
-                <div id="areaMascote">
-                    <div id="semMascote" class="sem-imagem">👹 Nenhum mascote cadastrado</div>
-                    <img id="previaMascote" class="preview-aparencia">
+                <div class="whatsapp-opcao" id="opcao2">
+                    <div class="whatsapp-numero">📱 14 98114-1871</div>
+                    <div class="whatsapp-tipo">WhatsApp Secundário</div>
+                    <button class="btn-whatsapp" onclick="selecionarWhatsApp('5514981141871')">
+                        USAR ESTE NÚMERO
+                    </button>
                 </div>
 
-                <button class="btn-remover" onclick="removerMascote()">REMOVER MASCOTE</button>
-            </div>
-        </div>
-
-        <!-- ==================================================
-             PRODUTOS
-        ================================================== -->
-        <h2 class="titulo">🍔 Cadastro de Produto</h2>
-
-        <div class="formulario">
-            <input type="hidden" id="produtoId">
-
-            <label>Nome do produto</label>
-            <input type="text" id="nome" placeholder="Ex: X-Salada">
-
-            <label>Categoria</label>
-            <select id="categoria">
-                <option value="Lanches">🍔 Lanches</option>
-                <option value="Bebidas">🥤 Bebidas</option>
-                <option value="Adicionais">➕ Adicionais</option>
-                <option value="Combos">📦 Combos</option>
-            </select>
-
-            <label>Preço</label>
-            <input type="number" id="preco" placeholder="Ex: 17.90" step="0.01">
-
-            <label>Descrição</label>
-            <textarea id="descricao" placeholder="Descrição do produto"></textarea>
-
-            <label>📸 Foto do produto</label>
-            <input type="file" id="foto" accept="image/*" onchange="selecionarFoto(event)">
-
-            <div class="area-foto">
-                <div id="semFoto" class="sem-foto">📷 Nenhuma foto selecionada</div>
-                <img id="previaFoto" class="previa-foto">
+                <div id="statusWhatsApp" class="status-whatsapp">
+                    Carregando...
+                </div>
             </div>
 
-            <button class="btn btn-salvar" onclick="salvarProduto()">💾 SALVAR PRODUTO</button>
-            <button class="btn btn-limpar" onclick="limparFormulario()">LIMPAR</button>
-        </div>
+            <!-- ==================================================
+                 APARÊNCIA
+            ================================================== -->
+            <h2 class="titulo">🎨 Aparência do Monstro Burguer</h2>
 
-        <h2 class="titulo">📋 Produtos cadastrados</h2>
-        <div id="listaProdutos" class="produtos"></div>
+            <div class="aparencia-box">
+                <div class="aparencia-item">
+                    <div class="aparencia-titulo">🖼️ Logo do Monstro Burguer</div>
+                    <input type="file" id="logoADM" accept="image/*" onchange="selecionarLogo(event)">
+
+                    <div id="areaLogo">
+                        <div id="semLogo" class="sem-imagem">🖼️ Nenhuma logo cadastrada</div>
+                        <img id="previaLogo" class="preview-aparencia">
+                    </div>
+
+                    <button class="btn-remover" onclick="removerLogo()">REMOVER LOGO</button>
+                </div>
+
+                <div class="aparencia-item">
+                    <div class="aparencia-titulo">👹 Mascote do Monstro Burguer</div>
+                    <input type="file" id="mascoteADM" accept="image/*" onchange="selecionarMascote(event)">
+
+                    <div id="areaMascote">
+                        <div id="semMascote" class="sem-imagem">👹 Nenhum mascote cadastrado</div>
+                        <img id="previaMascote" class="preview-aparencia">
+                    </div>
+
+                    <button class="btn-remover" onclick="removerMascote()">REMOVER MASCOTE</button>
+                </div>
+            </div>
+
+            <!-- ==================================================
+                 PRODUTOS
+            ================================================== -->
+            <h2 class="titulo">🍔 Cadastro de Produto</h2>
+
+            <div class="formulario">
+                <input type="hidden" id="produtoId">
+
+                <label>Nome do produto</label>
+                <input type="text" id="nome" placeholder="Ex: X-Salada">
+
+                <label>Categoria</label>
+                <select id="categoria">
+                    <option value="Lanches">🍔 Lanches</option>
+                    <option value="Bebidas">🥤 Bebidas</option>
+                    <option value="Adicionais">➕ Adicionais</option>
+                    <option value="Combos">📦 Combos</option>
+                </select>
+
+                <label>Preço</label>
+                <input type="number" id="preco" placeholder="Ex: 17.90" step="0.01">
+
+                <label>Descrição</label>
+                <textarea id="descricao" placeholder="Descrição do produto"></textarea>
+
+                <label>📸 Foto do produto</label>
+                <input type="file" id="foto" accept="image/*" onchange="selecionarFoto(event)">
+
+                <div class="area-foto">
+                    <div id="semFoto" class="sem-foto">📷 Nenhuma foto selecionada</div>
+                    <img id="previaFoto" class="previa-foto">
+                </div>
+
+                <button class="btn btn-salvar" onclick="salvarProduto()">💾 SALVAR PRODUTO</button>
+                <button class="btn btn-limpar" onclick="limparFormulario()">LIMPAR</button>
+            </div>
+
+            <h2 class="titulo">📋 Produtos cadastrados</h2>
+            <div id="listaProdutos" class="produtos"></div>
+
+        </div>
 
     </div>
 
     <div id="mensagem" class="mensagem"></div>
 
     <script>
+        /* ==================================================
+           SENHA DE ACESSO
+           Obs: como o site é hospedado no GitHub Pages
+           (sem servidor), essa senha fica visível pra quem
+           inspecionar o código-fonte. Ela serve pra barrar
+           visitantes comuns, não é uma segurança "de banco".
+        ================================================== */
+        const SENHA_ADMIN = "Placido57";
+
+        function verificarSenha() {
+            const campo = document.getElementById("campoSenha");
+            const erro = document.getElementById("erroSenha");
+
+            if (campo.value === SENHA_ADMIN) {
+                sessionStorage.setItem("monstroAdmAutenticado", "sim");
+                document.getElementById("telaSenha").style.display = "none";
+                document.getElementById("painelProtegido").style.display = "block";
+            } else {
+                erro.style.display = "block";
+                campo.value = "";
+                campo.focus();
+            }
+        }
+
+        document.getElementById("campoSenha").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                verificarSenha();
+            }
+        });
+
+        if (sessionStorage.getItem("monstroAdmAutenticado") === "sim") {
+            document.getElementById("telaSenha").style.display = "none";
+            document.getElementById("painelProtegido").style.display = "block";
+        }
+
         /* ==================================================
            WHATSAPP
         ================================================== */
