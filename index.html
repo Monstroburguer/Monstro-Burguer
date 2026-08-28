@@ -17,19 +17,12 @@
 
     :root {
       --fundo: #000000;
-
-      /* AZUL DO AMBIENTE */
       --azul-neon: #00f0ff;
-
-      /* ROXO DAS BORDAS */
       --roxo-neon: #b000ff;
       --roxo-glow: rgba(176, 0, 255, 0.65);
-
-      /* VERDE ELÉTRICO DOS BOTÕES */
       --verde-eletrico: #39ff88;
       --verde-suave: rgba(57, 255, 136, 0.08);
       --verde-forte: rgba(57, 255, 136, 0.85);
-
       --branco: #ffffff;
     }
 
@@ -44,10 +37,6 @@
       justify-content: center;
       align-items: center;
     }
-
-    /* =========================
-       CONTAINER
-    ========================= */
 
     .app {
       width: 100%;
@@ -71,7 +60,6 @@
         ),
         #000000;
 
-      /* MOLDURA EXTERNA */
       border: 2px solid var(--azul-neon);
       border-radius: 24px;
 
@@ -80,19 +68,12 @@
         inset 0 0 14px rgba(0, 240, 255, 0.12);
     }
 
-    /* =========================
-       STATUS ABERTO / FECHADO
-       CANTO SUPERIOR ESQUERDO
-    ========================= */
-
     .status {
       position: absolute;
-
       top: 14px;
       left: 15px;
 
       height: 32px;
-
       padding: 0 10px;
 
       display: flex;
@@ -100,7 +81,6 @@
       gap: 7px;
 
       border-radius: 18px;
-
       background: rgba(0, 0, 0, 0.78);
 
       border: 1px solid rgba(255, 255, 255, 0.10);
@@ -134,11 +114,6 @@
         0 0 12px rgba(255, 59, 59, 0.45);
     }
 
-    /* =========================
-       ENGRENAGEM
-       CANTO SUPERIOR DIREITO
-    ========================= */
-
     .config {
       position: absolute;
 
@@ -169,10 +144,6 @@
       box-shadow:
         0 0 8px var(--roxo-glow);
     }
-
-    /* =========================
-       MASCOTE
-    ========================= */
 
     .mascote-area {
       width: 100%;
@@ -222,10 +193,6 @@
       text-align: center;
     }
 
-    /* =========================
-       BOTÕES
-    ========================= */
-
     .categorias {
       width: 100%;
 
@@ -251,10 +218,8 @@
 
       border-radius: 17px;
 
-      /* BORDA ROXO NEON */
       border: 1.5px solid var(--roxo-neon);
 
-      /* VERDE ELÉTRICO BEM FRACO */
       background:
         linear-gradient(
           180deg,
@@ -279,8 +244,6 @@
         background 0.12s ease;
     }
 
-    /* QUANDO APERTA */
-
     .categoria:active {
       transform: scale(0.96);
 
@@ -304,8 +267,6 @@
         0 0 5px rgba(255, 255, 255, 0.65);
     }
 
-    /* COMBOS CENTRALIZADO */
-
     .categoria-combo {
       grid-column: span 2;
 
@@ -313,10 +274,6 @@
 
       justify-self: center;
     }
-
-    /* =========================
-       PARTE INFERIOR
-    ========================= */
 
     .rodape-acoes {
       width: 100%;
@@ -333,11 +290,6 @@
 
       flex-shrink: 0;
     }
-
-    /* =========================
-       WHATSAPP
-       SOMENTE ÍCONE VERDE
-    ========================= */
 
     .btn-whatsapp {
       width: 42px;
@@ -374,10 +326,6 @@
       fill: #25D366;
     }
 
-    /* =========================
-       VER CARDÁPIO
-    ========================= */
-
     .btn-cardapio {
       width: 63%;
       height: 46px;
@@ -389,10 +337,8 @@
 
       border-radius: 15px;
 
-      /* ROXO NEON */
       border: 1.5px solid var(--roxo-neon);
 
-      /* VERDE SUAVE */
       background:
         linear-gradient(
           180deg,
@@ -437,10 +383,6 @@
         inset 0 0 18px rgba(57, 255, 136, 0.60);
     }
 
-    /* =========================
-       CELULARES PEQUENOS
-    ========================= */
-
     @media (max-height: 680px) {
 
       .app {
@@ -481,18 +423,14 @@
 
   <main class="app">
 
-    <!-- STATUS -->
     <div class="status" id="status">
-
       <span class="bolinha"></span>
 
       <span id="statusTexto">
         ABERTO
       </span>
-
     </div>
 
-    <!-- ENGRENAGEM -->
     <a
       href="adm.html"
       class="config"
@@ -505,6 +443,7 @@
     <section class="mascote-area">
 
       <img
+        id="mascote"
         src="mascote-oficial.png"
         alt="Mascote oficial Monstro Burguer"
         class="mascote"
@@ -516,34 +455,21 @@
 
     </section>
 
-    <!-- CATEGORIAS -->
     <nav class="categorias">
 
-      <a
-        href="cardapio.html"
-        class="categoria"
-      >
+      <a href="cardapio.html" class="categoria">
         🍔 Todos
       </a>
 
-      <a
-        href="cardapio.html"
-        class="categoria"
-      >
+      <a href="cardapio.html" class="categoria">
         🍔 Lanches
       </a>
 
-      <a
-        href="cardapio.html"
-        class="categoria"
-      >
+      <a href="cardapio.html" class="categoria">
         🥤 Bebidas
       </a>
 
-      <a
-        href="cardapio.html"
-        class="categoria"
-      >
+      <a href="cardapio.html" class="categoria">
         ➕ Adicionais
       </a>
 
@@ -556,10 +482,8 @@
 
     </nav>
 
-    <!-- AÇÕES INFERIORES -->
     <div class="rodape-acoes">
 
-      <!-- WHATSAPP -->
       <a
         href="https://wa.me/"
         class="btn-whatsapp"
@@ -577,7 +501,6 @@
 
       </a>
 
-      <!-- VER CARDÁPIO -->
       <a
         href="cardapio.html"
         class="btn-cardapio"
@@ -590,6 +513,27 @@
   </main>
 
   <script>
+
+    /* =========================
+       MASCOTE
+       TENTA LOCAL PRIMEIRO.
+       SE FALHAR, USA IMGUR.
+    ========================= */
+
+    const mascote = document.getElementById("mascote");
+
+    mascote.onerror = function () {
+
+      /* Evita ficar entrando em loop */
+      if (this.dataset.fallback === "1") {
+        return;
+      }
+
+      this.dataset.fallback = "1";
+
+      this.src = "https://i.imgur.com/lL0PfCJ.png";
+    };
+
 
     /* =========================
        HORÁRIO
