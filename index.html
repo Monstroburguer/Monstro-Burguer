@@ -2,10 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>MONSTRO BURGUER</title>
-
   <style>
     * {
       margin: 0;
@@ -15,554 +13,204 @@
     }
 
     :root {
-      --fundo: #050b14;
-      --fundo-2: #071522;
-      --azul: #00aaff;
-      --azul-claro: #19c8ff;
-      --roxo: #8b3dff;
+      --fundo: #000000;
+      --azul-neon: #00f0ff;
+      --azul-glow: rgba(0, 240, 255, 0.8);
+      --roxo-botao: #130026;
       --branco: #ffffff;
-      --verde: #20e06f;
-      --vermelho: #ff3b3b;
     }
 
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 50% 35%, rgba(0, 170, 255, 0.13), transparent 38%),
-        radial-gradient(circle at 50% 80%, rgba(139, 61, 255, 0.08), transparent 35%),
-        var(--fundo);
-
-      color: var(--branco);
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #050505;
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
     }
 
-    /* ÁREA PRINCIPAL */
-
+    /* CONTAINER DO APP COM MOLDURA NEON */
     .app {
       width: 100%;
-      max-width: 480px;
-      min-height: 100vh;
-      position: relative;
-
+      height: 100dvh;
+      max-width: 430px;
+      padding: 16px 16px 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
-
-      padding: 22px 18px 20px;
-
-      border: 1px solid rgba(0, 170, 255, 0.65);
-      border-radius: 28px;
-
-      background:
-        radial-gradient(circle at 50% 30%, rgba(0, 170, 255, 0.10), transparent 42%),
-        linear-gradient(180deg, #071522 0%, #03070d 100%);
-
-      box-shadow:
-        0 0 18px rgba(0, 170, 255, 0.18),
-        inset 0 0 35px rgba(0, 170, 255, 0.04);
-
+      position: relative;
       overflow: hidden;
+      background: var(--fundo);
+      
+      /* Moldura azul neon única */
+      border: 2px solid var(--azul-neon);
+      border-radius: 28px;
+      box-shadow: 0 0 15px var(--azul-neon), inset 0 0 10px rgba(0, 240, 255, 0.2);
     }
 
-    /* ENGRENAGEM */
-
+    /* BOTÃO CONFIGURAÇÕES (ADM) */
     .config {
       position: absolute;
-      top: 16px;
+      top: 14px;
       right: 16px;
-
-      width: 42px;
-      height: 42px;
-
-      border-radius: 50%;
-      border: 1px solid rgba(0, 170, 255, 0.65);
-
-      background: rgba(0, 10, 20, 0.75);
-      color: white;
-
+      width: 36px;
+      height: 36px;
       display: flex;
-      align-items: center;
       justify-content: center;
-
-      font-size: 21px;
-      text-decoration: none;
-
-      box-shadow: 0 0 12px rgba(0, 170, 255, 0.20);
-
-      transition: 0.2s;
-      z-index: 10;
-    }
-
-    .config:hover {
-      transform: rotate(30deg);
-      box-shadow: 0 0 20px rgba(0, 170, 255, 0.55);
-    }
-
-    /* LOGO / NOME */
-
-    .titulo {
-      margin-top: 5px;
-      text-align: center;
-
-      font-size: clamp(28px, 8vw, 38px);
-      font-weight: 900;
-      letter-spacing: 2px;
-
+      align-items: center;
+      border-radius: 50%;
+      border: 1.5px solid var(--azul-neon);
+      background: rgba(0, 0, 0, 0.8);
       color: white;
-
-      text-shadow:
-        0 0 5px var(--azul),
-        0 0 14px var(--azul),
-        0 0 25px rgba(0, 170, 255, 0.65);
+      text-decoration: none;
+      font-size: 16px;
+      z-index: 20;
+      box-shadow: 0 0 8px var(--azul-neon);
     }
 
-    .subtitulo {
-      margin-top: 3px;
-
-      font-size: 11px;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-
-      color: rgba(255, 255, 255, 0.68);
-    }
-
-    /* MASCOTE */
-
+    /* AREA DO MASCOTE E LOGO */
     .mascote-area {
       width: 100%;
-      height: 300px;
-
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-
-      position: relative;
-      margin-top: 4px;
-    }
-
-    .mascote-area::before {
-      content: "";
-
-      position: absolute;
-      width: 270px;
-      height: 270px;
-
-      border-radius: 50%;
-
-      background:
-        radial-gradient(
-          circle,
-          rgba(0, 170, 255, 0.16),
-          rgba(139, 61, 255, 0.06) 45%,
-          transparent 70%
-        );
-
-      filter: blur(8px);
+      margin-top: 10px;
+      margin-bottom: 5px;
+      flex-shrink: 0;
     }
 
     .mascote {
-      position: relative;
-
-      width: min(72vw, 290px);
-      max-height: 285px;
-
+      width: min(65vw, 240px);
+      max-height: 200px;
       object-fit: contain;
-
-      z-index: 2;
-
-      filter:
-        drop-shadow(0 0 8px rgba(0, 170, 255, 0.40))
-        drop-shadow(0 0 20px rgba(0, 170, 255, 0.18));
-
-      animation: respirar 3.5s ease-in-out infinite;
     }
 
-    @keyframes respirar {
-      0%, 100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.025);
-      }
+    .subtitulo {
+      margin-top: 4px;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
     }
 
-    /* CATEGORIAS */
-
+    /* BOTÕES DE CATEGORIAS */
     .categorias {
       width: 100%;
-
       display: grid;
       grid-template-columns: 1fr 1fr;
-
       gap: 10px;
-
-      margin-top: 3px;
+      margin-top: 10px;
+      flex-shrink: 0;
     }
 
     .categoria {
-      min-height: 48px;
-
-      border: 1px solid rgba(0, 170, 255, 0.65);
-      border-radius: 14px;
-
-      background:
-        linear-gradient(
-          135deg,
-          rgba(0, 170, 255, 0.08),
-          rgba(0, 0, 0, 0.35)
-        );
-
-      color: white;
-
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
-
+      gap: 6px;
+      border-radius: 20px;
+      border: 1.5px solid var(--azul-neon);
+      background: var(--roxo-botao);
+      color: var(--azul-neon);
       text-decoration: none;
-
       font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-
-      box-shadow:
-        inset 0 0 12px rgba(0, 170, 255, 0.04),
-        0 0 8px rgba(0, 170, 255, 0.08);
-
-      transition: 0.2s;
+      font-weight: 800;
+      box-shadow: 0 0 10px var(--azul-glow);
+      text-shadow: 0 0 5px var(--azul-neon);
     }
 
-    .categoria:hover {
-      transform: translateY(-2px);
-
-      border-color: var(--azul-claro);
-
-      box-shadow:
-        0 0 15px rgba(0, 170, 255, 0.35),
-        inset 0 0 12px rgba(0, 170, 255, 0.08);
+    /* BOTÃO COMBOS CENTRALIZADO */
+    .categoria-combo {
+      grid-column: span 2;
+      width: 60%;
+      justify-self: center;
     }
 
-    /* BOTÃO CARDÁPIO */
-
-    .btn-cardapio {
+    /* ÁREA INFERIOR (WHATSAPP + CARDÁPIO) */
+    .rodape-acoes {
       width: 100%;
-
-      min-height: 56px;
-
-      margin-top: 13px;
-
-      border-radius: 17px;
-
-      border: 1px solid var(--azul-claro);
-
-      background:
-        linear-gradient(
-          135deg,
-          rgba(0, 170, 255, 0.20),
-          rgba(0, 90, 150, 0.10)
-        );
-
-      color: white;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      text-decoration: none;
-
-      font-size: 17px;
-      font-weight: 900;
-      letter-spacing: 1px;
-
-      text-shadow: 0 0 8px var(--azul);
-
-      box-shadow:
-        0 0 12px rgba(0, 170, 255, 0.28),
-        inset 0 0 15px rgba(0, 170, 255, 0.08);
-
-      animation: brilhoBotao 2.8s ease-in-out infinite;
-    }
-
-    @keyframes brilhoBotao {
-      0%, 100% {
-        box-shadow:
-          0 0 10px rgba(0, 170, 255, 0.22),
-          inset 0 0 12px rgba(0, 170, 255, 0.05);
-      }
-
-      50% {
-        box-shadow:
-          0 0 22px rgba(0, 170, 255, 0.48),
-          inset 0 0 18px rgba(0, 170, 255, 0.10);
-      }
-    }
-
-    /* RODAPÉ */
-
-    .rodape {
-      width: 100%;
-
       margin-top: auto;
-      padding-top: 15px;
-
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 6px;
+      flex-shrink: 0;
     }
 
-    /* WHATSAPP */
-
-    .whatsapp {
+    .btn-whatsapp {
       width: 50px;
       height: 50px;
-
-      border-radius: 50%;
-
+      border-radius: 16px;
+      border: 1.5px solid var(--azul-neon);
+      background: var(--roxo-botao);
       display: flex;
       align-items: center;
       justify-content: center;
-
-      background: #25D366;
-
-      text-decoration: none;
-
-      box-shadow:
-        0 0 10px rgba(37, 211, 102, 0.35);
-
-      transition: 0.2s;
+      box-shadow: 0 0 10px var(--azul-glow);
+      flex-shrink: 0;
     }
 
-    .whatsapp:hover {
-      transform: scale(1.08);
-
-      box-shadow:
-        0 0 20px rgba(37, 211, 102, 0.55);
+    .btn-whatsapp svg {
+      width: 26px;
+      height: 26px;
+      fill: var(--azul-neon);
+      filter: drop-shadow(0 0 3px var(--azul-neon));
     }
 
-    .whatsapp svg {
-      width: 28px;
-      height: 28px;
-
-      fill: white;
-    }
-
-    /* STATUS */
-
-    .status {
+    .btn-cardapio {
+      flex: 1;
+      height: 50px;
       display: flex;
       align-items: center;
-      gap: 8px;
-
-      padding: 9px 13px;
-
-      border-radius: 20px;
-
-      background: rgba(0, 0, 0, 0.28);
-
-      border: 1px solid rgba(255, 255, 255, 0.08);
-
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .bolinha {
-      width: 10px;
-      height: 10px;
-
-      border-radius: 50%;
-
-      background: var(--verde);
-
-      box-shadow:
-        0 0 7px var(--verde),
-        0 0 13px rgba(32, 224, 111, 0.55);
-    }
-
-    .status.fechado .bolinha {
-      background: var(--vermelho);
-
-      box-shadow:
-        0 0 7px var(--vermelho),
-        0 0 13px rgba(255, 59, 59, 0.55);
-    }
-
-    /* CELULARES PEQUENOS */
-
-    @media (max-height: 700px) {
-
-      .app {
-        padding-top: 15px;
-      }
-
-      .mascote-area {
-        height: 235px;
-      }
-
-      .mascote {
-        width: min(60vw, 235px);
-        max-height: 225px;
-      }
-
-      .titulo {
-        font-size: 28px;
-      }
-
-      .categoria {
-        min-height: 43px;
-      }
-
-      .btn-cardapio {
-        min-height: 51px;
-      }
-    }
-
-    @media (max-width: 350px) {
-
-      .app {
-        padding-left: 13px;
-        padding-right: 13px;
-      }
-
-      .categorias {
-        gap: 7px;
-      }
-
-      .categoria {
-        font-size: 11px;
-      }
+      justify-content: center;
+      border-radius: 16px;
+      border: 1.5px solid var(--azul-neon);
+      background: var(--roxo-botao);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      box-shadow: 0 0 12px var(--azul-glow);
+      text-shadow: 0 0 8px var(--azul-neon);
     }
   </style>
 </head>
-
 <body>
 
   <main class="app">
 
-    <!-- ENGRENAGEM -->
-    <a href="adm.html" class="config" aria-label="Abrir administração">
-      ⚙️
-    </a>
+    <a href="adm.html" class="config" aria-label="Administração">⚙️</a>
 
-    <!-- TÍTULO -->
-    <h1 class="titulo">MONSTRO BURGUER</h1>
-
-    <div class="subtitulo">
-      sabor que assusta
-    </div>
-
-    <!-- MASCOTE -->
     <section class="mascote-area">
-      <img
-        src="mascote-oficial.png"
-        alt="Mascote oficial Monstro Burguer"
-        class="mascote"
-      >
+      <img src="mascote-monstro.png" alt="Monstro Burguer" class="mascote">
+      <div class="subtitulo">O sabor monstruoso que você merece!</div>
     </section>
 
-    <!-- CATEGORIAS -->
     <nav class="categorias">
-
-      <a href="cardapio.html" class="categoria">
-        🍔 LANCHES
-      </a>
-
-      <a href="cardapio.html" class="categoria">
-        🥤 BEBIDAS
-      </a>
-
-      <a href="cardapio.html" class="categoria">
-        ➕ ADICIONAIS
-      </a>
-
-      <a href="cardapio.html" class="categoria">
-        🍔 COMBOS
-      </a>
-
+      <a href="cardapio.html" class="categoria">🍔 Todos</a>
+      <a href="cardapio.html" class="categoria">🍔 Lanches</a>
+      <a href="cardapio.html" class="categoria">🥤 Bebidas</a>
+      <a href="cardapio.html" class="categoria">➕ Adicionais</a>
+      <a href="cardapio.html" class="categoria categoria-combo">📦 Combos</a>
     </nav>
 
-    <!-- CARDÁPIO -->
-    <a href="cardapio.html" class="btn-cardapio">
-      🍔 VER CARDÁPIO
-    </a>
-
-    <!-- RODAPÉ -->
-    <div class="rodape">
-
-      <!-- WHATSAPP -->
-      <a
-        href="https://wa.me/"
-        class="whatsapp"
-        aria-label="WhatsApp"
-        target="_blank"
-      >
-
-        <svg viewBox="0 0 32 32" aria-hidden="true">
+    <div class="rodape-acoes">
+      <a href="https://wa.me/" class="btn-whatsapp" target="_blank" aria-label="WhatsApp">
+        <svg viewBox="0 0 32 32">
           <path d="M19.11 17.42c-.27-.14-1.58-.78-1.83-.87-.25-.09-.43-.14-.61.14-.18.27-.7.87-.86 1.05-.16.18-.32.2-.59.07-.27-.14-1.12-.41-2.14-1.32-.79-.7-1.32-1.56-1.48-1.83-.16-.27-.02-.42.12-.55.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.27-.96.94-.96 2.29s.98 2.66 1.12 2.84c.14.18 1.92 2.93 4.65 4.11.65.28 1.16.45 1.55.57.65.21 1.24.18 1.71.11.52-.08 1.58-.65 1.8-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32z"/>
           <path d="M16.01 3C8.83 3 3 8.83 3 16.01c0 2.29.6 4.44 1.65 6.3L3 29l6.86-1.6a12.95 12.95 0 0 0 6.15 1.55h.01C23.18 28.95 29 23.12 29 15.99 29 8.83 23.18 3 16.01 3zm0 23.64h-.01c-1.96 0-3.88-.53-5.56-1.54l-.4-.24-4.07.95.97-3.97-.26-.41a10.94 10.94 0 1 1 9.33 5.21z"/>
         </svg>
-
       </a>
 
-      <!-- STATUS -->
-      <div class="status" id="status">
-        <span class="bolinha"></span>
-        <span id="statusTexto">ABERTO</span>
-      </div>
-
+      <a href="cardapio.html" class="btn-cardapio">
+        VER CARDÁPIO
+      </a>
     </div>
 
   </main>
-
-  <script>
-    /*
-      HORÁRIO DE FUNCIONAMENTO
-
-      Altere somente estes horários quando precisar.
-
-      Exemplo:
-      18 = 18:00
-      23 = 23:00
-    */
-
-    const horaAbertura = 18;
-    const horaFechamento = 23;
-
-    function atualizarStatus() {
-
-      const agora = new Date();
-
-      const hora = agora.getHours();
-      const minuto = agora.getMinutes();
-
-      const horarioAtual = hora + (minuto / 60);
-
-      const aberto =
-        horarioAtual >= horaAbertura &&
-        horarioAtual < horaFechamento;
-
-      const status = document.getElementById("status");
-      const texto = document.getElementById("statusTexto");
-
-      if (aberto) {
-
-        status.classList.remove("fechado");
-        texto.textContent = "ABERTO";
-
-      } else {
-
-        status.classList.add("fechado");
-        texto.textContent = "FECHADO";
-
-      }
-    }
-
-    atualizarStatus();
-
-    setInterval(atualizarStatus, 60000);
-  </script>
 
 </body>
 </html>
