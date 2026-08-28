@@ -192,21 +192,23 @@
       50% { filter: brightness(1.08); }
     }
 
-    .scan-line {
+    .scan-line-global {
       position: absolute;
       left: 0;
       right: 0;
-      top: -40%;
-      height: 45%;
+      top: -22%;
+      height: 22%;
 
-      background: linear-gradient(180deg, transparent, rgba(0, 229, 255, 0.18), transparent);
+      background: linear-gradient(180deg, transparent, rgba(0, 229, 255, 0.14), transparent);
 
-      animation: escanear 6s linear infinite;
+      animation: escanearTudo 7s linear infinite;
       pointer-events: none;
+
+      z-index: 15;
     }
 
-    @keyframes escanear {
-      0% { top: -45%; }
+    @keyframes escanearTudo {
+      0% { top: -22%; }
       100% { top: 100%; }
     }
 
@@ -449,6 +451,8 @@
 
   <main class="app">
 
+    <div class="scan-line-global"></div>
+
     <div class="status" id="status">
       <span id="statusTexto">ABERTO</span>
     </div>
@@ -470,8 +474,6 @@
         alt="Mascote oficial Monstro Burguer"
         class="mascote"
       >
-
-      <div class="scan-line"></div>
 
     </section>
 
