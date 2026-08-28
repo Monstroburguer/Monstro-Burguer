@@ -3,214 +3,644 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
   <title>MONSTRO BURGUER</title>
+
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: Arial, "Segoe UI", sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     :root {
       --fundo: #000000;
+
+      /* AZUL DO AMBIENTE */
       --azul-neon: #00f0ff;
-      --azul-glow: rgba(0, 240, 255, 0.8);
-      --roxo-botao: #130026;
+
+      /* ROXO DAS BORDAS */
+      --roxo-neon: #b000ff;
+      --roxo-glow: rgba(176, 0, 255, 0.65);
+
+      /* VERDE ELÉTRICO DOS BOTÕES */
+      --verde-eletrico: #39ff88;
+      --verde-suave: rgba(57, 255, 136, 0.08);
+      --verde-forte: rgba(57, 255, 136, 0.85);
+
       --branco: #ffffff;
     }
 
-    html, body {
+    html,
+    body {
       width: 100%;
       height: 100%;
       overflow: hidden;
       background: #050505;
+
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    /* CONTAINER DO APP COM MOLDURA NEON */
+    /* =========================
+       CONTAINER
+    ========================= */
+
     .app {
       width: 100%;
       height: 100dvh;
       max-width: 430px;
-      padding: 16px 16px 14px;
+
+      padding: 12px 14px 12px;
+
       display: flex;
       flex-direction: column;
       align-items: center;
+
       position: relative;
       overflow: hidden;
-      background: var(--fundo);
-      
-      /* Moldura azul neon única */
+
+      background:
+        radial-gradient(
+          circle at 50% 35%,
+          rgba(0, 240, 255, 0.08),
+          transparent 35%
+        ),
+        #000000;
+
+      /* MOLDURA EXTERNA */
       border: 2px solid var(--azul-neon);
-      border-radius: 28px;
-      box-shadow: 0 0 15px var(--azul-neon), inset 0 0 10px rgba(0, 240, 255, 0.2);
+      border-radius: 24px;
+
+      box-shadow:
+        0 0 14px rgba(0, 240, 255, 0.65),
+        inset 0 0 14px rgba(0, 240, 255, 0.12);
     }
 
-    /* BOTÃO CONFIGURAÇÕES (ADM) */
+    /* =========================
+       STATUS ABERTO / FECHADO
+       CANTO SUPERIOR ESQUERDO
+    ========================= */
+
+    .status {
+      position: absolute;
+
+      top: 14px;
+      left: 15px;
+
+      height: 32px;
+
+      padding: 0 10px;
+
+      display: flex;
+      align-items: center;
+      gap: 7px;
+
+      border-radius: 18px;
+
+      background: rgba(0, 0, 0, 0.78);
+
+      border: 1px solid rgba(255, 255, 255, 0.10);
+
+      color: white;
+
+      font-size: 10px;
+      font-weight: 800;
+
+      z-index: 20;
+    }
+
+    .bolinha {
+      width: 9px;
+      height: 9px;
+
+      border-radius: 50%;
+
+      background: #20e06f;
+
+      box-shadow:
+        0 0 6px #20e06f,
+        0 0 12px rgba(32, 224, 111, 0.45);
+    }
+
+    .status.fechado .bolinha {
+      background: #ff3b3b;
+
+      box-shadow:
+        0 0 6px #ff3b3b,
+        0 0 12px rgba(255, 59, 59, 0.45);
+    }
+
+    /* =========================
+       ENGRENAGEM
+       CANTO SUPERIOR DIREITO
+    ========================= */
+
     .config {
       position: absolute;
-      top: 14px;
-      right: 16px;
+
+      top: 10px;
+      right: 12px;
+
       width: 36px;
       height: 36px;
+
       display: flex;
       justify-content: center;
       align-items: center;
+
       border-radius: 50%;
-      border: 1.5px solid var(--azul-neon);
-      background: rgba(0, 0, 0, 0.8);
+
+      border: 1.5px solid var(--roxo-neon);
+
+      background: rgba(0, 0, 0, 0.80);
+
       color: white;
+
       text-decoration: none;
-      font-size: 16px;
+
+      font-size: 17px;
+
       z-index: 20;
-      box-shadow: 0 0 8px var(--azul-neon);
+
+      box-shadow:
+        0 0 8px var(--roxo-glow);
     }
 
-    /* AREA DO MASCOTE E LOGO */
+    /* =========================
+       MASCOTE
+    ========================= */
+
     .mascote-area {
       width: 100%;
+
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 10px;
+
+      margin-top: 8px;
       margin-bottom: 5px;
+
       flex-shrink: 0;
     }
 
     .mascote {
-      width: min(65vw, 240px);
-      max-height: 200px;
+      width: min(62vw, 230px);
+      max-height: 205px;
+
       object-fit: contain;
+
+      filter:
+        drop-shadow(0 0 7px rgba(0, 240, 255, 0.35))
+        drop-shadow(0 0 16px rgba(0, 240, 255, 0.12));
+
+      animation: respirar 3.5s ease-in-out infinite;
+    }
+
+    @keyframes respirar {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.02);
+      }
     }
 
     .subtitulo {
-      margin-top: 4px;
-      font-size: 11px;
+      margin-top: 3px;
+
+      font-size: 10px;
       letter-spacing: 1px;
-      color: rgba(255, 255, 255, 0.7);
+
+      color: rgba(255, 255, 255, 0.68);
+
       text-align: center;
     }
 
-    /* BOTÕES DE CATEGORIAS */
+    /* =========================
+       BOTÕES
+    ========================= */
+
     .categorias {
       width: 100%;
+
       display: grid;
+
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
+
+      gap: 8px;
+
+      margin-top: 8px;
+
       flex-shrink: 0;
     }
 
     .categoria {
-      height: 44px;
+      height: 42px;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      border-radius: 20px;
-      border: 1.5px solid var(--azul-neon);
-      background: var(--roxo-botao);
-      color: var(--azul-neon);
+
+      gap: 5px;
+
+      border-radius: 17px;
+
+      /* BORDA ROXO NEON */
+      border: 1.5px solid var(--roxo-neon);
+
+      /* VERDE ELÉTRICO BEM FRACO */
+      background:
+        linear-gradient(
+          180deg,
+          rgba(57, 255, 136, 0.09),
+          rgba(57, 255, 136, 0.025)
+        );
+
+      color: #ffffff;
+
       text-decoration: none;
-      font-size: 13px;
+
+      font-size: 12px;
       font-weight: 800;
-      box-shadow: 0 0 10px var(--azul-glow);
-      text-shadow: 0 0 5px var(--azul-neon);
+
+      box-shadow:
+        0 0 7px rgba(176, 0, 255, 0.35),
+        inset 0 0 7px rgba(57, 255, 136, 0.04);
+
+      transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        background 0.12s ease;
     }
 
-    /* BOTÃO COMBOS CENTRALIZADO */
+    /* QUANDO APERTA */
+
+    .categoria:active {
+      transform: scale(0.96);
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(57, 255, 136, 0.72),
+          rgba(57, 255, 136, 0.28)
+        );
+
+      color: #00150a;
+
+      border-color: #d86aff;
+
+      box-shadow:
+        0 0 12px rgba(176, 0, 255, 0.90),
+        0 0 28px rgba(57, 255, 136, 0.65),
+        inset 0 0 18px rgba(57, 255, 136, 0.55);
+
+      text-shadow:
+        0 0 5px rgba(255, 255, 255, 0.65);
+    }
+
+    /* COMBOS CENTRALIZADO */
+
     .categoria-combo {
       grid-column: span 2;
-      width: 60%;
+
+      width: 58%;
+
       justify-self: center;
     }
 
-    /* ÁREA INFERIOR (WHATSAPP + CARDÁPIO) */
+    /* =========================
+       PARTE INFERIOR
+    ========================= */
+
     .rodape-acoes {
       width: 100%;
+
       margin-top: auto;
+
       display: flex;
+
       align-items: center;
-      gap: 12px;
-      padding-bottom: 6px;
+
+      justify-content: space-between;
+
+      padding-bottom: 2px;
+
       flex-shrink: 0;
     }
 
+    /* =========================
+       WHATSAPP
+       SOMENTE ÍCONE VERDE
+    ========================= */
+
     .btn-whatsapp {
-      width: 50px;
-      height: 50px;
-      border-radius: 16px;
-      border: 1.5px solid var(--azul-neon);
-      background: var(--roxo-botao);
+      width: 42px;
+      height: 42px;
+
       display: flex;
+
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 10px var(--azul-glow);
-      flex-shrink: 0;
+
+      background: transparent;
+
+      border: none;
+
+      text-decoration: none;
+
+      filter:
+        drop-shadow(0 0 4px rgba(37, 211, 102, 0.35));
+
+      transition: 0.15s;
+    }
+
+    .btn-whatsapp:active {
+      transform: scale(0.90);
+
+      filter:
+        drop-shadow(0 0 9px rgba(37, 211, 102, 0.80));
     }
 
     .btn-whatsapp svg {
-      width: 26px;
-      height: 26px;
-      fill: var(--azul-neon);
-      filter: drop-shadow(0 0 3px var(--azul-neon));
+      width: 28px;
+      height: 28px;
+
+      fill: #25D366;
     }
 
+    /* =========================
+       VER CARDÁPIO
+    ========================= */
+
     .btn-cardapio {
-      flex: 1;
-      height: 50px;
+      width: 63%;
+      height: 46px;
+
       display: flex;
+
       align-items: center;
       justify-content: center;
-      border-radius: 16px;
-      border: 1.5px solid var(--azul-neon);
-      background: var(--roxo-botao);
-      color: #ffffff;
+
+      border-radius: 15px;
+
+      /* ROXO NEON */
+      border: 1.5px solid var(--roxo-neon);
+
+      /* VERDE SUAVE */
+      background:
+        linear-gradient(
+          180deg,
+          rgba(57, 255, 136, 0.10),
+          rgba(57, 255, 136, 0.025)
+        );
+
+      color: white;
+
       text-decoration: none;
-      font-size: 15px;
+
+      font-size: 14px;
+
       font-weight: 900;
-      letter-spacing: 1px;
-      box-shadow: 0 0 12px var(--azul-glow);
-      text-shadow: 0 0 8px var(--azul-neon);
+
+      letter-spacing: 0.8px;
+
+      box-shadow:
+        0 0 9px rgba(176, 0, 255, 0.40);
+
+      transition:
+        transform 0.12s ease,
+        box-shadow 0.12s ease,
+        background 0.12s ease;
+    }
+
+    .btn-cardapio:active {
+      transform: scale(0.96);
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(57, 255, 136, 0.82),
+          rgba(57, 255, 136, 0.30)
+        );
+
+      color: #00150a;
+
+      box-shadow:
+        0 0 14px rgba(176, 0, 255, 0.95),
+        0 0 30px rgba(57, 255, 136, 0.70),
+        inset 0 0 18px rgba(57, 255, 136, 0.60);
+    }
+
+    /* =========================
+       CELULARES PEQUENOS
+    ========================= */
+
+    @media (max-height: 680px) {
+
+      .app {
+        padding-top: 8px;
+      }
+
+      .mascote {
+        width: 195px;
+        max-height: 175px;
+      }
+
+      .subtitulo {
+        font-size: 9px;
+      }
+
+      .categoria {
+        height: 38px;
+      }
+
+      .categorias {
+        gap: 6px;
+        margin-top: 6px;
+      }
+
+      .btn-cardapio {
+        height: 42px;
+      }
+
+      .btn-whatsapp {
+        width: 38px;
+        height: 38px;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <main class="app">
 
-    <a href="adm.html" class="config" aria-label="Administração">⚙️</a>
+    <!-- STATUS -->
+    <div class="status" id="status">
 
+      <span class="bolinha"></span>
+
+      <span id="statusTexto">
+        ABERTO
+      </span>
+
+    </div>
+
+    <!-- ENGRENAGEM -->
+    <a
+      href="adm.html"
+      class="config"
+      aria-label="Administração"
+    >
+      ⚙️
+    </a>
+
+    <!-- MASCOTE -->
     <section class="mascote-area">
-      <img src="mascote-monstro.png" alt="Monstro Burguer" class="mascote">
-      <div class="subtitulo">O sabor monstruoso que você merece!</div>
+
+      <img
+        src="mascote-oficial.png"
+        alt="Mascote oficial Monstro Burguer"
+        class="mascote"
+      >
+
+      <div class="subtitulo">
+        O sabor monstruoso que você merece!
+      </div>
+
     </section>
 
+    <!-- CATEGORIAS -->
     <nav class="categorias">
-      <a href="cardapio.html" class="categoria">🍔 Todos</a>
-      <a href="cardapio.html" class="categoria">🍔 Lanches</a>
-      <a href="cardapio.html" class="categoria">🥤 Bebidas</a>
-      <a href="cardapio.html" class="categoria">➕ Adicionais</a>
-      <a href="cardapio.html" class="categoria categoria-combo">📦 Combos</a>
+
+      <a
+        href="cardapio.html"
+        class="categoria"
+      >
+        🍔 Todos
+      </a>
+
+      <a
+        href="cardapio.html"
+        class="categoria"
+      >
+        🍔 Lanches
+      </a>
+
+      <a
+        href="cardapio.html"
+        class="categoria"
+      >
+        🥤 Bebidas
+      </a>
+
+      <a
+        href="cardapio.html"
+        class="categoria"
+      >
+        ➕ Adicionais
+      </a>
+
+      <a
+        href="cardapio.html"
+        class="categoria categoria-combo"
+      >
+        📦 Combos
+      </a>
+
     </nav>
 
+    <!-- AÇÕES INFERIORES -->
     <div class="rodape-acoes">
-      <a href="https://wa.me/" class="btn-whatsapp" target="_blank" aria-label="WhatsApp">
+
+      <!-- WHATSAPP -->
+      <a
+        href="https://wa.me/"
+        class="btn-whatsapp"
+        target="_blank"
+        aria-label="WhatsApp"
+      >
+
         <svg viewBox="0 0 32 32">
-          <path d="M19.11 17.42c-.27-.14-1.58-.78-1.83-.87-.25-.09-.43-.14-.61.14-.18.27-.7.87-.86 1.05-.16.18-.32.2-.59.07-.27-.14-1.12-.41-2.14-1.32-.79-.7-1.32-1.56-1.48-1.83-.16-.27-.02-.42.12-.55.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.27-.96.94-.96 2.29s.98 2.66 1.12 2.84c.14.18 1.92 2.93 4.65 4.11.65.28 1.16.45 1.55.57.65.21 1.24.18 1.71.11.52-.08 1.58-.65 1.8-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32z"/>
+
+          <path d="M19.11 17.42c-.27-.14-1.58-.78-1.83-.87-.25-.09-.43-.14-.61.14-.18.27-.7.87-.86 1.05-.16.18-.32.2-.59.07-.27-.14-1.12-.41-2.14-1.32-.79-.7-1.32-1.56-1.48-1.83-.16-.27-.02-.42.12-.55.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.27-.96.94-.96 2.29s.98 2.66 1.12 2.84c.14.18 1.92 2.93 4.65 4.11.65.28 1.16.45 1.55.57.52.21 1.24.18 1.71.11.52-.08 1.58-.65 1.8-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32z"/>
+
           <path d="M16.01 3C8.83 3 3 8.83 3 16.01c0 2.29.6 4.44 1.65 6.3L3 29l6.86-1.6a12.95 12.95 0 0 0 6.15 1.55h.01C23.18 28.95 29 23.12 29 15.99 29 8.83 23.18 3 16.01 3zm0 23.64h-.01c-1.96 0-3.88-.53-5.56-1.54l-.4-.24-4.07.95.97-3.97-.26-.41a10.94 10.94 0 1 1 9.33 5.21z"/>
+
         </svg>
+
       </a>
 
-      <a href="cardapio.html" class="btn-cardapio">
+      <!-- VER CARDÁPIO -->
+      <a
+        href="cardapio.html"
+        class="btn-cardapio"
+      >
         VER CARDÁPIO
       </a>
+
     </div>
 
   </main>
+
+  <script>
+
+    /* =========================
+       HORÁRIO
+    ========================= */
+
+    const horaAbertura = 18;
+    const horaFechamento = 23;
+
+    function atualizarStatus() {
+
+      const agora = new Date();
+
+      const hora = agora.getHours();
+      const minuto = agora.getMinutes();
+
+      const horarioAtual =
+        hora + (minuto / 60);
+
+      const aberto =
+        horarioAtual >= horaAbertura &&
+        horarioAtual < horaFechamento;
+
+      const status =
+        document.getElementById("status");
+
+      const texto =
+        document.getElementById("statusTexto");
+
+      if (aberto) {
+
+        status.classList.remove("fechado");
+
+        texto.textContent = "ABERTO";
+
+      } else {
+
+        status.classList.add("fechado");
+
+        texto.textContent = "FECHADO";
+
+      }
+    }
+
+    atualizarStatus();
+
+    setInterval(
+      atualizarStatus,
+      60000
+    );
+
+  </script>
 
 </body>
 </html>
