@@ -1,522 +1,181 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt‑BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MONSTRO BURGUER</title>
-
+  <meta charset="UTF‑8">
+  <meta name="viewport" content="width=device‑width, initial‑scale=1.0">
+  <title>🍔 MONSTRO BURGUER — Início</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, "Segoe UI", sans-serif;
+    * { margin:0; padding:0; box‑sizing:border‑box; font‑family:Arial, 'Segoe UI', Roboto, sans‑serif; }
+    html, body {
+      background: #000000;
+      color: #ffffff;
+      min‑height: 100vh;
+      padding‑top: 62px;
+      padding‑bottom: 30px;
     }
-
     :root {
-      --azul: #00ccff;
-      --roxo: #bf00ff;
-      --verde: #00ff41;
+      --roxo: #BF00FF;
+      --verde: #00FF41;
+      --azul: #00CCFF;
+      --fundo‑btn: #120822;
     }
 
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 50% 25%,
-          rgba(0, 204, 255, .13),
-          transparent 28%),
-        radial-gradient(circle at 50% 48%,
-          rgba(191, 0, 255, .08),
-          transparent 38%),
-        #050505;
-      color: white;
-      padding: 14px;
-      overflow-x: hidden;
+    /* 🟢 STATUS LOJA */
+    .status‑box {
+      position:fixed; top:12px; left:12px; z‑index:90;
+      display:flex; gap:7px; align‑items:center;
+      background:rgba(30,30,40,.75); border:1px solid #333;
+      border‑radius:50px; padding:6px 16px;
+      font‑size: 14px; font‑weight: 500;
+      backdrop‑filter: blur(4px);
     }
-
-    /* TOPO */
-
-    .topo {
-      max-width: 430px;
-      margin: auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .status-box {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 7px 11px;
-      border-radius: 30px;
-      background: rgba(10,10,10,.85);
-      border: 1px solid #292929;
-      font-size: 11px;
-      font-weight: bold;
-    }
-
-    .ponto {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #555;
-    }
-
+    .ponto {width: 10px; height: 10px; border‑radius: 50%; background:#555;}
     .aberto .ponto {
-      background: var(--verde);
-      box-shadow: 0 0 8px var(--verde);
-      animation: piscar 1.8s infinite alternate;
+      background: var(--verde); box‑shadow: 0 0 9px var(--verde);
+      animation: brilhoPonto 2s infinite alternate;
+    }
+    .fechado .ponto { background:#ff3355; box‑shadow:0 0 9px #ff3355; }
+    @keyframes brilhoPonto {0%{opacity:.6}100%{opacity:1}}
+
+    /* ⚙️ ENGRENAGEM ADMIN */
+    .botao‑engrenagem {
+      position:fixed; top:12px; right:12px; z‑index:99;
+      width: 40px; height: 40px; border‑radius: 50%;
+      border: 1px solid #444; background:rgba(30,30,40,.75);
+      color: #aaa; font‑size: 18px; line‑height: 38px; text‑align:center;
+      backdrop‑filter: blur(4px);
+      text‑decoration:none; cursor:pointer;
+      transition: all .2s ease;
+    }
+    .botao‑engrenagem:hover {border‑color:var(--roxo); color:var(--roxo);}
+
+    /* 🖼️ ÁREA MASCOTE — PERFEITAMENTE AJUSTADA */
+    .bloco‑logo {
+      text‑align:center;
+      padding: 20px 16px 24px;
+    }
+    .logo‑marca {
+      width: 100%;
+      max‑width: 320px;
+      height: auto;
+      display:block;
+      margin: 0 auto;
+      object‑fit: contain;
+    }
+    .slogan {
+      color:#999; font‑size: 15px; margin‑top: 6px; letter‑spacing: .5px;
+    }
+    .titulo‑etapa {
+      text‑align:center;
+      color:#ccc; font‑size: 16px; letter‑spacing: 1px;
+      margin‑bottom: 20px; text‑transform: uppercase;
     }
 
-    @keyframes piscar {
-      from { opacity: .5; }
-      to { opacity: 1; }
+    /* 🎯 GRADE EXATA: 2 × 2 → Combos no centro embaixo */
+    .grade‑botoes {
+      max‑width: 520px; margin: 0 auto; padding: 0 16px;
+      display:grid;
+      grid‑template‑columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .botao‑cat {
+      border‑radius: 50px; border: 2px solid transparent;
+      background: linear-gradient(#1a1a2c, #10101f) padding‑box,
+                  linear-gradient(135deg, var(--azul), var(--roxo)) border‑box;
+      color:#fff; font‑size: 16px; font‑weight: 500;
+      padding: 14px 12px; text‑align:center; cursor:pointer;
+      transition: all .22s ease;
+    }
+    .botao‑cat.ativo {
+      border‑color: var(--azul);
+      box‑shadow: inset 0 0 0 1px rgba(0,204,255,.15), 0 0 10px rgba(0,204,255,.35);
+      background: #1e2638;
+    }
+    .botao‑cat:hover:not(.ativo) {
+      border‑color: #444;
+      background: #181828;
+    }
+    .botao‑cat:active {transform: scale(.97);}
+
+    .botao‑linha‑cheia {
+      grid‑column: span 2;
+      max‑width: 320px; margin: 4px auto 0;
     }
 
-    .botao-engrenagem {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 1px solid #333;
-      background: #111;
-      color: #888;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      font-size: 17px;
+    /* 📋 RODAPÉ: Botão grande + botão telefone */
+    .area‑acao {
+      max‑width: 520px; margin: 28px auto 0; padding: 0 16px;
+      display:flex; gap: 12px; align‑items:center;
     }
-
-    /* MASCOTE */
-
-    .area-mascote {
-      max-width: 430px;
-      margin: 5px auto 8px;
-      text-align: center;
-      position: relative;
-      padding: 4px 0 0;
-
-      /* SEM QUADRO / SEM MOLDURA */
-      background: transparent;
-      border: none;
-      box-shadow: none;
+    .botao‑ver {
+      flex: 1;
+      border‑radius: 50px; border:none;
+      background: linear-gradient(90deg, #7B00CC, #BF00FF);
+      color:#fff; font‑size: 17px; font‑weight:bold;
+      padding: 14px 12px; text‑align:center;
+      display:block; text‑decoration:none;
+      box‑shadow: 0 0 12px rgba(191,0,255,.28);
+      transition: transform .22s ease, filter .22s ease;
     }
+    .botao‑ver:hover { filter:brightness(1.08); transform:scale(1.015); }
+    .botao‑ver:active {transform: scale(.97);}
 
-    .area-mascote::before {
-      content: "";
-      position: absolute;
-      width: 280px;
-      height: 210px;
-      left: 50%;
-      top: 20px;
-      transform: translateX(-50%);
-      background: radial-gradient(
-        ellipse,
-        rgba(0,204,255,.13),
-        rgba(191,0,255,.06),
-        transparent 72%
-      );
-      filter: blur(18px);
-      z-index: -1;
+    .botao‑tel {
+      width: 52px; height: 52px; min‑width: 52px;
+      border‑radius: 50%; border:none;
+      background: linear-gradient(#142c1c, #0f2015);
+      color: var(--verde); font‑size: 22px;
+      display:flex; align‑items:center; justify‑content:center;
+      box‑shadow: 0 0 0 1px rgba(0,255,65,.2), inset 0 0 6px rgba(0,255,65,.08);
+      cursor:pointer; transition: all .2s ease;
+      text‑decoration:none;
     }
-
-    .mascote {
-      width: 78%;
-      max-width: 310px;
-      max-height: 270px;
-      object-fit: contain;
-      display: block;
-      margin: auto;
-
-      /* BRILHO DA PRÓPRIA LOGO/MASCOTE */
-      filter:
-        drop-shadow(0 0 7px rgba(0,204,255,.22))
-        drop-shadow(0 0 18px rgba(191,0,255,.10));
-
-      animation: respirar 4s ease-in-out infinite;
-    }
-
-    @keyframes respirar {
-      0%, 100% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.015);
-      }
-    }
-
-    .frase {
-      margin-top: -2px;
-      color: #aaa;
-      font-size: 12px;
-      letter-spacing: 1px;
-      font-weight: bold;
-    }
-
-    /* TÍTULO */
-
-    .titulo {
-      max-width: 430px;
-      margin: 20px auto 11px;
-      text-align: center;
-      font-family: "Trebuchet MS", Arial, sans-serif;
-      font-size: 16px;
-      font-weight: 900;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: #fff;
-      text-shadow:
-        0 0 5px rgba(0,204,255,.45),
-        0 0 12px rgba(191,0,255,.18);
-    }
-
-    /* CATEGORIAS */
-
-    .grade-botoes {
-      max-width: 430px;
-      margin: auto;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 9px;
-    }
-
-    .botao-cat {
-      min-height: 68px;
-      border-radius: 23px;
-      border: 1px solid rgba(0,204,255,.22);
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(0,204,255,.07),
-          rgba(191,0,255,.06)
-        ),
-        #101010;
-
-      color: #eee;
-      cursor: pointer;
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-
-      font-size: 13px;
-      font-weight: bold;
-
-      transition:
-        transform .15s ease,
-        border-color .15s ease,
-        box-shadow .15s ease,
-        background .15s ease;
-    }
-
-    .botao-cat .icone {
-      font-size: 21px;
-      line-height: 1;
-    }
-
-    .botao-cat:active,
-    .botao-cat.ativo {
-      transform: scale(.96);
-      border-color: var(--azul);
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(0,204,255,.20),
-          rgba(191,0,255,.13)
-        ),
-        #101010;
-
-      box-shadow:
-        0 0 7px rgba(0,204,255,.42),
-        0 0 17px rgba(0,204,255,.16),
-        inset 0 0 10px rgba(0,204,255,.08);
-    }
-
-    .botao-linha-cheia {
-      grid-column: span 2;
-      min-height: 54px;
-      flex-direction: row;
-      gap: 7px;
-    }
-
-    /* AÇÕES */
-
-    .acoes {
-      max-width: 430px;
-      margin: 18px auto 0;
-      display: flex;
-      gap: 9px;
-      align-items: center;
-    }
-
-    /*
-      BOTÃO VER CARDÁPIO
-
-      Estado normal:
-      roxo suave + moldura verde neon discreta.
-
-      A moldura verde permanece fixa.
-      Somente o roxo reage ao clique.
-    */
-
-    .botao-ver {
-      flex: 1;
-      min-height: 51px;
-      border-radius: 24px;
-
-      border: 1px solid rgba(0,255,65,.75);
-
-      background:
-        linear-gradient(
-          100deg,
-          rgba(120,0,180,.78),
-          rgba(160,0,220,.72)
-        );
-
-      color: white;
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: .4px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      text-decoration: none;
-
-      box-shadow:
-        0 0 6px rgba(0,255,65,.16),
-        0 0 12px rgba(191,0,255,.10);
-
-      transition:
-        transform .12s ease,
-        background .08s ease,
-        box-shadow .08s ease;
-    }
-
-    /*
-      FAROL ALTO
-
-      Ao tocar:
-      o verde continua discreto.
-      O roxo recebe o clarão forte.
-    */
-
-    .botao-ver:active {
-      transform: scale(.96);
-
-      background:
-        linear-gradient(
-          100deg,
-          #d100ff,
-          #ff35ff
-        );
-
-      box-shadow:
-        0 0 12px rgba(191,0,255,.85),
-        0 0 28px rgba(191,0,255,.70),
-        0 0 50px rgba(191,0,255,.38);
-
-      transition: none;
-    }
-
-    /* WHATSAPP */
-
-    .botao-whatsapp {
-      width: 51px;
-      height: 51px;
-      flex: 0 0 51px;
-
-      border-radius: 50%;
-      border: 1px solid rgba(0,255,65,.45);
-
-      background: rgba(0,255,65,.07);
-      color: var(--verde);
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      text-decoration: none;
-      font-size: 24px;
-
-      box-shadow:
-        0 0 8px rgba(0,255,65,.12);
-
-      transition: .15s;
-    }
-
-    .botao-whatsapp:active {
-      transform: scale(.90);
-
-      background: rgba(0,255,65,.18);
-
-      box-shadow:
-        0 0 10px rgba(0,255,65,.65),
-        0 0 22px rgba(0,255,65,.28);
-    }
-
-    @media (max-width: 360px) {
-
-      body {
-        padding: 11px;
-      }
-
-      .mascote {
-        width: 72%;
-        max-height: 230px;
-      }
-
-      .titulo {
-        font-size: 14px;
-      }
-
-      .botao-cat {
-        min-height: 63px;
-      }
-    }
+    .botao‑tel:hover { background:#1a3824; box‑shadow: 0 0 14px rgba(0,255,65,.35); }
   </style>
 </head>
-
 <body>
 
-  <!-- TOPO -->
+<div class="status‑box fechado">
+  <div class="ponto"></div>
+  <span id="texto‑status">LOJA FECHADA</span>
+</div>
 
-  <div class="topo">
+<a class="botao‑engrenagem" href="admin.html">⚙</a>
 
-    <div class="status-box aberto">
-      <div class="ponto"></div>
-      <span id="texto-status">LOJA ABERTA</span>
-    </div>
+<!-- 🖼️ LINK DEFINITIVO → JÁ APONTANDO PRO SEU ARQUIVO NO GITHUB -->
+<div class="bloco‑logo">
+  <img class="logo‑marca" alt="MONSTRO BURGUER — Mascote Oficial"
+       src="https://raw.githubusercontent.com/Monstroburguer/Monstro‑Burguer/main/mascote‑oficial.png">
+  <p class="slogan">A FOME CHAMOU.</p>
+</div>
 
-    <a class="botao-engrenagem" href="admin.html">⚙</a>
+<p class="titulo‑etapa">ESCOLHA O TAMANHO DA SUA FOME</p>
 
-  </div>
+<div class="grade‑botoes">
+  <button class="botao‑cat ativo" onclick="irPara('todos')">🍔 Todos</button>
+  <button class="botao‑cat" onclick="irPara('lanches')">🍔 Lanches</button>
+  <button class="botao‑cat" onclick="irPara('bebidas')">🥤 Bebidas</button>
+  <button class="botao‑cat" onclick="irPara('adicionais')">➕ Adicionais</button>
+  <button class="botao‑cat botao‑linha‑cheia" onclick="irPara('combos')">📦 Combos</button>
+</div>
 
+<div class="area‑acao">
+  <a class="botao‑ver" href="cardapio.html">VER CARDÁPIO</a>
+  <a class="botao‑tel" href="https://wa.me/5514996619487" target="_blank">📞</a>
+</div>
 
-  <!-- MASCOTE -->
-
-  <div class="area-mascote">
-
-    <img
-      id="mascote"
-      class="mascote"
-      alt="Monstro Burguer"
-      src="https://i.imgur.com/9WLN0Dv.png"
-    >
-
-    <div class="frase">
-      A FOME CHAMOU.
-    </div>
-
-  </div>
-
-
-  <!-- CATEGORIAS -->
-
-  <div class="titulo">
-    ESCOLHA O TAMANHO DA SUA FOME
-  </div>
-
-  <div class="grade-botoes">
-
-    <button class="botao-cat ativo" onclick="irPara('todos')">
-      <span class="icone">🍔</span>
-      <span>Todos</span>
-    </button>
-
-    <button class="botao-cat" onclick="irPara('lanches')">
-      <span class="icone">🍔</span>
-      <span>Lanches</span>
-    </button>
-
-    <button class="botao-cat" onclick="irPara('bebidas')">
-      <span class="icone">🥤</span>
-      <span>Bebidas</span>
-    </button>
-
-    <button class="botao-cat" onclick="irPara('adicionais')">
-      <span class="icone">➕</span>
-      <span>Adicionais</span>
-    </button>
-
-    <button
-      class="botao-cat botao-linha-cheia"
-      onclick="irPara('combos')"
-    >
-      <span class="icone">📦</span>
-      <span>Combos</span>
-    </button>
-
-  </div>
-
-
-  <!-- BOTÃO PRINCIPAL + WHATSAPP -->
-
-  <div class="acoes">
-
-    <a class="botao-ver" href="cardapio.html">
-      VER CARDÁPIO
-    </a>
-
-    <a
-      class="botao-whatsapp"
-      href="https://wa.me/5514996619487"
-      target="_blank"
-      aria-label="WhatsApp"
-    >
-      ☎
-    </a>
-
-  </div>
-
-
-  <script>
-
-    function irPara(categoria) {
-      localStorage.setItem("categoriaInicial", categoria);
-      window.location.href = "cardapio.html";
-    }
-
-
-    window.onload = function() {
-
-      /* STATUS DA LOJA */
-
-      const caixa = document.querySelector(".status-box");
-      const texto = document.getElementById("texto-status");
-
-      const lojaAberta =
-        localStorage.getItem("lojaAberta") !== "false";
-
-      caixa.classList.toggle("aberto", lojaAberta);
-
-      texto.textContent =
-        lojaAberta
-          ? "LOJA ABERTA"
-          : "LOJA FECHADA";
-
-
-      /* MASCOTE SALVO NO ADM */
-
-      const mascote = document.getElementById("mascote");
-
-      const mascoteSalvo =
-        localStorage.getItem("monstroMascote");
-
-      if (mascoteSalvo) {
-        mascote.src = mascoteSalvo;
-      }
-
-    };
-
-  </script>
-
+<script>
+function irPara(categoria){
+  localStorage.setItem('categoriaInicial', categoria);
+  window.location.href = 'cardapio.html';
+}
+window.onload = function(){
+  const caixa=document.querySelector('.status‑box'), txt=document.getElementById('texto‑status'),
+        ok=localStorage.getItem('lojaAberta')!=='false';
+  caixa.classList.toggle('aberto',ok);
+  caixa.classList.toggle('fechado',!ok);
+  txt.textContent=ok?'LOJA ABERTA':'LOJA FECHADA';
+};
+</script>
 </body>
 </html>
