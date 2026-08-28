@@ -164,8 +164,8 @@
 
     .mascote-area {
       width: 100%;
-      height: 50%;
-      flex: 0 0 50%;
+      height: 46%;
+      flex: 0 0 46%;
 
       position: relative;
       overflow: hidden;
@@ -212,7 +212,7 @@
 
     .subtitulo {
       width: 100%;
-      margin-top: -6px;
+      margin-top: 10px;
 
       font-family: var(--mono);
       font-size: 10px;
@@ -276,6 +276,22 @@
         box-shadow: 0 0 16px rgba(0, 229, 255, 0.50), inset 0 0 16px rgba(139, 47, 255, 0.28);
         background-position: 100% 50%;
       }
+    }
+
+    .categoria.clicado,
+    .btn-cardapio.clicado {
+      background: linear-gradient(135deg, rgba(0, 229, 255, 0.95), rgba(139, 47, 255, 0.75)) !important;
+      color: #00150a !important;
+      border-color: #ffffff !important;
+      box-shadow:
+        0 0 26px rgba(0, 229, 255, 1),
+        0 0 46px rgba(139, 47, 255, 0.85) !important;
+      transition: all 0.06s ease-out;
+    }
+
+    .btn-whatsapp.clicado {
+      box-shadow: 0 0 26px rgba(37, 211, 102, 1) !important;
+      transition: all 0.06s ease-out;
     }
 
     .categoria:active {
@@ -591,6 +607,62 @@
       atualizarStatus,
       60000
     );
+
+
+    /* =========================
+       SOM E ACENDER NO CLIQUE
+    ========================= */
+
+    function tocarCliqueSistema() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1300, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(420, ctx.currentTime + 0.09);
+
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.10);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.11);
+      } catch (e) {
+        /* Áudio bloqueado pelo navegador, segue sem som */
+      }
+    }
+
+    // Botões que navegam para outra página: toca o som, acende, depois navega
+    document.querySelectorAll(".categoria, .btn-cardapio").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        const destino = this.getAttribute("href");
+
+        this.classList.add("clicado");
+        tocarCliqueSistema();
+
+        setTimeout(() => {
+          window.location.href = destino;
+        }, 140);
+      });
+    });
+
+    // WhatsApp abre em nova aba, só acende e toca o som
+    document.querySelector(".btn-whatsapp").addEventListener("click", function () {
+      const el = this;
+
+      el.classList.add("clicado");
+      tocarCliqueSistema();
+
+      setTimeout(() => {
+        el.classList.remove("clicado");
+      }, 250);
+    });
 
   </script>
 
