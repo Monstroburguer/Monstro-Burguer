@@ -643,12 +643,14 @@
       btn.addEventListener("click", function (e) {
         e.preventDefault();
 
-        const destino = this.getAttribute("href");
+        const el = this;
+        const destino = el.getAttribute("href");
 
-        this.classList.add("clicado");
+        el.classList.add("clicado");
         tocarCliqueSistema();
 
         setTimeout(() => {
+          el.classList.remove("clicado");
           window.location.href = destino;
         }, 140);
       });
