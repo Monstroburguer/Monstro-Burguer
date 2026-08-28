@@ -169,6 +169,8 @@
 
       position: relative;
       overflow: hidden;
+
+      background: var(--void);
     }
 
     .mascote {
@@ -181,10 +183,23 @@
       object-fit: cover;
       object-position: center 35%;
 
-      -webkit-mask-image: radial-gradient(ellipse 78% 82% at 50% 42%, #fff 55%, transparent 100%);
-      mask-image: radial-gradient(ellipse 78% 82% at 50% 42%, #fff 55%, transparent 100%);
-
       animation: respirar 4s ease-in-out infinite;
+    }
+
+    /* Camada de fusão nas bordas, sem depender de mask-image
+       (mais compatível com navegadores de celular) */
+    .mascote-fade {
+      position: absolute;
+      inset: 0;
+
+      background: radial-gradient(
+        ellipse 78% 82% at 50% 42%,
+        transparent 55%,
+        var(--void) 100%
+      );
+
+      pointer-events: none;
+      z-index: 5;
     }
 
     @keyframes respirar {
@@ -474,6 +489,8 @@
         alt="Mascote oficial Monstro Burguer"
         class="mascote"
       >
+
+      <div class="mascote-fade"></div>
 
     </section>
 
