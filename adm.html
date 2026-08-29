@@ -1,647 +1,1121 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍔 MONSTRO BURGUER — Cardápio</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADM | Monstro Burguer</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-<!-- Firebase (Firestore) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCNWFiB87wlWkaMRZkw3lp8htcf6ubG7ks",
-    authDomain: "monstro-burguer-40b02.firebaseapp.com",
-    projectId: "monstro-burguer-40b02",
-    storageBucket: "monstro-burguer-40b02.firebasestorage.app",
-    messagingSenderId: "569343783289",
-    appId: "1:569343783289:web:3523028ddad73743cfffa8",
-    measurementId: "G-2HJWJY7JVH"
-  };
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #080808;
+            color: white;
+            padding-bottom: 40px;
+        }
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
+        header {
+            background: #050505;
+            padding: 25px 15px;
+            text-align: center;
+            border-bottom: 2px solid #168cff;
+            box-shadow: 0 0 15px #168cff;
+        }
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Rajdhani',Arial,sans-serif;-webkit-tap-highlight-color:transparent}
-:root{
-  --void: #05070d;
-  --ciano: #00e5ff;
-  --ciano-dim: rgba(0, 229, 255, 0.35);
-  --violeta: #8b2fff;
-  --violeta-dim: rgba(139, 47, 255, 0.35);
-  --verde: #39ff88;
-  --vermelho: #ff3b5c;
-  --dourado: #ffc93c;
-  --texto: #eaf6ff;
-  --card: #0b0f1c;
-  --mono: 'JetBrains Mono', monospace;
-}
-html,body{background:var(--void);color:var(--texto);min-height:100vh}
-body{padding-bottom:110px;position:relative}
+        header h1 {
+            margin: 0;
+            color: #168cff;
+            text-shadow: 0 0 10px #168cff, 0 0 25px #168cff;
+        }
 
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:0;
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(0,229,255,0.06), transparent 45%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 38px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 38px);
-}
+        header p {
+            color: #aaa;
+        }
 
-.cabecalho{
-  position:sticky;
-  top:0;
-  z-index:90;
-  text-align:center;
-  padding:18px 15px;
-  background:rgba(5,7,13,0.92);
-  backdrop-filter:blur(6px);
-  border-bottom:2px solid var(--ciano);
-  box-shadow:0 0 16px rgba(0,229,255,0.35), inset 0 -8px 16px -12px rgba(0,229,255,0.4);
-}
-.cabecalho h1{
-  font-size:22px;
-  font-weight:700;
-  letter-spacing:1px;
-  color:var(--texto);
-  text-transform:uppercase;
-}
-.cabecalho h1 span{
-  color:var(--ciano);
-  text-shadow:0 0 8px var(--ciano), 0 0 20px var(--ciano);
-}
-.voltar{
-  position:absolute;
-  left:15px;
-  top:50%;
-  transform:translateY(-50%);
-  width:34px;
-  height:34px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  clip-path:polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
-  border:1.5px solid var(--violeta);
-  background:rgba(0,0,0,0.6);
-  color:var(--texto);
-  text-decoration:none;
-  font-size:16px;
-  box-shadow:0 0 9px var(--violeta-dim);
-}
+        .painel {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+        }
 
-.categorias{
-  display:grid;
-  grid-template-columns:repeat(4, 1fr);
-  gap:8px;
-  padding:14px 15px;
-  position:sticky;
-  top:63px;
-  z-index:80;
-  background:var(--void);
-  border-bottom:1px solid rgba(0,229,255,0.15);
-}
-.cat-btn{
-  padding:10px 4px;
-  background:linear-gradient(135deg, rgba(139,47,255,0.10), rgba(0,229,255,0.04));
-  border:1px solid var(--ciano-dim);
-  clip-path:polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-  color:rgba(234,246,255,0.55);
-  font-family:var(--mono);
-  font-size:10.5px;
-  font-weight:600;
-  letter-spacing:0.3px;
-  cursor:pointer;
-  transition:all .25s;
-  text-align:center;
-}
-.cat-btn.ativo{
-  border-color:var(--ciano);
-  color:var(--void);
-  background:linear-gradient(135deg, var(--ciano), var(--violeta));
-  box-shadow:0 0 16px rgba(0,229,255,0.55);
-  font-weight:700;
-}
+        .titulo {
+            color: #168cff;
+            text-shadow: 0 0 8px #168cff;
+            border-bottom: 1px solid #168cff;
+            padding-bottom: 8px;
+        }
 
-.container{padding:0 15px 30px;position:relative;z-index:1}
-.categoria-titulo{
-  font-family:var(--mono);
-  font-size:12px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:var(--ciano);
-  margin:18px 0 12px;
-  padding-bottom:8px;
-  border-bottom:1px solid rgba(0,229,255,0.2);
-}
-.categoria-titulo::before{content:"// "}
+        .formulario,
+        .whatsapp-box,
+        .aparencia-box {
+            background: #111;
+            padding: 18px;
+            border-radius: 15px;
+            border: 1px solid #168cff;
+            box-shadow: 0 0 12px rgba(22, 140, 255, 0.25);
+            margin-bottom: 20px;
+        }
 
-.carregando,.vazio{
-  font-family:var(--mono);
-  font-size:13px;
-  color:rgba(234,246,255,0.45);
-  text-align:center;
-  padding:40px 10px;
-}
+        label {
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
 
-.item{
-  background:var(--card);
-  clip-path:polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
-  padding:16px;
-  margin-bottom:12px;
-  border:1px solid rgba(0,229,255,0.15);
-  transition:all .3s;
-}
-.item.selecionado{
-  border-color:var(--verde);
-  box-shadow:0 0 18px rgba(57,255,136,0.35), inset 0 0 14px rgba(57,255,136,0.06);
-}
-.item-foto{
-  width:100%;
-  height:150px;
-  object-fit:cover;
-  border-radius:8px;
-  margin-bottom:10px;
-  border:1px solid rgba(0,229,255,0.2);
-}
-.item-cima{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  margin-bottom:8px;
-  gap:10px;
-}
-.item-nome{
-  font-size:16px;
-  font-weight:700;
-  color:var(--texto);
-  flex:1;
-}
-.item-preco{
-  font-family:var(--mono);
-  font-size:15px;
-  font-weight:700;
-  color:var(--verde);
-  text-shadow:0 0 6px rgba(57,255,136,0.5);
-  white-space:nowrap;
-}
-.item-descricao{
-  font-size:13px;
-  color:rgba(234,246,255,0.55);
-  margin-bottom:12px;
-  line-height:1.4;
-}
-.item-baixo{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.btn-selecionar{
-  padding:8px 18px;
-  background:linear-gradient(135deg, var(--ciano), var(--violeta));
-  border:none;
-  clip-path:polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-  color:var(--void);
-  font-family:var(--mono);
-  font-weight:700;
-  font-size:12px;
-  letter-spacing:0.5px;
-  text-transform:uppercase;
-  cursor:pointer;
-  transition:all .25s;
-  box-shadow:0 0 10px rgba(0,229,255,0.4);
-}
-.btn-selecionar.selecionado{
-  background:linear-gradient(135deg, var(--verde), #00cc66);
-  box-shadow:0 0 15px rgba(57,255,136,0.6);
-  padding:8px 22px;
-}
-.btn-selecionar.selecionado::after{content:" ✓"}
-.quantidade-controle{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  opacity:0;
-  transform:scale(0.8);
-  transition:all .3s;
-}
-.item.selecionado .quantidade-controle{opacity:1;transform:scale(1)}
-.qtd-btn{
-  width:30px;
-  height:30px;
-  border-radius:50%;
-  border:1px solid var(--ciano-dim);
-  background:rgba(0,0,0,0.5);
-  color:var(--texto);
-  font-size:17px;
-  font-weight:bold;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.qtd-btn.menos{border-color:var(--vermelho);color:var(--vermelho)}
-.qtd-btn.mais{border-color:var(--verde);color:var(--verde)}
-.qtd-num{
-  font-family:var(--mono);
-  font-size:16px;
-  font-weight:bold;
-  min-width:26px;
-  text-align:center;
-  color:var(--verde);
-}
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            background: #080808;
+            color: white;
+            font-size: 15px;
+        }
 
-.carrinho-barra{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:rgba(8,10,20,0.95);
-  backdrop-filter:blur(6px);
-  border-top:2px solid var(--ciano);
-  padding:12px 15px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  z-index:100;
-  box-shadow:0 -6px 20px rgba(0,229,255,0.20);
-}
-.carrinho-info{flex:1}
-.carrinho-total{
-  font-family:var(--mono);
-  font-size:19px;
-  font-weight:700;
-  color:var(--verde);
-  text-shadow:0 0 8px rgba(57,255,136,0.5);
-}
-.carrinho-itens{
-  font-size:11px;
-  font-family:var(--mono);
-  color:rgba(234,246,255,0.45);
-  margin-top:2px;
-}
-.btn-finalizar{
-  padding:12px 22px;
-  background:linear-gradient(135deg, #25D366, #1fb354);
-  border:none;
-  clip-path:polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-  color:#00150a;
-  font-weight:800;
-  font-size:14px;
-  cursor:pointer;
-  box-shadow:0 0 16px rgba(37,211,102,0.55);
-  transition:all .2s;
-}
-.btn-finalizar:active{transform:scale(0.96)}
-.btn-finalizar:disabled{opacity:0.35;cursor:not-allowed;box-shadow:none}
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
 
-.modal-fundo{
-  position:fixed;
-  inset:0;
-  background:rgba(2,3,6,0.92);
-  z-index:200;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-.modal-aberto{display:flex}
-.modal{
-  background:var(--card);
-  border:1.5px solid var(--ciano);
-  clip-path:polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px);
-  padding:25px;
-  max-width:380px;
-  width:100%;
-  box-shadow:0 0 30px rgba(0,229,255,0.35);
-  position:relative;
-}
-.modal h2{
-  text-align:center;
-  color:var(--ciano);
-  margin-bottom:20px;
-  font-size:19px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  text-shadow:0 0 8px rgba(0,229,255,0.5);
-}
-.modal-item{
-  display:flex;
-  justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px solid rgba(0,229,255,0.12);
-  font-size:14px;
-  font-family:var(--mono);
-}
-.modal-obs{margin-top:15px}
-.modal-obs textarea{
-  width:100%;
-  height:60px;
-  background:rgba(0,0,0,0.5);
-  border:1px solid var(--violeta-dim);
-  border-radius:8px;
-  color:var(--texto);
-  padding:10px;
-  font-size:13px;
-  font-family:'Rajdhani',sans-serif;
-  resize:none;
-}
-.modal-obs textarea:focus{outline:none;border-color:var(--violeta)}
-.modal-total{
-  display:flex;
-  justify-content:space-between;
-  padding:15px 0 5px;
-  border-top:1px solid var(--verde);
-  margin-top:10px;
-  font-family:var(--mono);
-  font-size:18px;
-  font-weight:bold;
-  color:var(--verde);
-  text-shadow:0 0 6px rgba(57,255,136,0.5);
-}
-.modal-botoes{display:flex;gap:10px;margin-top:15px}
-.modal-btn-cancelar{
-  flex:1;
-  padding:12px;
-  background:transparent;
-  border:1px solid rgba(234,246,255,0.3);
-  color:rgba(234,246,255,0.7);
-  clip-path:polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-  font-size:14px;
-  cursor:pointer;
-}
-.modal-btn-whatsapp{
-  flex:2;
-  padding:12px;
-  background:linear-gradient(135deg, #25D366, #1fb354);
-  border:none;
-  color:#00150a;
-  clip-path:polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-  font-size:14px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 0 12px rgba(37,211,102,0.5);
-}
-.fechar-modal{
-  position:absolute;
-  top:14px;
-  right:14px;
-  background:none;
-  border:none;
-  color:rgba(234,246,255,0.5);
-  font-size:24px;
-  cursor:pointer;
-}
-</style>
+        .btn {
+            width: 100%;
+            padding: 13px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-salvar {
+            background: #168cff;
+            box-shadow: 0 0 10px #168cff;
+        }
+
+        .btn-limpar {
+            background: #333;
+        }
+
+        .whatsapp-opcao {
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 12px;
+            background: #080808;
+        }
+
+        .whatsapp-opcao.ativo {
+            border-color: #00c96b;
+            box-shadow: 0 0 12px rgba(0, 201, 107, 0.35);
+        }
+
+        .status-opcao {
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 12px;
+            background: #080808;
+            text-align: center;
+        }
+
+        .status-opcao.ativo-aberto {
+            border-color: #00c96b;
+            box-shadow: 0 0 12px rgba(0, 201, 107, 0.35);
+        }
+
+        .status-opcao.ativo-fechado {
+            border-color: #ff4d4d;
+            box-shadow: 0 0 12px rgba(255, 77, 77, 0.35);
+        }
+
+        .status-opcao-titulo {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .btn-status {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: none;
+            border-radius: 9px;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .btn-status-auto {
+            background: #168cff;
+        }
+
+        .btn-status-aberto {
+            background: #00a85a;
+        }
+
+        .btn-status-fechado {
+            background: #b30000;
+        }
+
+        .whatsapp-numero {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .whatsapp-tipo {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .btn-whatsapp {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            border: none;
+            border-radius: 9px;
+            background: #00a85a;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .status-whatsapp {
+            margin-top: 15px;
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            background: #050505;
+            color: #00ff88;
+            border: 1px solid #00a85a;
+        }
+
+        .aparencia-item {
+            background: #080808;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .aparencia-titulo {
+            color: #168cff;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .preview-aparencia {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            object-fit: contain;
+            background: #050505;
+            border-radius: 12px;
+            border: 1px solid #168cff;
+            display: none;
+            margin: 12px auto;
+        }
+
+        .sem-imagem {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            margin: 12px auto;
+            border-radius: 12px;
+            border: 1px dashed #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            text-align: center;
+        }
+
+        .btn-remover {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 8px;
+            background: #333;
+            color: white;
+            font-weight: bold;
+        }
+
+        .area-foto {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .previa-foto {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 2px solid #168cff;
+            display: none;
+            margin: 12px auto;
+        }
+
+        .sem-foto {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            margin: 12px auto;
+            border-radius: 14px;
+            border: 1px dashed #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+        }
+
+        .produtos {
+            margin-top: 25px;
+        }
+
+        .produto {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .produto-foto {
+            width: 100%;
+            max-width: 280px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #168cff;
+        }
+
+        .produto h3 {
+            margin-top: 0;
+            color: #168cff;
+        }
+
+        .produto-info {
+            color: #bbb;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .acoes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .acoes button {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .editar {
+            background: #168cff;
+        }
+
+        .ativar {
+            background: #00a85a;
+        }
+
+        .desativar {
+            background: #555;
+        }
+
+        .excluir {
+            background: #8b0000;
+        }
+
+        .inativo {
+            opacity: 0.45;
+        }
+
+        .mensagem {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111;
+            border: 1px solid #168cff;
+            border-radius: 10px;
+            padding: 14px 20px;
+            box-shadow: 0 0 15px #168cff;
+            z-index: 9999;
+        }
+
+        /* ==================================================
+           TELA DE SENHA
+        ================================================== */
+        .tela-senha {
+            position: fixed;
+            inset: 0;
+            background: #050505;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+            padding: 20px;
+        }
+
+        .caixa-senha {
+            background: #111;
+            border: 1px solid #168cff;
+            box-shadow: 0 0 20px rgba(22, 140, 255, 0.35);
+            border-radius: 16px;
+            padding: 30px 24px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .caixa-senha h2 {
+            color: #168cff;
+            text-shadow: 0 0 10px #168cff;
+            margin-bottom: 6px;
+        }
+
+        .caixa-senha p {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .caixa-senha input {
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .btn-entrar {
+            width: 100%;
+            padding: 13px;
+            margin-top: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #168cff;
+            box-shadow: 0 0 10px #168cff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .erro-senha {
+            color: #ff4d4d;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .painel-protegido {
+            display: none;
+        }
+    </style>
+
+    <!-- Firebase (Firestore) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCNWFiB87wlWkaMRZkw3lp8htcf6ubG7ks",
+            authDomain: "monstro-burguer-40b02.firebaseapp.com",
+            projectId: "monstro-burguer-40b02",
+            storageBucket: "monstro-burguer-40b02.firebasestorage.app",
+            messagingSenderId: "569343783289",
+            appId: "1:569343783289:web:3523028ddad73743cfffa8",
+            measurementId: "G-2HJWJY7JVH"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
 </head>
+
 <body>
 
-<div class="cabecalho">
-  <a href="index.html" class="voltar">←</a>
-  <h1>🍔 <span>CARDÁPIO</span></h1>
-</div>
-
-<div class="categorias">
-  <button class="cat-btn ativo" data-cat="Lanches">🍔 Lanches</button>
-  <button class="cat-btn" data-cat="Bebidas">🥤 Bebidas</button>
-  <button class="cat-btn" data-cat="Adicionais">➕ Adicionais</button>
-  <button class="cat-btn" data-cat="Combos">📦 Combos</button>
-</div>
-
-<div class="container" id="cardapio">
-  <div class="carregando">Carregando cardápio...</div>
-</div>
-
-<div class="carrinho-barra">
-  <div class="carrinho-info">
-    <div class="carrinho-total" id="carrinho-total">R$ 0,00</div>
-    <div class="carrinho-itens" id="carrinho-qtd">Nenhum item selecionado</div>
-  </div>
-  <button class="btn-finalizar" id="btn-finalizar" onclick="abrirModal()" disabled>
-    Finalizar
-  </button>
-</div>
-
-<div class="modal-fundo" id="modal">
-  <div class="modal">
-    <button class="fechar-modal" onclick="fecharModal()">×</button>
-    <h2>📋 Resumo do Pedido</h2>
-    <div id="modal-itens"></div>
-    <div class="modal-obs">
-      <textarea id="observacao-pedido" placeholder="Observações (ex: retirar cebola, ponto da carne, etc.)"></textarea>
+    <!-- ==================================================
+         TELA DE SENHA
+    ================================================== -->
+    <div class="tela-senha" id="telaSenha">
+        <div class="caixa-senha">
+            <h2>🔒 Acesso restrito</h2>
+            <p>Digite a senha para entrar no painel administrativo</p>
+            <input type="password" id="campoSenha" placeholder="Senha" autocomplete="off">
+            <button class="btn-entrar" onclick="verificarSenha()">ENTRAR</button>
+            <div class="erro-senha" id="erroSenha">Senha incorreta. Tente novamente.</div>
+        </div>
     </div>
-    <div class="modal-total" id="modal-total">R$ 0,00</div>
-    <div class="modal-botoes">
-      <button class="modal-btn-cancelar" onclick="fecharModal()">Cancelar</button>
-      <button class="modal-btn-whatsapp" onclick="enviarWhatsApp()">📱 Enviar Pedido</button>
+
+    <div id="painelProtegido" class="painel-protegido">
+
+        <header>
+            <h1>👹 MONSTRO BURGUER</h1>
+            <p>Painel Administrativo</p>
+        </header>
+
+        <div class="painel">
+
+            <!-- ==================================================
+                 WHATSAPP
+            ================================================== -->
+            <h2 class="titulo">📲 WhatsApp dos Pedidos</h2>
+
+            <div class="whatsapp-box">
+                <div class="whatsapp-opcao" id="opcao1">
+                    <div class="whatsapp-numero">📱 14 99661-9487</div>
+                    <div class="whatsapp-tipo">WhatsApp Principal</div>
+                    <button class="btn-whatsapp" onclick="selecionarWhatsApp('5514996619487')">
+                        USAR ESTE NÚMERO
+                    </button>
+                </div>
+
+                <div class="whatsapp-opcao" id="opcao2">
+                    <div class="whatsapp-numero">📱 14 98114-1871</div>
+                    <div class="whatsapp-tipo">WhatsApp Secundário</div>
+                    <button class="btn-whatsapp" onclick="selecionarWhatsApp('5514981141871')">
+                        USAR ESTE NÚMERO
+                    </button>
+                </div>
+
+                <div id="statusWhatsApp" class="status-whatsapp">
+                    Carregando...
+                </div>
+            </div>
+
+            <!-- ==================================================
+                 STATUS DA LOJA
+            ================================================== -->
+            <h2 class="titulo">🚦 Status da Loja</h2>
+
+            <div class="whatsapp-box">
+                <div class="status-opcao" id="statusOpcaoAuto">
+                    <div class="status-opcao-titulo">🕒 Automático</div>
+                    <div class="whatsapp-tipo">Segue o horário de funcionamento (19h às 23:59)</div>
+                    <button class="btn-status btn-status-auto" onclick="definirStatusLoja('auto')">
+                        USAR AUTOMÁTICO
+                    </button>
+                </div>
+
+                <div class="status-opcao" id="statusOpcaoAberto">
+                    <div class="status-opcao-titulo">🟢 Forçar Aberto</div>
+                    <div class="whatsapp-tipo">Mostra ABERTO mesmo fora do horário</div>
+                    <button class="btn-status btn-status-aberto" onclick="definirStatusLoja('aberto')">
+                        FORÇAR ABERTO
+                    </button>
+                </div>
+
+                <div class="status-opcao" id="statusOpcaoFechado">
+                    <div class="status-opcao-titulo">🔴 Forçar Fechado</div>
+                    <div class="whatsapp-tipo">Mostra FECHADO mesmo dentro do horário</div>
+                    <button class="btn-status btn-status-fechado" onclick="definirStatusLoja('fechado')">
+                        FORÇAR FECHADO
+                    </button>
+                </div>
+
+                <div id="statusLojaAtual" class="status-whatsapp">
+                    Carregando...
+                </div>
+            </div>
+
+            <!-- ==================================================
+                 APARÊNCIA
+            ================================================== -->
+            <h2 class="titulo">🎨 Aparência do Monstro Burguer</h2>
+
+            <div class="aparencia-box">
+                <div class="aparencia-item">
+                    <div class="aparencia-titulo">🖼️ Logo do Monstro Burguer</div>
+                    <input type="file" id="logoADM" accept="image/*" onchange="selecionarLogo(event)">
+
+                    <div id="areaLogo">
+                        <div id="semLogo" class="sem-imagem">🖼️ Nenhuma logo cadastrada</div>
+                        <img id="previaLogo" class="preview-aparencia">
+                    </div>
+
+                    <button class="btn-remover" onclick="removerLogo()">REMOVER LOGO</button>
+                </div>
+
+                <div class="aparencia-item">
+                    <div class="aparencia-titulo">👹 Mascote do Monstro Burguer</div>
+                    <input type="file" id="mascoteADM" accept="image/*" onchange="selecionarMascote(event)">
+
+                    <div id="areaMascote">
+                        <div id="semMascote" class="sem-imagem">👹 Nenhum mascote cadastrado</div>
+                        <img id="previaMascote" class="preview-aparencia">
+                    </div>
+
+                    <button class="btn-remover" onclick="removerMascote()">REMOVER MASCOTE</button>
+                </div>
+            </div>
+
+            <!-- ==================================================
+                 PRODUTOS
+            ================================================== -->
+            <h2 class="titulo">🍔 Cadastro de Produto</h2>
+
+            <div class="formulario">
+                <input type="hidden" id="produtoId">
+
+                <label>Nome do produto</label>
+                <input type="text" id="nome" placeholder="Ex: X-Salada">
+
+                <label>Categoria</label>
+                <select id="categoria">
+                    <option value="Lanches">🍔 Lanches</option>
+                    <option value="Bebidas">🥤 Bebidas</option>
+                    <option value="Adicionais">➕ Adicionais</option>
+                    <option value="Combos">📦 Combos</option>
+                </select>
+
+                <label>Preço</label>
+                <input type="number" id="preco" placeholder="Ex: 17.90" step="0.01">
+
+                <label>Descrição</label>
+                <textarea id="descricao" placeholder="Descrição do produto"></textarea>
+
+                <label>📸 Foto do produto</label>
+                <input type="file" id="foto" accept="image/*" onchange="selecionarFoto(event)">
+
+                <div class="area-foto">
+                    <div id="semFoto" class="sem-foto">📷 Nenhuma foto selecionada</div>
+                    <img id="previaFoto" class="previa-foto">
+                </div>
+
+                <button class="btn btn-salvar" onclick="salvarProduto()">💾 SALVAR PRODUTO</button>
+                <button class="btn btn-limpar" onclick="limparFormulario()">LIMPAR</button>
+            </div>
+
+            <h2 class="titulo">📋 Produtos cadastrados</h2>
+            <div id="listaProdutos" class="produtos"></div>
+
+        </div>
+
     </div>
-  </div>
-</div>
 
-<script>
-/* ==================================================
-   WHATSAPP DOS PEDIDOS (Firestore: config/loja)
-   Começa com o número principal como padrão e é
-   atualizado em tempo real se o admin trocar.
-================================================== */
-let whatsappPedidos = "5514996619487";
+    <div id="mensagem" class="mensagem"></div>
 
-db.collection("config").doc("loja").onSnapshot(function(doc) {
-  if (doc.exists && doc.data().whatsapp) {
-    whatsappPedidos = doc.data().whatsapp;
-  }
-});
+    <script>
+        /* ==================================================
+           SENHA DE ACESSO
+           Obs: como o site é hospedado no GitHub Pages
+           (sem servidor), essa senha fica visível pra quem
+           inspecionar o código-fonte. Ela serve pra barrar
+           visitantes comuns, não é uma segurança "de banco".
+        ================================================== */
+        const SENHA_ADMIN = "Placido57";
 
-/* ==================================================
-   PRODUTOS (Firestore: coleção "produtos")
-================================================== */
-let todosProdutos = [];
-let carrinho = [];
-let categoriaAtiva = 'Lanches';
+        function verificarSenha() {
+            const campo = document.getElementById("campoSenha");
+            const erro = document.getElementById("erroSenha");
 
-const nomesCategoria = {
-  Lanches: '🍔 Lanches',
-  Bebidas: '🥤 Bebidas',
-  Adicionais: '➕ Adicionais',
-  Combos: '📦 Combos'
-};
+            if (campo.value === SENHA_ADMIN) {
+                sessionStorage.setItem("monstroAdmAutenticado", "sim");
+                document.getElementById("telaSenha").style.display = "none";
+                document.getElementById("painelProtegido").style.display = "block";
+            } else {
+                erro.style.display = "block";
+                campo.value = "";
+                campo.focus();
+            }
+        }
 
-window.onload = function(){
-  // Categoria vinda da tela inicial (index.html), se houver
-  const catSalva = sessionStorage.getItem('categoriaInicial');
-  if (catSalva && nomesCategoria[catSalva]) {
-    categoriaAtiva = catSalva;
-    document.querySelectorAll('.cat-btn').forEach(function(b){
-      b.classList.toggle('ativo', b.dataset.cat === catSalva);
-    });
-    sessionStorage.removeItem('categoriaInicial');
-  }
+        document.getElementById("campoSenha").addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                verificarSenha();
+            }
+        });
 
-  configurarCategorias();
+        if (sessionStorage.getItem("monstroAdmAutenticado") === "sim") {
+            document.getElementById("telaSenha").style.display = "none";
+            document.getElementById("painelProtegido").style.display = "block";
+        }
 
-  db.collection("produtos")
-    .where("ativo", "==", true)
-    .onSnapshot(function(snapshot) {
-      todosProdutos = [];
-      snapshot.forEach(function(doc) {
-        todosProdutos.push(Object.assign({ id: doc.id }, doc.data()));
-      });
-      renderizarCardapio();
-    }, function(erro) {
-      document.getElementById('cardapio').innerHTML =
-        '<div class="vazio">Não foi possível carregar o cardápio agora. Tente novamente em instantes.</div>';
-    });
-};
+        /* ==================================================
+           CONFIG DA LOJA (Firestore: config/loja)
+           whatsapp, statusLoja, logo e mascote ficam
+           guardados nesse único documento.
+        ================================================== */
+        const configRef = db.collection("config").doc("loja");
 
-function renderizarCardapio(){
-  const container = document.getElementById('cardapio');
-  const itens = todosProdutos.filter(function(p){ return p.categoria === categoriaAtiva; });
+        let whatsappAtivo = "5514996619487";
+        let statusLoja = "auto";
 
-  const titulo = nomesCategoria[categoriaAtiva] || categoriaAtiva;
+        configRef.onSnapshot(function(doc) {
+            if (doc.exists) {
+                const dados = doc.data();
 
-  if (itens.length === 0) {
-    container.innerHTML =
-      '<h3 class="categoria-titulo">' + titulo + '</h3>' +
-      '<div class="vazio">Nenhum item cadastrado nessa categoria ainda.</div>';
-    atualizarCarrinho();
-    return;
-  }
+                whatsappAtivo = dados.whatsapp || "5514996619487";
+                statusLoja = dados.statusLoja || "auto";
 
-  let html = '<h3 class="categoria-titulo">' + titulo + '</h3>';
+                atualizarWhatsAppVisual();
+                atualizarStatusLojaVisual();
 
-  itens.forEach(function(item){
-    const noCarrinho = carrinho.find(function(i){ return i.id === item.id; });
-    const qtd = noCarrinho ? noCarrinho.quantidade : 0;
-    const selecionado = qtd > 0;
-    const preco = Number(item.preco) || 0;
-    const fotoHTML = item.foto ? '<img src="' + item.foto + '" class="item-foto" alt="' + item.nome + '">' : '';
+                if (dados.logo) {
+                    mostrarLogo(dados.logo);
+                } else {
+                    document.getElementById("previaLogo").style.display = "none";
+                    document.getElementById("semLogo").style.display = "flex";
+                }
 
-    html += '<div class="item ' + (selecionado ? 'selecionado' : '') + '">' +
-        fotoHTML +
-        '<div class="item-cima">' +
-          '<div class="item-nome">' + item.nome + '</div>' +
-          '<div class="item-preco">R$ ' + preco.toFixed(2).replace('.',',') + '</div>' +
-        '</div>' +
-        '<div class="item-descricao">' + (item.descricao || '') + '</div>' +
-        '<div class="item-baixo">' +
-          '<button class="btn-selecionar ' + (selecionado ? 'selecionado' : '') + '" onclick="alternarItem(\'' + item.id + '\')">' +
-            (selecionado ? 'Selecionado' : 'Selecionar') +
-          '</button>' +
-          '<div class="quantidade-controle">' +
-            '<button class="qtd-btn menos" onclick="alterarQtd(\'' + item.id + '\', -1)">−</button>' +
-            '<span class="qtd-num">' + qtd + '</span>' +
-            '<button class="qtd-btn mais" onclick="alterarQtd(\'' + item.id + '\', 1)">+</button>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-  });
+                if (dados.mascote) {
+                    mostrarMascote(dados.mascote);
+                } else {
+                    document.getElementById("previaMascote").style.display = "none";
+                    document.getElementById("semMascote").style.display = "flex";
+                }
+            } else {
+                configRef.set({ whatsapp: whatsappAtivo, statusLoja: statusLoja });
+            }
+        }, function(erro) {
+            mostrarMensagem("Erro ao conectar no Firestore: " + erro.message);
+        });
 
-  container.innerHTML = html;
-  atualizarCarrinho();
-}
+        function atualizarWhatsAppVisual() {
+            let opcao1 = document.getElementById("opcao1");
+            let opcao2 = document.getElementById("opcao2");
+            let status = document.getElementById("statusWhatsApp");
 
-function configurarCategorias(){
-  document.querySelectorAll('.cat-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('.cat-btn').forEach(function(b){ b.classList.remove('ativo'); });
-      this.classList.add('ativo');
-      categoriaAtiva = this.dataset.cat;
-      renderizarCardapio();
-      window.scrollTo({top:0, behavior:'smooth'});
-    });
-  });
-}
+            opcao1.classList.remove("ativo");
+            opcao2.classList.remove("ativo");
 
-function alternarItem(id){
-  const item = todosProdutos.find(function(i){ return i.id === id; });
-  if (!item) return;
-  const noCarrinho = carrinho.find(function(i){ return i.id === id; });
+            if (whatsappAtivo === "5514996619487") {
+                opcao1.classList.add("ativo");
+                status.innerText = "🟢 Pedidos serão enviados para o PRINCIPAL";
+            } else {
+                opcao2.classList.add("ativo");
+                status.innerText = "🟢 Pedidos serão enviados para o SECUNDÁRIO";
+            }
+        }
 
-  if(noCarrinho){
-    carrinho = carrinho.filter(function(i){ return i.id !== id; });
-  } else {
-    carrinho.push({id: item.id, nome: item.nome, preco: Number(item.preco) || 0, quantidade: 1});
-  }
-  renderizarCardapio();
-}
+        function selecionarWhatsApp(numero) {
+            configRef.set({ whatsapp: numero }, { merge: true })
+                .then(function() {
+                    mostrarMensagem("WhatsApp dos pedidos alterado!");
+                })
+                .catch(function(erro) {
+                    mostrarMensagem("Erro ao salvar: " + erro.message);
+                });
+        }
 
-function alterarQtd(id, delta){
-  const item = carrinho.find(function(i){ return i.id === id; });
-  if(!item) return;
+        /* ==================================================
+           STATUS DA LOJA (aberto / fechado / automático)
+        ================================================== */
+        function definirStatusLoja(valor) {
+            configRef.set({ statusLoja: valor }, { merge: true })
+                .then(function() {
+                    if (valor === "auto") {
+                        mostrarMensagem("Status voltou pro automático!");
+                    } else if (valor === "aberto") {
+                        mostrarMensagem("Loja forçada como ABERTA!");
+                    } else {
+                        mostrarMensagem("Loja forçada como FECHADA!");
+                    }
+                })
+                .catch(function(erro) {
+                    mostrarMensagem("Erro ao salvar: " + erro.message);
+                });
+        }
 
-  item.quantidade += delta;
-  if(item.quantidade <= 0){
-    carrinho = carrinho.filter(function(i){ return i.id !== id; });
-  }
-  renderizarCardapio();
-}
+        function atualizarStatusLojaVisual() {
+            let opAuto = document.getElementById("statusOpcaoAuto");
+            let opAberto = document.getElementById("statusOpcaoAberto");
+            let opFechado = document.getElementById("statusOpcaoFechado");
+            let atual = document.getElementById("statusLojaAtual");
 
-function atualizarCarrinho(){
-  const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
-  const qtdItens = carrinho.reduce(function(s, i){ return s + i.quantidade; }, 0);
+            opAuto.classList.remove("ativo-aberto", "ativo-fechado");
+            opAberto.classList.remove("ativo-aberto", "ativo-fechado");
+            opFechado.classList.remove("ativo-aberto", "ativo-fechado");
 
-  document.getElementById('carrinho-total').textContent = 'R$ ' + total.toFixed(2).replace('.',',');
-  document.getElementById('carrinho-qtd').textContent =
-    qtdItens === 0 ? 'Nenhum item selecionado' :
-    qtdItens + ' item' + (qtdItens > 1 ? 's' : '') + ' selecionado' + (qtdItens > 1 ? 's' : '');
-  document.getElementById('btn-finalizar').disabled = qtdItens === 0;
-}
+            if (statusLoja === "aberto") {
+                opAberto.classList.add("ativo-aberto");
+                atual.innerText = "🟢 Loja marcada como ABERTA manualmente";
+            } else if (statusLoja === "fechado") {
+                opFechado.classList.add("ativo-fechado");
+                atual.innerText = "🔴 Loja marcada como FECHADA manualmente";
+            } else {
+                opAuto.classList.add("ativo-aberto");
+                atual.innerText = "🕒 Seguindo o horário automático (19h às 23:59)";
+            }
+        }
 
-function abrirModal(){
-  if(carrinho.length === 0) return;
-  const itensDiv = document.getElementById('modal-itens');
-  const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
+        /* ==================================================
+           LOGO
+        ================================================== */
+        function selecionarLogo(event) {
+            let arquivo = event.target.files[0];
+            if (!arquivo) return;
 
-  itensDiv.innerHTML = carrinho.map(function(i){
-    return '<div class="modal-item"><span>' + i.quantidade + 'x ' + i.nome + '</span>' +
-           '<span>R$ ' + (i.preco * i.quantidade).toFixed(2).replace('.',',') + '</span></div>';
-  }).join('');
+            let leitor = new FileReader();
+            leitor.onload = function(e) {
+                let img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    let canvas = document.createElement("canvas");
+                    let ctx = canvas.getContext("2d");
+                    let maxLargura = 400;
+                    let escala = maxLargura / img.width;
 
-  document.getElementById('modal-total').innerHTML = '<strong>TOTAL: R$ ' + total.toFixed(2).replace('.',',') + '</strong>';
-  document.getElementById('modal').classList.add('modal-aberto');
-}
+                    if (escala < 1) {
+                        canvas.width = maxLargura;
+                        canvas.height = img.height * escala;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
 
-function fecharModal(){
-  document.getElementById('modal').classList.remove('modal-aberto');
-}
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    let logoComprimida = canvas.toDataURL("image/jpeg", 0.8);
 
-function enviarWhatsApp(){
-  if(carrinho.length === 0) return;
-  const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
-  const obs = document.getElementById('observacao-pedido').value.trim();
+                    configRef.set({ logo: logoComprimida }, { merge: true })
+                        .then(function() {
+                            mostrarMensagem("Logo salva!");
+                        })
+                        .catch(function(erro) {
+                            mostrarMensagem("Erro ao salvar: " + erro.message);
+                        });
+                };
+            };
+            leitor.readAsDataURL(arquivo);
+        }
 
-  let texto = 'PEDIDO - MONSTRO BURGUER\n\nITENS DO PEDIDO:\n';
+        function mostrarLogo(imagem) {
+            let previa = document.getElementById("previaLogo");
+            let semLogo = document.getElementById("semLogo");
+            previa.src = imagem;
+            previa.style.display = "block";
+            semLogo.style.display = "none";
+        }
 
-  carrinho.forEach(function(i){
-    const subtotal = (i.preco * i.quantidade).toFixed(2).replace('.',',');
-    texto += i.quantidade + 'x ' + i.nome + ' - R$ ' + subtotal + '\n';
-  });
+        function removerLogo() {
+            configRef.set({ logo: firebase.firestore.FieldValue.delete() }, { merge: true })
+                .then(function() {
+                    document.getElementById("logoADM").value = "";
+                    mostrarMensagem("Logo removida!");
+                })
+                .catch(function(erro) {
+                    mostrarMensagem("Erro ao remover: " + erro.message);
+                });
+        }
 
-  if(obs){
-    texto += '\nOBSERVAÇÕES:\n' + obs + '\n';
-  }
+        /* ==================================================
+           MASCOTE
+        ================================================== */
+        function selecionarMascote(event) {
+            let arquivo = event.target.files[0];
+            if (!arquivo) return;
 
-  texto += '\nTOTAL: R$ ' + total.toFixed(2).replace('.',',') + '\n\n';
-  texto += 'Pode me chamar pra confirmar! Obrigado!';
+            let leitor = new FileReader();
+            leitor.onload = function(e) {
+                let img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    let canvas = document.createElement("canvas");
+                    let ctx = canvas.getContext("2d");
+                    let maxLargura = 400;
+                    let escala = maxLargura / img.width;
 
-  const url = 'https://wa.me/' + whatsappPedidos + '?text=' + encodeURIComponent(texto);
-  window.open(url, '_blank');
-  fecharModal();
-}
+                    if (escala < 1) {
+                        canvas.width = maxLargura;
+                        canvas.height = img.height * escala;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
 
-document.getElementById('modal').addEventListener('click', function(e){
-  if(e.target === this) fecharModal();
-});
-</script>
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    let mascoteComprimido = canvas.toDataURL("image/jpeg", 0.8);
 
+                    configRef.set({ mascote: mascoteComprimido }, { merge: true })
+                        .then(function() {
+                            mostrarMensagem("Mascote salvo!");
+                        })
+                        .catch(function(erro) {
+                            mostrarMensagem("Erro ao salvar: " + erro.message);
+                        });
+                };
+            };
+            leitor.readAsDataURL(arquivo);
+        }
+
+        function mostrarMascote(imagem) {
+            let previa = document.getElementById("previaMascote");
+            let semMascote = document.getElementById("semMascote");
+            previa.src = imagem;
+            previa.style.display = "block";
+            semMascote.style.display = "none";
+        }
+
+        function removerMascote() {
+            configRef.set({ mascote: firebase.firestore.FieldValue.delete() }, { merge: true })
+                .then(function() {
+                    document.getElementById("mascoteADM").value = "";
+                    mostrarMensagem("Mascote removido!");
+                })
+                .catch(function(erro) {
+                    mostrarMensagem("Erro ao remover: " + erro.message);
+                });
+        }
+
+        /* ==================================================
+           PRODUTOS (Firestore: coleção "produtos")
+        ================================================== */
+        const produtosRef = db.collection("produtos");
+        let produtos = [];
+        let fotoSelecionada = "";
+
+        produtosRef.orderBy("criadoEm", "desc").onSnapshot(function(snapshot) {
+            produtos = [];
+            snapshot.forEach(function(doc) {
+                produtos.push(Object.assign({ id: doc.id }, doc.data()));
+            });
+            mostrarProdutos();
+        }, function(erro) {
+            mostrarMensagem("Erro ao carregar produtos: " + erro.message);
+        });
+
+        // Seleciona a foto e comprime automaticamente para evitar estouro do LocalStorage
+        function selecionarFoto(event) {
+            let arquivo = event.target.files[0];
+            if (!arquivo) return;
+
+            let leitor = new FileReader();
+            leitor.onload = function(e) {
+                let img = new Image();
+                img.src = e.target.result;
+
+                img.onload = function() {
+                    let canvas = document.createElement("canvas");
+                    let ctx = canvas.getContext("2d");
+                    let maxLargura = 600;
+                    let escala = maxLargura / img.width;
+
+                    if (escala < 1) {
+                        canvas.width = maxLargura;
+                        canvas.height = img.height * escala;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
+
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    fotoSelecionada = canvas.toDataURL("image/jpeg", 0.7);
+
+                    let previa = document.getElementById("previaFoto");
+                    let semFoto = document.getElementById("semFoto");
+
+                    previa.src = fotoSelecionada;
+                    previa.style.display = "block";
+                    semFoto.style.display = "none";
+                };
+            };
+            leitor.readAsDataURL(arquivo);
+        }
+
+        function salvarProduto() {
+            let id = document.getElementById("produtoId").value;
+            let nome = document.getElementById("nome").value.trim();
+            let categoria = document.getElementById("categoria").value;
+            let preco = parseFloat(document.getElementById("preco").value);
+            let descricao = document.getElementById("descricao").value.trim();
+
+            if (!nome) {
+                mostrarMensagem("Digite o nome do produto.");
+                return;
+            }
+
+            if (isNaN(preco)) {
+                mostrarMensagem("Digite um preço válido.");
+                return;
+            }
+
+            let dadosProduto = {
+                nome: nome,
+                categoria: categoria,
+                preco: preco,
+                descricao: descricao
+            };
+
+            if (fotoSelecionada) {
+                dadosProduto.foto = fotoSelecionada;
+            }
+
+            if (id) {
+                produtosRef.doc(id).update(dadosProduto)
+                    .then(function() {
+                        mostrarMensagem("Produto atualizado!");
+                        limparFormulario();
+                    })
+                    .catch(function(erro) {
+                        mostrarMensagem("Erro ao salvar: " + erro.message);
+                    });
+            } else {
+                dadosProduto.foto = fotoSelecionada;
+                dadosProduto.ativo = true;
+                dadosProduto.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+
+                produtosRef.add(dadosProduto)
+                    .then(function() {
+                        mostrarMensagem("Produto cadastrado!");
+                        limparFormulario();
+                    })
+                    .catch(function(erro) {
+                        mostrarMensagem("Erro ao salvar: " + erro.message);
+                    });
+            }
+        }
+
+        function mostrarProdutos() {
+            let lista = document.getElementById("listaProdutos");
+            lista.innerHTML = "";
+
+            if (produtos.length === 0) {
+                lista.innerHTML = `<div class="produto">Nenhum produto cadastrado ainda.</div>`;
+                return;
+            }
+
+            produtos.forEach(function(produto) {
+                let div = document.createElement("div");
+                div.className = "produto";
+
+                if (!produto.ativo) {
+                    div.classList.add("inativo");
+                }
+
+                let fotoHTML = produto.foto ? `<img src="${produto.foto}" class="produto-foto" alt="${produto.nome}">` : '';
+
+                div.innerHTML = `
+                    ${fotoHTML}
+                    <h3>${produto.nome}</h3>
+                    <div class="produto-info">
+                        Categoria: ${produto.categoria}<br>
+                        Preço: R$ ${Number(produto.preco).toFixed(2).replace(".", ",")}<br>
+                        ${produto.descricao || ""}<br><br>
+                        Status: ${produto.ativo ? "🟢 Ativo" : "⚪ Desativado"}
+                    </div>
+                    <div class="acoes">
+                        <button class="editar" onclick="editarProduto('${produto.id}')">✏️ EDITAR</button>
+                        <button class="${produto.ativo ? 'desativar' : 'ativar'}" onclick="alternarProduto('${produto.id}')">
+                            ${produto.ativo ? '🔴 DESATIVAR' : '🟢 ATIVAR'}
+                        </button>
+                        <button class="excluir" onclick="excluirProduto('${produto.id}')">🗑️ EXCLUIR</button>
+                    </div>
+                `;
+
+                lista.appendChild(div);
+            });
+        }
+
+        function editarProduto(id) {
+            let produto = produtos.find(item => item.id === id);
+            if (!produto) return;
+
+            document.getElementById("produtoId").value = produto.id;
+            document.getElementById("nome").value = produto.nome;
+            document.getElementById("categoria").value = produto.categoria;
+            document.getElementById("preco").value = produto.preco;
+            document.getElementById("descricao").value = produto.descricao;
+            fotoSelecionada = produto.foto || "";
+
+            let previa = document.getElementById("previaFoto");
+            let semFoto = document.getElementById("semFoto");
+
+            if (produto.foto) {
+                previa.src = produto.foto;
+                previa.style.display = "block";
+                semFoto.style.display = "none";
+            } else {
+                previa.style.display = "none";
+                semFoto.style.display = "flex";
+            }
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function alternarProduto(id) {
+            let produto = produtos.find(item => item.id === id);
+            if (!produto) return;
+
+            produtosRef.doc(id).update({ ativo: !produto.ativo })
+                .then(function() {
+                    mostrarMensagem(!produto.ativo ? "Produto ativado!" : "Produto desativado!");
+                })
+                .catch(function(erro) {
+                    mostrarMensagem("Erro ao salvar: " + erro.message);
+                });
+        }
+
+        function excluirProduto(id) {
+            if (!confirm("Tem certeza que deseja excluir este produto do cardápio?")) {
+                return;
+            }
+
+            let idAtual = document.getElementById("produtoId").value;
+            if (idAtual == id) {
+                limparFormulario();
+            }
+
+            produtosRef.doc(id).delete()
+                .then(function() {
+                    mostrarMensagem("Produto excluído!");
+                })
+                .catch(function(erro) {
+                    mostrarMensagem("Erro ao excluir: " + erro.message);
+                });
+        }
+
+        function limparFormulario() {
+            document.getElementById("produtoId").value = "";
+            document.getElementById("nome").value = "";
+            document.getElementById("preco").value = "";
+            document.getElementById("descricao").value = "";
+            document.getElementById("categoria").value = "Lanches";
+            document.getElementById("foto").value = "";
+            fotoSelecionada = "";
+            document.getElementById("previaFoto").style.display = "none";
+            document.getElementById("semFoto").style.display = "flex";
+        }
+
+        /* ==================================================
+           MENSAGEM
+        ================================================== */
+        function mostrarMensagem(texto) {
+            let mensagem = document.getElementById("mensagem");
+            mensagem.innerText = "✓ " + texto;
+            mensagem.style.display = "block";
+            setTimeout(function() {
+                mensagem.style.display = "none";
+            }, 2000);
+        }
+
+        /* ==================================================
+           INICIAR
+           (whatsapp, status, aparência e produtos já são
+           carregados automaticamente pelos listeners do
+           Firestore acima, assim que a conexão responde)
+        ================================================== */
+        mostrarProdutos();
+    </script>
 </body>
+
 </html>
