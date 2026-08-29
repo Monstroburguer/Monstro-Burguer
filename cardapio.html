@@ -9,6 +9,24 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+<!-- Firebase (Firestore) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCNWFiB87wlWkaMRZkw3lp8htcf6ubG7ks",
+    authDomain: "monstro-burguer-40b02.firebaseapp.com",
+    projectId: "monstro-burguer-40b02",
+    storageBucket: "monstro-burguer-40b02.firebasestorage.app",
+    messagingSenderId: "569343783289",
+    appId: "1:569343783289:web:3523028ddad73743cfffa8",
+    measurementId: "G-2HJWJY7JVH"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Rajdhani',Arial,sans-serif;-webkit-tap-highlight-color:transparent}
 :root{
@@ -126,6 +144,14 @@ body::before{
 }
 .categoria-titulo::before{content:"// "}
 
+.carregando,.vazio{
+  font-family:var(--mono);
+  font-size:13px;
+  color:rgba(234,246,255,0.45);
+  text-align:center;
+  padding:40px 10px;
+}
+
 .item{
   background:var(--card);
   clip-path:polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
@@ -137,6 +163,14 @@ body::before{
 .item.selecionado{
   border-color:var(--verde);
   box-shadow:0 0 18px rgba(57,255,136,0.35), inset 0 0 14px rgba(57,255,136,0.06);
+}
+.item-foto{
+  width:100%;
+  height:150px;
+  object-fit:cover;
+  border-radius:8px;
+  margin-bottom:10px;
+  border:1px solid rgba(0,229,255,0.2);
 }
 .item-cima{
   display:flex;
@@ -158,15 +192,6 @@ body::before{
   color:var(--verde);
   text-shadow:0 0 6px rgba(57,255,136,0.5);
   white-space:nowrap;
-}
-.item.preco-promo .item-preco{
-  color:var(--dourado);
-  text-shadow:0 0 8px var(--dourado);
-  animation:pulsarDourado 1.5s infinite alternate;
-}
-@keyframes pulsarDourado{
-  from{text-shadow:0 0 6px var(--dourado)}
-  to{text-shadow:0 0 15px var(--dourado), 0 0 22px var(--dourado)}
 }
 .item-descricao{
   font-size:13px;
@@ -386,13 +411,15 @@ body::before{
 </div>
 
 <div class="categorias">
-  <button class="cat-btn ativo" data-cat="lanches">🍔 Lanches</button>
-  <button class="cat-btn" data-cat="bebidas">🥤 Bebidas</button>
-  <button class="cat-btn" data-cat="adicionais">➕ Adicionais</button>
-  <button class="cat-btn" data-cat="combos">📦 Combos</button>
+  <button class="cat-btn ativo" data-cat="Lanches">🍔 Lanches</button>
+  <button class="cat-btn" data-cat="Bebidas">🥤 Bebidas</button>
+  <button class="cat-btn" data-cat="Adicionais">➕ Adicionais</button>
+  <button class="cat-btn" data-cat="Combos">📦 Combos</button>
 </div>
 
-<div class="container" id="cardapio"></div>
+<div class="container" id="cardapio">
+  <div class="carregando">Carregando cardápio...</div>
+</div>
 
 <div class="carrinho-barra">
   <div class="carrinho-info">
@@ -421,103 +448,103 @@ body::before{
 </div>
 
 <script>
-const cardapio = {
-  lanches: [
-    {id:1, nome:"X-Burguer Monstro", preco:28.00, desc:"Hamburguer artesanal, queijo, alface, tomate, molho especial"},
-    {id:2, nome:"X-Catupiry", preco:21.00, desc:"Hamburguer, catupiry, queijo, bacon, molho", promo:true},
-    {id:3, nome:"X-Bacon Duplo", preco:34.00, desc:"Dois hamburgueres, bacon em dobro, queijo, molho defumado"},
-    {id:4, nome:"X-Tudo Monstro", preco:42.00, desc:"Tudo que temos! Carne, frango, calabresa, bacon, queijo, ovo, salada"},
-    {id:5, nome:"X-Salada", preco:25.00, desc:"Hamburguer, queijo, salada fresca"},
-    {id:6, nome:"X-Frango", preco:26.00, desc:"File de frango grelhado, queijo, salada, molho de alho"},
-    {id:7, nome:"Calabresa Especial", preco:30.00, desc:"Calabresa fatiada, queijo, cebola caramelizada, molho"},
-    {id:8, nome:"X-Egg", preco:27.00, desc:"Hamburguer, ovo frito, queijo, bacon, salada"},
-    {id:9, nome:"Monstro Duplo", preco:38.00, desc:"Dois hamburgueres artesanais, queijo cheddar, cebola roxa"},
-    {id:10, nome:"X-Costela", preco:35.00, desc:"Costela desfiada, queijo, molho barbecue, salada"},
-    {id:11, nome:"X-Cheddar Bacon", preco:33.00, desc:"Cheddar cremoso, bacon crocante, hamburguer, molho"},
-    {id:12, nome:"Super Monstro", preco:31.00, desc:"Hamburguer gigante, queijo, bacon, ovo, calabresa, salada", promo:true}
-  ],
-  bebidas: [
-    {id:101, nome:"Refrigerante Lata", preco:5.00, desc:"Coca-Cola, Guarana Antarctica, Fanta"},
-    {id:102, nome:"Refrigerante 1L", preco:9.00, desc:"Gelado, escolha o sabor"},
-    {id:103, nome:"Refrigerante 2L", preco:13.00, desc:"Pra familia toda!"},
-    {id:104, nome:"Suco Natural 500ml", preco:8.00, desc:"Laranja, maracuja, caju, goiaba"},
-    {id:105, nome:"Suco Natural 1L", preco:14.00, desc:"Fruta fresca, sem acucar"},
-    {id:106, nome:"Agua sem gas", preco:3.00, desc:"500ml"},
-    {id:107, nome:"Agua com gas", preco:3.50, desc:"500ml"}
-  ],
-  adicionais: [
-    {id:201, nome:"Batata Frita P", preco:8.00, desc:"Crocante e sequinha"},
-    {id:202, nome:"Batata Frita M", preco:12.00, desc:"Porcao media"},
-    {id:203, nome:"Batata Frita G", preco:16.00, desc:"Porcao familia"},
-    {id:204, nome:"Bacon Extra", preco:5.00, desc:"Bacon crocante adicional"},
-    {id:205, nome:"Queijo Extra", preco:4.00, desc:"Fatia extra de queijo"},
-    {id:206, nome:"Ovo Frito", preco:3.50, desc:"Ovo frito adicional"},
-    {id:207, nome:"Catupiry Extra", preco:5.00, desc:"Requeijao cremoso extra"},
-    {id:208, nome:"Molho Especial", preco:2.00, desc:"Molho da casa extra"}
-  ],
-  combos: [
-    {id:301, nome:"Combo 1 — X-Burguer + Refri", preco:30.00, desc:"X-Burguer + Refri lata + Batata P"},
-    {id:302, nome:"Combo 2 — X-Tudo + Refri", preco:48.00, desc:"X-Tudo + Refri 1L + Batata M"},
-    {id:303, nome:"Combo Familia", preco:85.00, desc:"2 X-Tudo + 1 X-Bacon + 2 Refri 1L + Batata G"},
-    {id:304, nome:"Combo Duplo", preco:55.00, desc:"2 Lanches a escolher + 2 Refri lata + Batata M"}
-  ]
+/* ==================================================
+   WHATSAPP DOS PEDIDOS (Firestore: config/loja)
+   Começa com o número principal como padrão e é
+   atualizado em tempo real se o admin trocar.
+================================================== */
+let whatsappPedidos = "5514996619487";
+
+db.collection("config").doc("loja").onSnapshot(function(doc) {
+  if (doc.exists && doc.data().whatsapp) {
+    whatsappPedidos = doc.data().whatsapp;
+  }
+});
+
+/* ==================================================
+   PRODUTOS (Firestore: coleção "produtos")
+================================================== */
+let todosProdutos = [];
+let carrinho = [];
+let categoriaAtiva = 'Lanches';
+
+const nomesCategoria = {
+  Lanches: '🍔 Lanches',
+  Bebidas: '🥤 Bebidas',
+  Adicionais: '➕ Adicionais',
+  Combos: '📦 Combos'
 };
 
-let carrinho = [];
-let categoriaAtiva = 'lanches';
-
 window.onload = function(){
-  // Checa se veio alguma categoria salva na página de início
-  const catSalva = localStorage.getItem('categoriaInicial');
-  if(catSalva && cardapio[catSalva]){
+  // Categoria vinda da tela inicial (index.html), se houver
+  const catSalva = sessionStorage.getItem('categoriaInicial');
+  if (catSalva && nomesCategoria[catSalva]) {
     categoriaAtiva = catSalva;
     document.querySelectorAll('.cat-btn').forEach(function(b){
       b.classList.toggle('ativo', b.dataset.cat === catSalva);
     });
-    localStorage.removeItem('categoriaInicial');
+    sessionStorage.removeItem('categoriaInicial');
   }
-  
-  renderizarCardapio();
+
   configurarCategorias();
+
+  db.collection("produtos")
+    .where("ativo", "==", true)
+    .onSnapshot(function(snapshot) {
+      todosProdutos = [];
+      snapshot.forEach(function(doc) {
+        todosProdutos.push(Object.assign({ id: doc.id }, doc.data()));
+      });
+      renderizarCardapio();
+    }, function(erro) {
+      document.getElementById('cardapio').innerHTML =
+        '<div class="vazio">Não foi possível carregar o cardápio agora. Tente novamente em instantes.</div>';
+    });
 };
 
 function renderizarCardapio(){
   const container = document.getElementById('cardapio');
-  const itens = cardapio[categoriaAtiva];
-  
-  const titulo = {
-    lanches: '🍔 Lanches',
-    bebidas: '🥤 Bebidas',
-    adicionais: '➕ Adicionais',
-    combos: '📦 Combos'
-  }[categoriaAtiva];
-  
+  const itens = todosProdutos.filter(function(p){ return p.categoria === categoriaAtiva; });
+
+  const titulo = nomesCategoria[categoriaAtiva] || categoriaAtiva;
+
+  if (itens.length === 0) {
+    container.innerHTML =
+      '<h3 class="categoria-titulo">' + titulo + '</h3>' +
+      '<div class="vazio">Nenhum item cadastrado nessa categoria ainda.</div>';
+    atualizarCarrinho();
+    return;
+  }
+
   let html = '<h3 class="categoria-titulo">' + titulo + '</h3>';
-  
+
   itens.forEach(function(item){
     const noCarrinho = carrinho.find(function(i){ return i.id === item.id; });
     const qtd = noCarrinho ? noCarrinho.quantidade : 0;
     const selecionado = qtd > 0;
-    
-    html += '<div class="item ' + (selecionado ? 'selecionado' : '') + ' ' + (item.promo ? 'preco-promo' : '') + '">' +
+    const preco = Number(item.preco) || 0;
+    const fotoHTML = item.foto ? '<img src="' + item.foto + '" class="item-foto" alt="' + item.nome + '">' : '';
+
+    html += '<div class="item ' + (selecionado ? 'selecionado' : '') + '">' +
+        fotoHTML +
         '<div class="item-cima">' +
-          '<div class="item-nome">' + item.nome + (item.promo ? ' 🔥' : '') + '</div>' +
-          '<div class="item-preco">R$ ' + item.preco.toFixed(2).replace('.',',') + '</div>' +
+          '<div class="item-nome">' + item.nome + '</div>' +
+          '<div class="item-preco">R$ ' + preco.toFixed(2).replace('.',',') + '</div>' +
         '</div>' +
-        '<div class="item-descricao">' + item.desc + '</div>' +
+        '<div class="item-descricao">' + (item.descricao || '') + '</div>' +
         '<div class="item-baixo">' +
-          '<button class="btn-selecionar ' + (selecionado ? 'selecionado' : '') + '" onclick="alternarItem(' + item.id + ')">' + 
-            (selecionado ? 'Selecionado' : 'Selecionar') + 
+          '<button class="btn-selecionar ' + (selecionado ? 'selecionado' : '') + '" onclick="alternarItem(\'' + item.id + '\')">' +
+            (selecionado ? 'Selecionado' : 'Selecionar') +
           '</button>' +
           '<div class="quantidade-controle">' +
-            '<button class="qtd-btn menos" onclick="alterarQtd(' + item.id + ', -1)">−</button>' +
+            '<button class="qtd-btn menos" onclick="alterarQtd(\'' + item.id + '\', -1)">−</button>' +
             '<span class="qtd-num">' + qtd + '</span>' +
-            '<button class="qtd-btn mais" onclick="alterarQtd(' + item.id + ', 1)">+</button>' +
+            '<button class="qtd-btn mais" onclick="alterarQtd(\'' + item.id + '\', 1)">+</button>' +
           '</div>' +
         '</div>' +
       '</div>';
   });
-  
+
   container.innerHTML = html;
   atualizarCarrinho();
 }
@@ -535,13 +562,14 @@ function configurarCategorias(){
 }
 
 function alternarItem(id){
-  const item = cardapio[categoriaAtiva].find(function(i){ return i.id === id; });
+  const item = todosProdutos.find(function(i){ return i.id === id; });
+  if (!item) return;
   const noCarrinho = carrinho.find(function(i){ return i.id === id; });
-  
+
   if(noCarrinho){
     carrinho = carrinho.filter(function(i){ return i.id !== id; });
   } else {
-    carrinho.push({id: item.id, nome: item.nome, preco: item.preco, quantidade: 1});
+    carrinho.push({id: item.id, nome: item.nome, preco: Number(item.preco) || 0, quantidade: 1});
   }
   renderizarCardapio();
 }
@@ -549,7 +577,7 @@ function alternarItem(id){
 function alterarQtd(id, delta){
   const item = carrinho.find(function(i){ return i.id === id; });
   if(!item) return;
-  
+
   item.quantidade += delta;
   if(item.quantidade <= 0){
     carrinho = carrinho.filter(function(i){ return i.id !== id; });
@@ -560,10 +588,10 @@ function alterarQtd(id, delta){
 function atualizarCarrinho(){
   const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
   const qtdItens = carrinho.reduce(function(s, i){ return s + i.quantidade; }, 0);
-  
+
   document.getElementById('carrinho-total').textContent = 'R$ ' + total.toFixed(2).replace('.',',');
-  document.getElementById('carrinho-qtd').textContent = 
-    qtdItens === 0 ? 'Nenhum item selecionado' : 
+  document.getElementById('carrinho-qtd').textContent =
+    qtdItens === 0 ? 'Nenhum item selecionado' :
     qtdItens + ' item' + (qtdItens > 1 ? 's' : '') + ' selecionado' + (qtdItens > 1 ? 's' : '');
   document.getElementById('btn-finalizar').disabled = qtdItens === 0;
 }
@@ -572,12 +600,12 @@ function abrirModal(){
   if(carrinho.length === 0) return;
   const itensDiv = document.getElementById('modal-itens');
   const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
-  
+
   itensDiv.innerHTML = carrinho.map(function(i){
     return '<div class="modal-item"><span>' + i.quantidade + 'x ' + i.nome + '</span>' +
            '<span>R$ ' + (i.preco * i.quantidade).toFixed(2).replace('.',',') + '</span></div>';
   }).join('');
-  
+
   document.getElementById('modal-total').innerHTML = '<strong>TOTAL: R$ ' + total.toFixed(2).replace('.',',') + '</strong>';
   document.getElementById('modal').classList.add('modal-aberto');
 }
@@ -590,22 +618,22 @@ function enviarWhatsApp(){
   if(carrinho.length === 0) return;
   const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
   const obs = document.getElementById('observacao-pedido').value.trim();
-  
+
   let texto = 'PEDIDO - MONSTRO BURGUER\n\nITENS DO PEDIDO:\n';
-  
+
   carrinho.forEach(function(i){
     const subtotal = (i.preco * i.quantidade).toFixed(2).replace('.',',');
     texto += i.quantidade + 'x ' + i.nome + ' - R$ ' + subtotal + '\n';
   });
-  
+
   if(obs){
     texto += '\nOBSERVAÇÕES:\n' + obs + '\n';
   }
-  
+
   texto += '\nTOTAL: R$ ' + total.toFixed(2).replace('.',',') + '\n\n';
   texto += 'Pode me chamar pra confirmar! Obrigado!';
-  
-  const url = 'https://wa.me/5514996619487?text=' + encodeURIComponent(texto);
+
+  const url = 'https://wa.me/' + whatsappPedidos + '?text=' + encodeURIComponent(texto);
   window.open(url, '_blank');
   fecharModal();
 }
