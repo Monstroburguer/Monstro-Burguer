@@ -474,12 +474,26 @@ body::before{
     </div>
     <div class="modal-campo">
       <label>Forma de pagamento *</label>
-      <select id="cliente-pagamento">
+      <select id="cliente-pagamento" onchange="alternarCampoTroco()">
         <option value="">Selecione...</option>
         <option value="Pix">Pix</option>
         <option value="Dinheiro">Dinheiro</option>
         <option value="Cartão">Cartão</option>
       </select>
+    </div>
+
+    <div class="modal-campo" id="campo-troco" style="display:none">
+      <label>Precisa de troco? *</label>
+      <select id="cliente-troco" onchange="alternarCampoTrocoValor()">
+        <option value="">Selecione...</option>
+        <option value="Não preciso de troco">Não preciso de troco</option>
+        <option value="Preciso de troco">Preciso de troco</option>
+      </select>
+    </div>
+
+    <div class="modal-campo" id="campo-troco-valor" style="display:none">
+      <label>Troco para quanto? *</label>
+      <input type="text" id="cliente-troco-valor" placeholder="Ex: R$ 100,00">
     </div>
 
     <div class="modal-obs">
@@ -653,11 +667,45 @@ function abrirModal(){
   }).join('');
 
   document.getElementById('modal-total').innerHTML = '<strong>TOTAL: R$ ' + total.toFixed(2).replace('.',',') + '</strong>';
+  document.getElementById('campo-troco').style.display = 'none';
+  document.getElementById('campo-troco-valor').style.display = 'none';
+  document.getElementById('cliente-troco').value = '';
+  document.getElementById('cliente-troco-valor').value = '';
   document.getElementById('modal').classList.add('modal-aberto');
 }
 
 function fecharModal(){
   document.getElementById('modal').classList.remove('modal-aberto');
+}
+
+/* ==================================================
+   CAMPO DE TROCO (só aparece quando pagamento = Dinheiro)
+================================================== */
+function alternarCampoTroco(){
+  const pagamento = document.getElementById('cliente-pagamento').value;
+  const campoTroco = document.getElementById('campo-troco');
+  const campoTrocoValor = document.getElementById('campo-troco-valor');
+
+  if(pagamento === 'Dinheiro'){
+    campoTroco.style.display = 'block';
+  } else {
+    campoTroco.style.display = 'none';
+    campoTrocoValor.style.display = 'none';
+    document.getElementById('cliente-troco').value = '';
+    document.getElementById('cliente-troco-valor').value = '';
+  }
+}
+
+function alternarCampoTrocoValor(){
+  const troco = document.getElementById('cliente-troco').value;
+  const campoTrocoValor = document.getElementById('campo-troco-valor');
+
+  if(troco === 'Preciso de troco'){
+    campoTrocoValor.style.display = 'block';
+  } else {
+    campoTrocoValor.style.display = 'none';
+    document.getElementById('cliente-troco-valor').value = '';
+  }
 }
 
 /* ==================================================
@@ -700,6 +748,25 @@ function enviarWhatsApp(){
     return;
   }
 
+  let trocoInfo = '';
+  if(pagamento === 'Dinheiro'){
+    const troco = document.getElementById('cliente-troco').value;
+    if(!troco){
+      alert('Por favor, informe se precisa de troco.');
+      return;
+    }
+    if(troco === 'Preciso de troco'){
+      const trocoValor = document.getElementById('cliente-troco-valor').value.trim();
+      if(!trocoValor){
+        alert('Por favor, informe para quanto precisa de troco.');
+        return;
+      }
+      trocoInfo = 'TROCO PARA: ' + trocoValor;
+    } else {
+      trocoInfo = 'TROCO: Não precisa';
+    }
+  }
+
   const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
   const obs = document.getElementById('observacao-pedido').value.trim();
 
@@ -710,13 +777,17 @@ function enviarWhatsApp(){
   proximoNumeroPedido().then(function(numero){
     const numeroFormatado = String(numero).padStart(4, '0');
 
-    let texto = '👹━━━━━━━━━━👹\n';
+    let texto = '━━━━━━━━━━━━━━\n';
     texto += '*MONSTRO BURGUER* — Nº ' + numeroFormatado + '\n';
-    texto += '👹━━━━━━━━━━👹\n\n';
+    texto += '━━━━━━━━━━━━━━\n\n';
 
     texto += 'CLIENTE: ' + nome + '\n';
     texto += 'ENDEREÇO: ' + endereco + '\n';
-    texto += 'FORMA DE PAGAMENTO: ' + pagamento + '\n\n';
+    texto += 'FORMA DE PAGAMENTO: ' + pagamento + '\n';
+    if(trocoInfo){
+      texto += trocoInfo + '\n';
+    }
+    texto += '\n';
 
     texto += 'ITENS DO PEDIDO:\n';
     carrinho.forEach(function(i){
