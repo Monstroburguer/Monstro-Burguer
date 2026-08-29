@@ -69,7 +69,7 @@ body::before{
   box-shadow:0 0 16px rgba(0,229,255,0.35), inset 0 -8px 16px -12px rgba(0,229,255,0.4);
 }
 .cabecalho h1{
-  font-size:22px;
+  font-size:15px;
   font-weight:700;
   letter-spacing:1px;
   color:var(--texto);
@@ -434,7 +434,7 @@ body::before{
 
 <div class="cabecalho">
   <a href="index.html" class="voltar">←</a>
-  <h1>🍔 <span>CARDÁPIO</span></h1>
+  <h1><span>CARDÁPIO</span></h1>
 </div>
 
 <div class="categorias">
@@ -515,9 +515,58 @@ body::before{
 ================================================== */
 let whatsappPedidos = "5514996619487";
 
+/* ==================================================
+   STATUS DA LOJA (Firestore: config/loja)
+   Mesma lógica do index.html: respeita o status
+   forçado pelo admin (aberto/fechado/auto) e,
+   em modo automático, considera o horário 19h-24h.
+================================================== */
+const horaAbertura = 19;
+const horaFechamento = 24;
+let statusForcado = "auto";
+let lojaAberta = true;
+
+function atualizarStatusLoja(){
+  if(statusForcado === "aberto"){
+    lojaAberta = true;
+  } else if(statusForcado === "fechado"){
+    lojaAberta = false;
+  } else {
+    const agora = new Date();
+    const hora = agora.getHours();
+    const minuto = agora.getMinutes();
+    const horarioAtual = hora + (minuto / 60);
+    lojaAberta = horarioAtual >= horaAbertura && horarioAtual < horaFechamento;
+  }
+  atualizarBotaoEnviar();
+}
+
+function atualizarBotaoEnviar(){
+  const btn = document.getElementById('btn-enviar-whatsapp');
+  if(!btn) return;
+
+  if(!lojaAberta){
+    btn.disabled = true;
+    btn.textContent = '🔒 Loja Fechada';
+  } else {
+    btn.disabled = false;
+    btn.textContent = '📱 Enviar Pedido';
+  }
+}
+
+atualizarStatusLoja();
+setInterval(atualizarStatusLoja, 60000);
+
 db.collection("config").doc("loja").onSnapshot(function(doc) {
-  if (doc.exists && doc.data().whatsapp) {
-    whatsappPedidos = doc.data().whatsapp;
+  if (doc.exists) {
+    const dados = doc.data();
+
+    if (dados.whatsapp) {
+      whatsappPedidos = dados.whatsapp;
+    }
+
+    statusForcado = dados.statusLoja || "auto";
+    atualizarStatusLoja();
   }
 });
 
@@ -671,6 +720,7 @@ function abrirModal(){
   document.getElementById('campo-troco-valor').style.display = 'none';
   document.getElementById('cliente-troco').value = '';
   document.getElementById('cliente-troco-valor').value = '';
+  atualizarBotaoEnviar();
   document.getElementById('modal').classList.add('modal-aberto');
 }
 
@@ -730,6 +780,11 @@ function proximoNumeroPedido(){
 
 function enviarWhatsApp(){
   if(carrinho.length === 0) return;
+
+  if(!lojaAberta){
+    alert('A loja está fechada no momento. Não é possível enviar pedidos.');
+    return;
+  }
 
   const nome = document.getElementById('cliente-nome').value.trim();
   const endereco = document.getElementById('cliente-endereco').value.trim();
