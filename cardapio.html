@@ -38,6 +38,7 @@
   --verde: #39ff88;
   --vermelho: #ff3b5c;
   --dourado: #ffc93c;
+  --laranja: #ff7a1a;
   --texto: #eaf6ff;
   --card: #0b0f1c;
   --mono: 'JetBrains Mono', monospace;
@@ -199,6 +200,18 @@ body::before{
   color:var(--verde);
   text-shadow:0 0 6px rgba(57,255,136,0.5);
   white-space:nowrap;
+}
+.item-preco.preco-promocao{
+  color:var(--laranja);
+  text-shadow:
+    0 0 8px rgba(255,122,26,0.95),
+    0 0 18px rgba(255,122,26,0.65),
+    0 0 30px rgba(255,122,26,0.35);
+  animation: pulsarPromo 1.4s ease-in-out infinite;
+}
+@keyframes pulsarPromo {
+  0%, 100% { text-shadow: 0 0 8px rgba(255,122,26,0.95), 0 0 18px rgba(255,122,26,0.65), 0 0 30px rgba(255,122,26,0.35); }
+  50% { text-shadow: 0 0 12px rgba(255,122,26,1), 0 0 26px rgba(255,122,26,0.85), 0 0 42px rgba(255,122,26,0.55); }
 }
 .item-descricao{
   font-size:13px;
@@ -648,13 +661,16 @@ function renderizarCardapio(){
     const qtd = noCarrinho ? noCarrinho.quantidade : 0;
     const selecionado = qtd > 0;
     const preco = Number(item.preco) || 0;
+    const emPromocao = item.promocao === true;
+    const classePreco = emPromocao ? 'item-preco preco-promocao' : 'item-preco';
+    const prefixoPreco = emPromocao ? '🔥 ' : '';
     const fotoHTML = item.foto ? '<img src="' + item.foto + '" class="item-foto" alt="' + item.nome + '">' : '';
 
     html += '<div class="item ' + (selecionado ? 'selecionado' : '') + '">' +
         fotoHTML +
         '<div class="item-cima">' +
           '<div class="item-nome">' + item.nome + '</div>' +
-          '<div class="item-preco">R$ ' + preco.toFixed(2).replace('.',',') + '</div>' +
+          '<div class="' + classePreco + '">' + prefixoPreco + 'R$ ' + preco.toFixed(2).replace('.',',') + '</div>' +
         '</div>' +
         '<div class="item-descricao">' + (item.descricao || '') + '</div>' +
         '<div class="item-baixo">' +
