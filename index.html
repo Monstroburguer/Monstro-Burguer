@@ -582,10 +582,31 @@
        HORÁRIO
     ========================= */
 
-    const horaAbertura = 18;
-    const horaFechamento = 23;
+    const horaAbertura = 19;
+    const horaFechamento = 24;
 
     function atualizarStatus() {
+
+      const status =
+        document.getElementById("status");
+
+      const texto =
+        document.getElementById("statusTexto");
+
+      const statusForcado =
+        localStorage.getItem("monstroStatusLoja") || "auto";
+
+      if (statusForcado === "aberto") {
+        status.classList.remove("fechado");
+        texto.textContent = "ABERTO";
+        return;
+      }
+
+      if (statusForcado === "fechado") {
+        status.classList.add("fechado");
+        texto.textContent = "FECHADO";
+        return;
+      }
 
       const agora = new Date();
 
@@ -598,12 +619,6 @@
       const aberto =
         horarioAtual >= horaAbertura &&
         horarioAtual < horaFechamento;
-
-      const status =
-        document.getElementById("status");
-
-      const texto =
-        document.getElementById("statusTexto");
 
       if (aberto) {
 
