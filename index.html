@@ -6,6 +6,16 @@
 
   <title>MONSTRO BURGUER</title>
 
+  <!-- Favicon (emoji como ícone, sem precisar de arquivo extra) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👹</text></svg>">
+
+  <!-- Compartilhamento (WhatsApp, redes sociais) -->
+  <meta property="og:title" content="Monstro Burguer">
+  <meta property="og:description" content="O sabor monstruoso que você merece. Peça pelo WhatsApp!">
+  <meta property="og:image" content="https://monstroburguer.github.io/Monstro-Burguer/mascote-oficial.png">
+  <meta property="og:type" content="website">
+  <meta name="description" content="Cardápio digital do Monstro Burguer. Lanches, bebidas, adicionais e combos — peça direto pelo WhatsApp.">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -71,6 +81,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: space-evenly;
 
       position: relative;
       overflow: hidden;
@@ -353,8 +364,6 @@
       width: 100%;
       padding: 0 14px;
 
-      margin-top: auto;
-
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -518,7 +527,7 @@
 
     <nav class="categorias">
 
-      <a href="cardapio.html" class="categoria" data-cat="Lanches">
+      <a href="cardapio.html" class="categoria" data-cat="Todos">
         🍔 Todos
       </a>
 
