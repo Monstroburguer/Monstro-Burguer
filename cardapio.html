@@ -169,7 +169,7 @@ body::before{
   box-shadow:
     0 0 30px rgba(139,47,255,1),
     0 0 55px rgba(139,47,255,0.75) !important;
-  transition: box-shadow 0.08s ease-out, border-color 0.08s ease-out;
+  transition: none !important;
 }
 .item-foto{
   width:100%;
@@ -239,7 +239,7 @@ body::before{
     0 0 26px rgba(139,47,255,1),
     0 0 50px rgba(139,47,255,0.90),
     0 0 70px rgba(139,47,255,0.50) !important;
-  transition: box-shadow 0.08s ease-out, background 0.08s ease-out;
+  transition: none !important;
 }
 .quantidade-controle{
   display:flex;
@@ -265,14 +265,14 @@ body::before{
   justify-content:center;
 }
 .qtd-btn.menos{border-color:var(--vermelho);color:var(--vermelho)}
-.qtd-btn.mais{border-color:var(--verde);color:var(--verde)}
+.qtd-btn.mais{border-color:var(--violeta);color:var(--violeta)}
 .qtd-num{
   font-family:var(--mono);
   font-size:16px;
   font-weight:bold;
   min-width:26px;
   text-align:center;
-  color:var(--verde);
+  color:var(--violeta);
 }
 
 .carrinho-barra{
@@ -745,7 +745,7 @@ function clicarSelecionar(id){
       if(itemEl){
         itemEl.classList.remove('flash-selecionar');
       }
-    }, 650);
+    }, 250);
   }
 }
 
