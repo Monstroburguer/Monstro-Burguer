@@ -322,6 +322,8 @@ body::before{
   padding:25px;
   max-width:380px;
   width:100%;
+  max-height:88vh;
+  overflow-y:auto;
   box-shadow:0 0 30px rgba(0,229,255,0.35);
   position:relative;
 }
@@ -342,7 +344,31 @@ body::before{
   font-size:14px;
   font-family:var(--mono);
 }
-.modal-obs{margin-top:15px}
+.modal-campo{margin-top:14px}
+.modal-campo label{
+  display:block;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+  color:rgba(234,246,255,0.55);
+  margin-bottom:6px;
+}
+.modal-campo input,
+.modal-campo select{
+  width:100%;
+  background:rgba(0,0,0,0.5);
+  border:1px solid var(--violeta-dim);
+  border-radius:8px;
+  color:var(--texto);
+  padding:10px;
+  font-size:13px;
+  font-family:'Rajdhani',sans-serif;
+}
+.modal-campo input:focus,
+.modal-campo select:focus{outline:none;border-color:var(--violeta)}
+.modal-campo select{appearance:none;-webkit-appearance:none}
+.modal-obs{margin-top:14px}
 .modal-obs textarea{
   width:100%;
   height:60px;
@@ -391,6 +417,7 @@ body::before{
   cursor:pointer;
   box-shadow:0 0 12px rgba(37,211,102,0.5);
 }
+.modal-btn-whatsapp:disabled{opacity:0.5;cursor:not-allowed;box-shadow:none}
 .fechar-modal{
   position:absolute;
   top:14px;
@@ -436,13 +463,32 @@ body::before{
     <button class="fechar-modal" onclick="fecharModal()">×</button>
     <h2>📋 Resumo do Pedido</h2>
     <div id="modal-itens"></div>
+
+    <div class="modal-campo">
+      <label>Nome do cliente *</label>
+      <input type="text" id="cliente-nome" placeholder="Seu nome completo">
+    </div>
+    <div class="modal-campo">
+      <label>Endereço de entrega *</label>
+      <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro">
+    </div>
+    <div class="modal-campo">
+      <label>Forma de pagamento *</label>
+      <select id="cliente-pagamento">
+        <option value="">Selecione...</option>
+        <option value="Pix">Pix</option>
+        <option value="Dinheiro">Dinheiro</option>
+        <option value="Cartão">Cartão</option>
+      </select>
+    </div>
+
     <div class="modal-obs">
       <textarea id="observacao-pedido" placeholder="Observações (ex: retirar cebola, ponto da carne, etc.)"></textarea>
     </div>
     <div class="modal-total" id="modal-total">R$ 0,00</div>
     <div class="modal-botoes">
       <button class="modal-btn-cancelar" onclick="fecharModal()">Cancelar</button>
-      <button class="modal-btn-whatsapp" onclick="enviarWhatsApp()">📱 Enviar Pedido</button>
+      <button class="modal-btn-whatsapp" id="btn-enviar-whatsapp" onclick="enviarWhatsApp()">📱 Enviar Pedido</button>
     </div>
   </div>
 </div>
@@ -614,28 +660,88 @@ function fecharModal(){
   document.getElementById('modal').classList.remove('modal-aberto');
 }
 
+/* ==================================================
+   NÚMERO DE PEDIDO SEQUENCIAL (Firestore: config/contadorPedidos)
+   Usa transação para garantir número único mesmo se
+   dois clientes finalizarem pedido ao mesmo tempo.
+================================================== */
+function proximoNumeroPedido(){
+  const contadorRef = db.collection('config').doc('contadorPedidos');
+  return db.runTransaction(function(transaction){
+    return transaction.get(contadorRef).then(function(doc){
+      let atual = 0;
+      if(doc.exists && doc.data().valor){
+        atual = doc.data().valor;
+      }
+      const novo = atual + 1;
+      transaction.set(contadorRef, {valor: novo});
+      return novo;
+    });
+  });
+}
+
 function enviarWhatsApp(){
   if(carrinho.length === 0) return;
+
+  const nome = document.getElementById('cliente-nome').value.trim();
+  const endereco = document.getElementById('cliente-endereco').value.trim();
+  const pagamento = document.getElementById('cliente-pagamento').value;
+
+  if(!nome){
+    alert('Por favor, preencha seu nome.');
+    return;
+  }
+  if(!endereco){
+    alert('Por favor, preencha o endereço de entrega.');
+    return;
+  }
+  if(!pagamento){
+    alert('Por favor, escolha a forma de pagamento.');
+    return;
+  }
+
   const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
   const obs = document.getElementById('observacao-pedido').value.trim();
 
-  let texto = 'PEDIDO - MONSTRO BURGUER\n\nITENS DO PEDIDO:\n';
+  const btnEnviar = document.getElementById('btn-enviar-whatsapp');
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = 'Enviando...';
 
-  carrinho.forEach(function(i){
-    const subtotal = (i.preco * i.quantidade).toFixed(2).replace('.',',');
-    texto += i.quantidade + 'x ' + i.nome + ' - R$ ' + subtotal + '\n';
+  proximoNumeroPedido().then(function(numero){
+    const numeroFormatado = String(numero).padStart(4, '0');
+
+    let texto = '👹━━━━━━━━━━👹\n';
+    texto += '*MONSTRO BURGUER* — Nº ' + numeroFormatado + '\n';
+    texto += '👹━━━━━━━━━━👹\n\n';
+
+    texto += 'CLIENTE: ' + nome + '\n';
+    texto += 'ENDEREÇO: ' + endereco + '\n';
+    texto += 'FORMA DE PAGAMENTO: ' + pagamento + '\n\n';
+
+    texto += 'ITENS DO PEDIDO:\n';
+    carrinho.forEach(function(i){
+      const subtotal = (i.preco * i.quantidade).toFixed(2).replace('.',',');
+      texto += i.quantidade + 'x ' + i.nome + ' - R$ ' + subtotal + '\n';
+    });
+
+    if(obs){
+      texto += '\nOBSERVAÇÕES:\n' + obs + '\n';
+    }
+
+    texto += '\nTOTAL: R$ ' + total.toFixed(2).replace('.',',') + '\n\n';
+    texto += 'Pode me chamar pra confirmar! Obrigado!';
+
+    const url = 'https://wa.me/' + whatsappPedidos + '?text=' + encodeURIComponent(texto);
+    window.open(url, '_blank');
+
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = '📱 Enviar Pedido';
+    fecharModal();
+  }).catch(function(erro){
+    alert('Não foi possível gerar o número do pedido agora. Tente novamente.');
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = '📱 Enviar Pedido';
   });
-
-  if(obs){
-    texto += '\nOBSERVAÇÕES:\n' + obs + '\n';
-  }
-
-  texto += '\nTOTAL: R$ ' + total.toFixed(2).replace('.',',') + '\n\n';
-  texto += 'Pode me chamar pra confirmar! Obrigado!';
-
-  const url = 'https://wa.me/' + whatsappPedidos + '?text=' + encodeURIComponent(texto);
-  window.open(url, '_blank');
-  fecharModal();
 }
 
 document.getElementById('modal').addEventListener('click', function(e){
