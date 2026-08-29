@@ -161,8 +161,15 @@ body::before{
   transition:all .3s;
 }
 .item.selecionado{
-  border-color:var(--verde);
-  box-shadow:0 0 18px rgba(57,255,136,0.35), inset 0 0 14px rgba(57,255,136,0.06);
+  border-color:var(--violeta);
+  box-shadow:0 0 18px rgba(139,47,255,0.45), inset 0 0 14px rgba(139,47,255,0.10);
+}
+.item.flash-selecionar{
+  border-color:#ffffff !important;
+  box-shadow:
+    0 0 30px rgba(139,47,255,1),
+    0 0 55px rgba(139,47,255,0.75) !important;
+  transition: box-shadow 0.08s ease-out, border-color 0.08s ease-out;
 }
 .item-foto{
   width:100%;
@@ -220,18 +227,18 @@ body::before{
   box-shadow:0 0 10px rgba(0,229,255,0.4);
 }
 .btn-selecionar.selecionado{
-  background:linear-gradient(135deg, var(--verde), #00cc66);
-  box-shadow:0 0 15px rgba(57,255,136,0.6);
+  background:linear-gradient(135deg, var(--violeta), #6a1fd9);
+  box-shadow:0 0 15px rgba(139,47,255,0.65);
   padding:8px 22px;
 }
 .btn-selecionar.selecionado::after{content:" ✓"}
 .btn-selecionar.clicado{
-  background:linear-gradient(135deg, rgba(139,47,255,0.95), rgba(0,229,255,0.55)) !important;
-  color:#05070d !important;
+  background:linear-gradient(135deg, rgba(139,47,255,1), rgba(90,20,200,0.95)) !important;
+  color:#ffffff !important;
   box-shadow:
-    0 0 22px rgba(139,47,255,1),
-    0 0 42px rgba(139,47,255,0.85),
-    0 0 60px rgba(0,229,255,0.45) !important;
+    0 0 26px rgba(139,47,255,1),
+    0 0 50px rgba(139,47,255,0.90),
+    0 0 70px rgba(139,47,255,0.50) !important;
   transition: box-shadow 0.08s ease-out, background 0.08s ease-out;
 }
 .quantidade-controle{
@@ -720,7 +727,7 @@ function tocarCliqueSistema() {
 
 /* ==================================================
    CLIQUE NO BOTÃO SELECIONAR: som + flash neon
-   O brilho fica aceso por ~1.8s antes de apagar.
+   O brilho fica aceso por ~0.65s antes de apagar.
 ================================================== */
 function clicarSelecionar(id){
   tocarCliqueSistema();
@@ -729,9 +736,16 @@ function clicarSelecionar(id){
   const btn = document.getElementById('btn-sel-' + id);
   if(btn){
     btn.classList.add('clicado');
+    const itemEl = btn.closest('.item');
+    if(itemEl){
+      itemEl.classList.add('flash-selecionar');
+    }
     setTimeout(function(){
       btn.classList.remove('clicado');
-    }, 1800);
+      if(itemEl){
+        itemEl.classList.remove('flash-selecionar');
+      }
+    }, 650);
   }
 }
 
