@@ -119,6 +119,55 @@
             box-shadow: 0 0 12px rgba(0, 201, 107, 0.35);
         }
 
+        .status-opcao {
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 12px;
+            background: #080808;
+            text-align: center;
+        }
+
+        .status-opcao.ativo-aberto {
+            border-color: #00c96b;
+            box-shadow: 0 0 12px rgba(0, 201, 107, 0.35);
+        }
+
+        .status-opcao.ativo-fechado {
+            border-color: #ff4d4d;
+            box-shadow: 0 0 12px rgba(255, 77, 77, 0.35);
+        }
+
+        .status-opcao-titulo {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .btn-status {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: none;
+            border-radius: 9px;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .btn-status-auto {
+            background: #168cff;
+        }
+
+        .btn-status-aberto {
+            background: #00a85a;
+        }
+
+        .btn-status-fechado {
+            background: #b30000;
+        }
+
         .whatsapp-numero {
             font-size: 18px;
             font-weight: bold;
@@ -437,6 +486,41 @@
             </div>
 
             <!-- ==================================================
+                 STATUS DA LOJA
+            ================================================== -->
+            <h2 class="titulo">🚦 Status da Loja</h2>
+
+            <div class="whatsapp-box">
+                <div class="status-opcao" id="statusOpcaoAuto">
+                    <div class="status-opcao-titulo">🕒 Automático</div>
+                    <div class="whatsapp-tipo">Segue o horário de funcionamento (19h às 23:59)</div>
+                    <button class="btn-status btn-status-auto" onclick="definirStatusLoja('auto')">
+                        USAR AUTOMÁTICO
+                    </button>
+                </div>
+
+                <div class="status-opcao" id="statusOpcaoAberto">
+                    <div class="status-opcao-titulo">🟢 Forçar Aberto</div>
+                    <div class="whatsapp-tipo">Mostra ABERTO mesmo fora do horário</div>
+                    <button class="btn-status btn-status-aberto" onclick="definirStatusLoja('aberto')">
+                        FORÇAR ABERTO
+                    </button>
+                </div>
+
+                <div class="status-opcao" id="statusOpcaoFechado">
+                    <div class="status-opcao-titulo">🔴 Forçar Fechado</div>
+                    <div class="whatsapp-tipo">Mostra FECHADO mesmo dentro do horário</div>
+                    <button class="btn-status btn-status-fechado" onclick="definirStatusLoja('fechado')">
+                        FORÇAR FECHADO
+                    </button>
+                </div>
+
+                <div id="statusLojaAtual" class="status-whatsapp">
+                    Carregando...
+                </div>
+            </div>
+
+            <!-- ==================================================
                  APARÊNCIA
             ================================================== -->
             <h2 class="titulo">🎨 Aparência do Monstro Burguer</h2>
@@ -581,6 +665,47 @@
             localStorage.setItem("monstroWhatsApp", numero);
             atualizarWhatsAppVisual();
             mostrarMensagem("WhatsApp dos pedidos alterado!");
+        }
+
+        /* ==================================================
+           STATUS DA LOJA (aberto / fechado / automático)
+        ================================================== */
+        let statusLoja = localStorage.getItem("monstroStatusLoja") || "auto";
+
+        function definirStatusLoja(valor) {
+            statusLoja = valor;
+            localStorage.setItem("monstroStatusLoja", valor);
+            atualizarStatusLojaVisual();
+
+            if (valor === "auto") {
+                mostrarMensagem("Status voltou pro automático!");
+            } else if (valor === "aberto") {
+                mostrarMensagem("Loja forçada como ABERTA!");
+            } else {
+                mostrarMensagem("Loja forçada como FECHADA!");
+            }
+        }
+
+        function atualizarStatusLojaVisual() {
+            let opAuto = document.getElementById("statusOpcaoAuto");
+            let opAberto = document.getElementById("statusOpcaoAberto");
+            let opFechado = document.getElementById("statusOpcaoFechado");
+            let atual = document.getElementById("statusLojaAtual");
+
+            opAuto.classList.remove("ativo-aberto", "ativo-fechado");
+            opAberto.classList.remove("ativo-aberto", "ativo-fechado");
+            opFechado.classList.remove("ativo-aberto", "ativo-fechado");
+
+            if (statusLoja === "aberto") {
+                opAberto.classList.add("ativo-aberto");
+                atual.innerText = "🟢 Loja marcada como ABERTA manualmente";
+            } else if (statusLoja === "fechado") {
+                opFechado.classList.add("ativo-fechado");
+                atual.innerText = "🔴 Loja marcada como FECHADA manualmente";
+            } else {
+                opAuto.classList.add("ativo-aberto");
+                atual.innerText = "🕒 Seguindo o horário automático (19h às 23:59)";
+            }
         }
 
         /* ==================================================
@@ -919,6 +1044,7 @@
            INICIAR
         ================================================== */
         atualizarWhatsAppVisual();
+        atualizarStatusLojaVisual();
         carregarAparencia();
         mostrarProdutos();
     </script>
