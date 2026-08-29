@@ -10,6 +10,24 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+  <!-- Firebase (Firestore) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCNWFiB87wlWkaMRZkw3lp8htcf6ubG7ks",
+      authDomain: "monstro-burguer-40b02.firebaseapp.com",
+      projectId: "monstro-burguer-40b02",
+      storageBucket: "monstro-burguer-40b02.firebasestorage.app",
+      messagingSenderId: "569343783289",
+      appId: "1:569343783289:web:3523028ddad73743cfffa8",
+      measurementId: "G-2HJWJY7JVH"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+  </script>
+
   <style>
     * {
       margin: 0;
@@ -500,25 +518,26 @@
 
     <nav class="categorias">
 
-      <a href="cardapio.html" class="categoria">
+      <a href="cardapio.html" class="categoria" data-cat="Lanches">
         🍔 Todos
       </a>
 
-      <a href="cardapio.html" class="categoria">
+      <a href="cardapio.html" class="categoria" data-cat="Lanches">
         🍔 Lanches
       </a>
 
-      <a href="cardapio.html" class="categoria">
+      <a href="cardapio.html" class="categoria" data-cat="Bebidas">
         🥤 Bebidas
       </a>
 
-      <a href="cardapio.html" class="categoria">
+      <a href="cardapio.html" class="categoria" data-cat="Adicionais">
         ➕ Adicionais
       </a>
 
       <a
         href="cardapio.html"
         class="categoria categoria-combo"
+        data-cat="Combos"
       >
         📦 Combos
       </a>
@@ -530,6 +549,7 @@
       <a
         href="https://wa.me/5514996619487"
         class="btn-whatsapp"
+        id="linkWhatsapp"
         target="_blank"
         aria-label="WhatsApp"
       >
@@ -579,11 +599,17 @@
 
 
     /* =========================
-       HORÁRIO
+       WHATSAPP + STATUS DA LOJA
+       (Firestore: config/loja)
+       Isso substitui o localStorage: agora o status
+       forçado pelo admin vale para QUALQUER aparelho,
+       não só o dele.
     ========================= */
 
     const horaAbertura = 19;
     const horaFechamento = 24;
+
+    let statusForcado = "auto";
 
     function atualizarStatus() {
 
@@ -592,9 +618,6 @@
 
       const texto =
         document.getElementById("statusTexto");
-
-      const statusForcado =
-        localStorage.getItem("monstroStatusLoja") || "auto";
 
       if (statusForcado === "aberto") {
         status.classList.remove("fechado");
@@ -642,6 +665,20 @@
       60000
     );
 
+    db.collection("config").doc("loja").onSnapshot(function (doc) {
+      if (doc.exists) {
+        const dados = doc.data();
+
+        statusForcado = dados.statusLoja || "auto";
+        atualizarStatus();
+
+        if (dados.whatsapp) {
+          document.getElementById("linkWhatsapp").href =
+            "https://wa.me/" + dados.whatsapp;
+        }
+      }
+    });
+
 
     /* =========================
        SOM E ACENDER NO CLIQUE
@@ -677,6 +714,11 @@
 
         const el = this;
         const destino = el.getAttribute("href");
+        const cat = el.getAttribute("data-cat");
+
+        if (cat) {
+          sessionStorage.setItem("categoriaInicial", cat);
+        }
 
         el.classList.add("clicado");
         tocarCliqueSistema();
