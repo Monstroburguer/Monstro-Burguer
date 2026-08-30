@@ -486,6 +486,7 @@ body::before{
 </div>
 
 <div class="categorias">
+  <button class="cat-btn" data-cat="Todos">🍔 Todos</button>
   <button class="cat-btn ativo" data-cat="Lanches">🍔 Lanches</button>
   <button class="cat-btn" data-cat="Bebidas">🥤 Bebidas</button>
   <button class="cat-btn" data-cat="Adicionais">➕ Adicionais</button>
@@ -569,6 +570,7 @@ body::before{
     <h2>💠 Pagamento via Pix</h2>
     <p class="pix-texto">Copie o código abaixo e cole no Pix Copia e Cola do seu banco:</p>
     <div class="pix-codigo" id="pix-codigo-texto"></div>
+    <p class="pix-texto" style="margin-top:14px;margin-bottom:0;color:var(--verde)">⚠️ Depois de pagar, envie o comprovante aqui no WhatsApp junto com o pedido!</p>
     <div class="modal-botoes">
       <button class="modal-btn-whatsapp" style="flex:1" onclick="copiarCodigoPix()">📋 Copiar código Pix</button>
     </div>
@@ -649,6 +651,7 @@ let carrinho = [];
 let categoriaAtiva = 'Lanches';
 
 const nomesCategoria = {
+  Todos: '🍔 Todos os Produtos',
   Lanches: '🍔 Lanches',
   Bebidas: '🥤 Bebidas',
   Adicionais: '➕ Adicionais',
@@ -684,7 +687,9 @@ window.onload = function(){
 
 function renderizarCardapio(){
   const container = document.getElementById('cardapio');
-  const itens = todosProdutos.filter(function(p){ return p.categoria === categoriaAtiva; });
+  const itens = categoriaAtiva === 'Todos'
+    ? todosProdutos
+    : todosProdutos.filter(function(p){ return p.categoria === categoriaAtiva; });
 
   const titulo = nomesCategoria[categoriaAtiva] || categoriaAtiva;
 
