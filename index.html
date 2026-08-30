@@ -161,6 +161,12 @@
       50% { opacity: 0; }
     }
 
+    /* =========================
+       ENGRENAGEM ADMIN — OCULTA
+       Fica invisível e sem nenhum brilho/contorno.
+       Só aparece depois de 5 toques na mesma área
+       (ver .config.revelado e o script no fim).
+    ========================= */
     .config {
       position: absolute;
 
@@ -176,11 +182,11 @@
 
       clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
 
-      border: 1.5px solid var(--violeta);
+      border: 1.5px solid transparent;
 
-      background: rgba(0, 0, 0, 0.75);
+      background: transparent;
 
-      color: var(--texto);
+      color: transparent;
 
       text-decoration: none;
 
@@ -188,7 +194,17 @@
 
       z-index: 20;
 
+      box-shadow: none;
+
+      transition: none;
+    }
+
+    .config.revelado {
+      border-color: var(--violeta);
+      background: rgba(0, 0, 0, 0.75);
+      color: var(--texto);
       box-shadow: 0 0 9px var(--violeta-dim);
+      transition: all 0.2s ease;
     }
 
     .mascote-area {
@@ -502,6 +518,7 @@
     <a
       href="adm.html"
       class="config"
+      id="config"
       aria-label="Administração"
     >
       ⚙️
@@ -749,6 +766,41 @@
       setTimeout(() => {
         el.classList.remove("clicado");
       }, 250);
+    });
+
+    /* =========================
+       ENGRENAGEM ADMIN OCULTA
+       Fica invisível na mesma posição de sempre
+       (canto superior direito). São necessários
+       5 toques seguidos (em até 2 segundos entre
+       um e outro) para ela aparecer. Depois de
+       revelada, o clique normal leva pra adm.html.
+    ========================= */
+
+    const config = document.getElementById("config");
+    let toquesConfig = 0;
+    let timerConfig = null;
+
+    config.addEventListener("click", function (e) {
+      if (config.classList.contains("revelado")) {
+        // Já revelada: deixa o clique navegar normalmente para adm.html
+        return;
+      }
+
+      // Ainda oculta: esse clique só conta como toque, não navega
+      e.preventDefault();
+
+      toquesConfig++;
+      clearTimeout(timerConfig);
+      timerConfig = setTimeout(function () {
+        toquesConfig = 0;
+      }, 2000);
+
+      if (toquesConfig >= 5) {
+        config.classList.add("revelado");
+        toquesConfig = 0;
+        clearTimeout(timerConfig);
+      }
     });
 
   </script>
