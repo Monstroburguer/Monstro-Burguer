@@ -457,6 +457,25 @@ body::before{
   font-size:24px;
   cursor:pointer;
 }
+.pix-texto{
+  font-family:var(--mono);
+  font-size:13px;
+  color:rgba(234,246,255,0.8);
+  text-align:center;
+  margin-bottom:14px;
+}
+.pix-codigo{
+  background:rgba(0,0,0,0.5);
+  border:1px solid var(--violeta-dim);
+  border-radius:8px;
+  padding:12px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--verde);
+  word-break:break-all;
+  max-height:120px;
+  overflow-y:auto;
+}
 </style>
 </head>
 <body>
@@ -498,6 +517,14 @@ body::before{
       <input type="text" id="cliente-nome" placeholder="Seu nome completo">
     </div>
     <div class="modal-campo">
+      <label>Tipo de pedido *</label>
+      <select id="cliente-tipo-pedido" onchange="alternarCampoEndereco()">
+        <option value="">Selecione...</option>
+        <option value="Entrega">🛵 Entrega (Delivery)</option>
+        <option value="Retirada">🏠 Retirar no local</option>
+      </select>
+    </div>
+    <div class="modal-campo" id="campo-endereco">
       <label>Endereço de entrega *</label>
       <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro">
     </div>
@@ -532,6 +559,21 @@ body::before{
     <div class="modal-botoes">
       <button class="modal-btn-cancelar" onclick="fecharModal()">Cancelar</button>
       <button class="modal-btn-whatsapp" id="btn-enviar-whatsapp" onclick="enviarWhatsApp()">📱 Enviar Pedido</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-fundo" id="modal-pix">
+  <div class="modal">
+    <button class="fechar-modal" onclick="fecharModalPix()">×</button>
+    <h2>💠 Pagamento via Pix</h2>
+    <p class="pix-texto">Copie o código abaixo e cole no Pix Copia e Cola do seu banco:</p>
+    <div class="pix-codigo" id="pix-codigo-texto"></div>
+    <div class="modal-botoes">
+      <button class="modal-btn-whatsapp" style="flex:1" onclick="copiarCodigoPix()">📋 Copiar código Pix</button>
+    </div>
+    <div class="modal-botoes">
+      <button class="modal-btn-cancelar" style="flex:1" onclick="fecharModalPix()">Fechar</button>
     </div>
   </div>
 </div>
@@ -802,12 +844,29 @@ function abrirModal(){
   document.getElementById('campo-troco-valor').style.display = 'none';
   document.getElementById('cliente-troco').value = '';
   document.getElementById('cliente-troco-valor').value = '';
+  document.getElementById('cliente-tipo-pedido').value = '';
+  document.getElementById('campo-endereco').style.display = 'block';
   atualizarBotaoEnviar();
   document.getElementById('modal').classList.add('modal-aberto');
 }
 
 function fecharModal(){
   document.getElementById('modal').classList.remove('modal-aberto');
+}
+
+/* ==================================================
+   TIPO DE PEDIDO (endereço só é obrigatório na Entrega)
+================================================== */
+function alternarCampoEndereco(){
+  const tipo = document.getElementById('cliente-tipo-pedido').value;
+  const campoEndereco = document.getElementById('campo-endereco');
+
+  if(tipo === 'Retirada'){
+    campoEndereco.style.display = 'none';
+    document.getElementById('cliente-endereco').value = '';
+  } else {
+    campoEndereco.style.display = 'block';
+  }
 }
 
 /* ==================================================
@@ -826,7 +885,85 @@ function alternarCampoTroco(){
     document.getElementById('cliente-troco').value = '';
     document.getElementById('cliente-troco-valor').value = '';
   }
+
+  if(pagamento === 'Pix'){
+    abrirModalPix();
+  }
 }
+
+/* ==================================================
+   PIX COPIA E COLA (payload estático, padrão Banco Central)
+   Chave: CNPJ do Monstro Burguer
+================================================== */
+function emvCampo(id, valor){
+  const tamanho = String(valor.length).padStart(2,'0');
+  return id + tamanho + valor;
+}
+
+function crc16Pix(payload){
+  let resultado = 0xFFFF;
+  for(let i = 0; i < payload.length; i++){
+    resultado ^= (payload.charCodeAt(i) << 8);
+    for(let j = 0; j < 8; j++){
+      if((resultado & 0x8000) !== 0){
+        resultado = ((resultado << 1) ^ 0x1021) & 0xFFFF;
+      } else {
+        resultado = (resultado << 1) & 0xFFFF;
+      }
+    }
+  }
+  return resultado.toString(16).toUpperCase().padStart(4,'0');
+}
+
+function gerarPayloadPix(valorTotal){
+  const chavePix = '67672694000184'; // CNPJ Monstro Burguer, sem pontuação
+  const nomeBeneficiario = 'MONSTRO BURGUER';
+  const cidade = 'OURINHOS';
+  const valorFormatado = valorTotal.toFixed(2);
+
+  const merchantAccountInfo = emvCampo('26',
+    emvCampo('00', 'br.gov.bcb.pix') + emvCampo('01', chavePix)
+  );
+  const additionalData = emvCampo('62', emvCampo('05', '***'));
+
+  let payload =
+    emvCampo('00', '01') +
+    merchantAccountInfo +
+    emvCampo('52', '0000') +
+    emvCampo('53', '986') +
+    emvCampo('54', valorFormatado) +
+    emvCampo('58', 'BR') +
+    emvCampo('59', nomeBeneficiario) +
+    emvCampo('60', cidade) +
+    additionalData +
+    '6304';
+
+  return payload + crc16Pix(payload);
+}
+
+function abrirModalPix(){
+  const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
+  const codigoPix = gerarPayloadPix(total);
+  document.getElementById('pix-codigo-texto').textContent = codigoPix;
+  document.getElementById('modal-pix').classList.add('modal-aberto');
+}
+
+function fecharModalPix(){
+  document.getElementById('modal-pix').classList.remove('modal-aberto');
+}
+
+function copiarCodigoPix(){
+  const codigo = document.getElementById('pix-codigo-texto').textContent;
+  navigator.clipboard.writeText(codigo).then(function(){
+    alert('Código Pix copiado! Agora é só colar no app do seu banco.');
+  }).catch(function(){
+    alert('Não foi possível copiar automaticamente. Toque e segure no código pra selecionar e copiar manualmente.');
+  });
+}
+
+document.getElementById('modal-pix').addEventListener('click', function(e){
+  if(e.target === this) fecharModalPix();
+});
 
 function alternarCampoTrocoValor(){
   const troco = document.getElementById('cliente-troco').value;
@@ -869,6 +1006,7 @@ function enviarWhatsApp(){
   }
 
   const nome = document.getElementById('cliente-nome').value.trim();
+  const tipoPedido = document.getElementById('cliente-tipo-pedido').value;
   const endereco = document.getElementById('cliente-endereco').value.trim();
   const pagamento = document.getElementById('cliente-pagamento').value;
 
@@ -876,7 +1014,11 @@ function enviarWhatsApp(){
     alert('Por favor, preencha seu nome.');
     return;
   }
-  if(!endereco){
+  if(!tipoPedido){
+    alert('Por favor, escolha se é entrega ou retirada no local.');
+    return;
+  }
+  if(tipoPedido === 'Entrega' && !endereco){
     alert('Por favor, preencha o endereço de entrega.');
     return;
   }
@@ -914,12 +1056,21 @@ function enviarWhatsApp(){
   proximoNumeroPedido().then(function(numero){
     const numeroFormatado = String(numero).padStart(4, '0');
 
+    // Data e hora do pedido (usadas para conferir o Pix no extrato do banco)
+    const agora = new Date();
+    const horaFormatada = String(agora.getHours()).padStart(2, '0') + ':' + String(agora.getMinutes()).padStart(2, '0');
+    const dataFormatada = String(agora.getDate()).padStart(2, '0') + '/' + String(agora.getMonth() + 1).padStart(2, '0') + '/' + agora.getFullYear();
+
     let texto = '━━━━━━━━━━━━━━\n';
     texto += '*MONSTRO BURGUER* — Nº ' + numeroFormatado + '\n';
     texto += '━━━━━━━━━━━━━━\n\n';
 
+    texto += 'DATA: ' + dataFormatada + ' às ' + horaFormatada + '\n';
     texto += 'CLIENTE: ' + nome + '\n';
-    texto += 'ENDEREÇO: ' + endereco + '\n';
+    texto += 'TIPO: ' + (tipoPedido === 'Retirada' ? 'Retirar no local' : 'Entrega (Delivery)') + '\n';
+    if(tipoPedido === 'Entrega'){
+      texto += 'ENDEREÇO: ' + endereco + '\n';
+    }
     texto += 'FORMA DE PAGAMENTO: ' + pagamento + '\n';
     if(trocoInfo){
       texto += trocoInfo + '\n';
