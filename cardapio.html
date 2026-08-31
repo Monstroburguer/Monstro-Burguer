@@ -477,6 +477,48 @@ body::before{
   font-size:24px;
   cursor:pointer;
 }
+
+/* ==================================================
+   ACOMPANHAMENTO DO PEDIDO (status ao vivo via Firestore)
+================================================== */
+.acompanhar-pedido{
+  position:fixed;
+  left:15px;
+  right:15px;
+  bottom:78px;
+  z-index:99;
+  background:var(--card);
+  border:1.5px solid var(--ciano);
+  clip-path:polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  padding:12px 14px;
+  box-shadow:0 0 18px rgba(0,229,255,0.35);
+  display:none;
+  font-family:var(--mono);
+  font-size:12px;
+}
+.acompanhar-pedido.mostrar{display:block}
+.acompanhar-pedido.aceito{
+  border-color:var(--verde);
+  box-shadow:0 0 18px rgba(57,255,136,0.4);
+}
+.acompanhar-titulo{
+  font-weight:700;
+  letter-spacing:0.5px;
+  margin-bottom:4px;
+}
+.acompanhar-pedido.aceito .acompanhar-titulo{color:var(--verde)}
+.acompanhar-pedido:not(.aceito) .acompanhar-titulo{color:var(--dourado)}
+.acompanhar-detalhe{color:rgba(234,246,255,0.65);line-height:1.5}
+.acompanhar-fechar{
+  position:absolute;
+  top:8px;
+  right:10px;
+  background:none;
+  border:none;
+  color:rgba(234,246,255,0.5);
+  font-size:16px;
+  cursor:pointer;
+}
 </style>
 </head>
 <body>
@@ -495,6 +537,12 @@ body::before{
 
 <div class="container" id="cardapio">
   <div class="carregando">Carregando cardápio...</div>
+</div>
+
+<div class="acompanhar-pedido" id="acompanharPedido">
+  <button class="acompanhar-fechar" onclick="fecharAcompanhamento()">×</button>
+  <div class="acompanhar-titulo" id="acompanharTitulo">🕒 Pedido enviado</div>
+  <div class="acompanhar-detalhe" id="acompanharDetalhe">Aguardando confirmação da loja...</div>
 </div>
 
 <div class="carrinho-barra">
@@ -648,6 +696,7 @@ window.onload = function(){
   }
 
   configurarCategorias();
+  retomarAcompanhamentoPedido();
 
   db.collection("produtos")
     .where("ativo", "==", true)
@@ -1000,6 +1049,82 @@ function proximoNumeroPedido(){
   });
 }
 
+/* ==================================================
+   PEDIDOS (Firestore: coleção "pedidos")
+   Salva o pedido pra loja poder aceitar (com frete
+   manual, se for entrega) e o cliente acompanhar o
+   status ao vivo aqui na mesma página.
+================================================== */
+const pedidosRef = db.collection('pedidos');
+let pedidoAtualId = null;
+let pedidoAtualUnsub = null;
+
+function salvarPedidoFirestore(numeroFormatado, dados){
+  return pedidosRef.doc(numeroFormatado).set(Object.assign({
+    numero: numeroFormatado,
+    status: 'pendente',
+    frete: null,
+    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+  }, dados));
+}
+
+function acompanharPedido(id){
+  pedidoAtualId = id;
+  sessionStorage.setItem('pedidoAcompanhado', id);
+
+  if(pedidoAtualUnsub){
+    pedidoAtualUnsub();
+  }
+
+  pedidoAtualUnsub = pedidosRef.doc(id).onSnapshot(function(doc){
+    if(!doc.exists) return;
+    atualizarPainelAcompanhamento(doc.data());
+  });
+}
+
+function retomarAcompanhamentoPedido(){
+  const idSalvo = sessionStorage.getItem('pedidoAcompanhado');
+  if(idSalvo){
+    acompanharPedido(idSalvo);
+  }
+}
+
+function atualizarPainelAcompanhamento(pedido){
+  const painel = document.getElementById('acompanharPedido');
+  const titulo = document.getElementById('acompanharTitulo');
+  const detalhe = document.getElementById('acompanharDetalhe');
+
+  painel.classList.add('mostrar');
+
+  if(pedido.status === 'aceito'){
+    painel.classList.add('aceito');
+    titulo.textContent = '✅ Pedido nº ' + pedido.numero + ' aceito!';
+
+    let texto = 'A loja confirmou seu pedido e já vai preparar.';
+    if(pedido.tipo === 'Entrega'){
+      const frete = Number(pedido.frete) || 0;
+      const totalComFrete = Number(pedido.total || 0) + frete;
+      texto += ' Frete: R$ ' + frete.toFixed(2).replace('.',',') +
+        ' — Total com frete: R$ ' + totalComFrete.toFixed(2).replace('.',',');
+    }
+    detalhe.textContent = texto;
+  } else {
+    painel.classList.remove('aceito');
+    titulo.textContent = '🕒 Pedido nº ' + pedido.numero + ' enviado';
+    detalhe.textContent = 'Aguardando confirmação da loja...';
+  }
+}
+
+function fecharAcompanhamento(){
+  document.getElementById('acompanharPedido').classList.remove('mostrar');
+  sessionStorage.removeItem('pedidoAcompanhado');
+  if(pedidoAtualUnsub){
+    pedidoAtualUnsub();
+    pedidoAtualUnsub = null;
+  }
+  pedidoAtualId = null;
+}
+
 function enviarWhatsApp(){
   if(carrinho.length === 0) return;
 
@@ -1086,6 +1211,23 @@ function enviarWhatsApp(){
 
     texto += '\nTOTAL: R$ ' + total.toFixed(2).replace('.',',') + '\n\n';
     texto += 'Pode me chamar pra confirmar! Obrigado!';
+
+    salvarPedidoFirestore(numeroFormatado, {
+      cliente: nome,
+      tipo: tipoPedido,
+      endereco: tipoPedido === 'Entrega' ? endereco : '',
+      pagamento: pagamento,
+      trocoInfo: trocoInfo,
+      itens: carrinho.map(function(i){
+        return { nome: i.nome, quantidade: i.quantidade, preco: i.preco };
+      }),
+      observacao: obs,
+      total: total
+    }).then(function(){
+      acompanharPedido(numeroFormatado);
+    }).catch(function(){
+      /* Se salvar o pedido falhar, o pedido ainda é enviado por WhatsApp normalmente */
+    });
 
     const url = 'https://wa.me/' + whatsappPedidos + '?text=' + encodeURIComponent(texto);
     window.open(url, '_blank');
