@@ -434,6 +434,17 @@ body::before{
   resize:none;
 }
 .modal-obs textarea:focus{outline:none;border-color:var(--violeta)}
+#pix-codigo{
+  width:100%;
+  background:rgba(0,0,0,0.5);
+  border:1px solid var(--violeta-dim);
+  border-radius:8px;
+  color:var(--texto);
+  padding:10px;
+  font-size:11px;
+  font-family:var(--mono);
+  resize:none;
+}
 .modal-total{
   display:flex;
   justify-content:space-between;
@@ -521,12 +532,24 @@ body::before{
       <input type="text" id="cliente-nome" placeholder="Seu nome completo">
     </div>
     <div class="modal-campo">
+      <label>Tipo de pedido *</label>
+      <select id="cliente-tipo-pedido" onchange="alternarTipoPedido()">
+        <option value="">Selecione...</option>
+        <option value="Entrega">🚚 Entrega</option>
+        <option value="Retirada">🏠 Retirada no local</option>
+      </select>
+    </div>
+    <div class="modal-campo" id="aviso-entrega-minima" style="display:none">
+      <label style="color:var(--laranja)">⚠️ Pedido mínimo para entrega: R$ 20,00. Esse pedido só pode ser retirado no local.</label>
+    </div>
+
+    <div class="modal-campo" id="campo-endereco">
       <label>Endereço de entrega *</label>
       <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro">
     </div>
     <div class="modal-campo">
       <label>Forma de pagamento *</label>
-      <select id="cliente-pagamento" onchange="alternarCampoTroco()">
+      <select id="cliente-pagamento" onchange="alternarCampoPagamento()">
         <option value="">Selecione...</option>
         <option value="Pix">Pix</option>
         <option value="Dinheiro">Dinheiro</option>
@@ -546,6 +569,12 @@ body::before{
     <div class="modal-campo" id="campo-troco-valor" style="display:none">
       <label>Troco para quanto? *</label>
       <input type="text" id="cliente-troco-valor" placeholder="Ex: R$ 100,00">
+    </div>
+
+    <div class="modal-campo" id="campo-pix" style="display:none">
+      <label>Código Pix Copia e Cola</label>
+      <textarea id="pix-codigo" readonly rows="3"></textarea>
+      <button type="button" class="modal-btn-cancelar" style="margin-top:8px;width:100%" onclick="copiarCodigoPix()">📋 Copiar código Pix</button>
     </div>
 
     <div class="modal-obs">
@@ -806,6 +835,12 @@ function abrirModal(){
   document.getElementById('campo-troco-valor').style.display = 'none';
   document.getElementById('cliente-troco').value = '';
   document.getElementById('cliente-troco-valor').value = '';
+  document.getElementById('campo-pix').style.display = 'none';
+  document.getElementById('pix-codigo').value = '';
+  document.getElementById('cliente-tipo-pedido').value = '';
+  document.getElementById('aviso-entrega-minima').style.display = 'none';
+  document.getElementById('campo-endereco').style.display = 'block';
+  atualizarOpcaoEntrega();
   document.getElementById('modal').classList.add('modal-aberto');
 }
 
@@ -814,12 +849,53 @@ function fecharModal(){
 }
 
 /* ==================================================
-   CAMPO DE TROCO (só aparece quando pagamento = Dinheiro)
+   TIPO DE PEDIDO (Entrega / Retirada no local)
+   Valor mínimo para entrega: R$ 20,00
 ================================================== */
-function alternarCampoTroco(){
+const VALOR_MINIMO_ENTREGA = 20;
+
+function atualizarOpcaoEntrega(){
+  const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
+  const selectTipo = document.getElementById('cliente-tipo-pedido');
+  const opcaoEntrega = selectTipo.querySelector('option[value="Entrega"]');
+  const aviso = document.getElementById('aviso-entrega-minima');
+
+  if(total < VALOR_MINIMO_ENTREGA){
+    opcaoEntrega.disabled = true;
+    aviso.style.display = 'block';
+
+    if(selectTipo.value === 'Entrega'){
+      selectTipo.value = 'Retirada';
+    }
+  } else {
+    opcaoEntrega.disabled = false;
+    aviso.style.display = 'none';
+  }
+
+  alternarTipoPedido();
+}
+
+function alternarTipoPedido(){
+  const tipo = document.getElementById('cliente-tipo-pedido').value;
+  const campoEndereco = document.getElementById('campo-endereco');
+
+  if(tipo === 'Retirada'){
+    campoEndereco.style.display = 'none';
+    document.getElementById('cliente-endereco').value = '';
+  } else {
+    campoEndereco.style.display = 'block';
+  }
+}
+
+/* ==================================================
+   CAMPO DE TROCO (só aparece quando pagamento = Dinheiro)
+   e CÓDIGO PIX (só aparece quando pagamento = Pix)
+================================================== */
+function alternarCampoPagamento(){
   const pagamento = document.getElementById('cliente-pagamento').value;
   const campoTroco = document.getElementById('campo-troco');
   const campoTrocoValor = document.getElementById('campo-troco-valor');
+  const campoPix = document.getElementById('campo-pix');
 
   if(pagamento === 'Dinheiro'){
     campoTroco.style.display = 'block';
@@ -828,6 +904,14 @@ function alternarCampoTroco(){
     campoTrocoValor.style.display = 'none';
     document.getElementById('cliente-troco').value = '';
     document.getElementById('cliente-troco-valor').value = '';
+  }
+
+  if(pagamento === 'Pix'){
+    campoPix.style.display = 'block';
+    gerarCodigoPix();
+  } else {
+    campoPix.style.display = 'none';
+    document.getElementById('pix-codigo').value = '';
   }
 }
 
@@ -841,6 +925,75 @@ function alternarCampoTrocoValor(){
     campoTrocoValor.style.display = 'none';
     document.getElementById('cliente-troco-valor').value = '';
   }
+}
+
+/* ==================================================
+   CÓDIGO PIX COPIA E COLA (padrão BR Code / EMV)
+   Chave Pix: CNPJ 67.672.694/0001-84
+   Beneficiário: Monstro Burguer — Ourinhos/SP
+================================================== */
+function montarCampoPix(id, valor){
+  const tamanho = String(valor.length).padStart(2, '0');
+  return id + tamanho + valor;
+}
+
+function crc16Pix(str){
+  let crc = 0xFFFF;
+  for(let i = 0; i < str.length; i++){
+    crc ^= (str.charCodeAt(i) << 8);
+    for(let j = 0; j < 8; j++){
+      if((crc & 0x8000) !== 0){
+        crc = ((crc << 1) ^ 0x1021) & 0xFFFF;
+      } else {
+        crc = (crc << 1) & 0xFFFF;
+      }
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4, '0');
+}
+
+function gerarPayloadPix(valor){
+  const chave = '67672694000184';
+  const nomeRecebedor = 'MONSTRO BURGUER';
+  const cidade = 'OURINHOS';
+  const valorFormatado = valor.toFixed(2);
+
+  const gui = montarCampoPix('00', 'br.gov.bcb.pix');
+  const chaveCampo = montarCampoPix('01', chave);
+  const merchantAccountInfo = montarCampoPix('26', gui + chaveCampo);
+
+  const payloadSemCrc =
+    montarCampoPix('00', '01') +
+    merchantAccountInfo +
+    montarCampoPix('52', '0000') +
+    montarCampoPix('53', '986') +
+    montarCampoPix('54', valorFormatado) +
+    montarCampoPix('58', 'BR') +
+    montarCampoPix('59', nomeRecebedor) +
+    montarCampoPix('60', cidade) +
+    montarCampoPix('62', montarCampoPix('05', '***')) +
+    '6304';
+
+  return payloadSemCrc + crc16Pix(payloadSemCrc);
+}
+
+function gerarCodigoPix(){
+  const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
+  document.getElementById('pix-codigo').value = gerarPayloadPix(total);
+}
+
+function copiarCodigoPix(){
+  const campo = document.getElementById('pix-codigo');
+  campo.select();
+  campo.setSelectionRange(0, 99999);
+
+  try{
+    navigator.clipboard.writeText(campo.value);
+  } catch(e){
+    document.execCommand('copy');
+  }
+
+  alert('Código Pix copiado!');
 }
 
 /* ==================================================
@@ -872,6 +1025,7 @@ function enviarWhatsApp(){
   }
 
   const nome = document.getElementById('cliente-nome').value.trim();
+  const tipoPedido = document.getElementById('cliente-tipo-pedido').value;
   const endereco = document.getElementById('cliente-endereco').value.trim();
   const pagamento = document.getElementById('cliente-pagamento').value;
 
@@ -879,7 +1033,11 @@ function enviarWhatsApp(){
     alert('Por favor, preencha seu nome.');
     return;
   }
-  if(!endereco){
+  if(!tipoPedido){
+    alert('Por favor, escolha entre entrega ou retirada no local.');
+    return;
+  }
+  if(tipoPedido === 'Entrega' && !endereco){
     alert('Por favor, preencha o endereço de entrega.');
     return;
   }
@@ -922,7 +1080,10 @@ function enviarWhatsApp(){
     texto += '━━━━━━━━━━━━━━\n\n';
 
     texto += 'CLIENTE: ' + nome + '\n';
-    texto += 'ENDEREÇO: ' + endereco + '\n';
+    texto += 'TIPO DE PEDIDO: ' + (tipoPedido === 'Entrega' ? 'Entrega' : 'Retirada no local') + '\n';
+    if(tipoPedido === 'Entrega'){
+      texto += 'ENDEREÇO: ' + endereco + '\n';
+    }
     texto += 'FORMA DE PAGAMENTO: ' + pagamento + '\n';
     if(trocoInfo){
       texto += trocoInfo + '\n';
