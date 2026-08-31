@@ -175,8 +175,8 @@ body::before{
   transition:all .3s;
 }
 .item.selecionado{
-  border-color:var(--verde);
-  box-shadow:0 0 18px rgba(57,255,136,0.35), inset 0 0 14px rgba(57,255,136,0.06);
+  border-color:var(--violeta);
+  box-shadow:0 0 18px rgba(139,47,255,0.45), inset 0 0 14px rgba(139,47,255,0.08);
 }
 .item-foto{
   width:100%;
@@ -203,8 +203,8 @@ body::before{
   font-family:var(--mono);
   font-size:15px;
   font-weight:700;
-  color:var(--verde);
-  text-shadow:0 0 6px rgba(57,255,136,0.5);
+  color:var(--violeta);
+  text-shadow:0 0 6px rgba(139,47,255,0.6);
   white-space:nowrap;
 }
 .item-descricao{
@@ -234,11 +234,26 @@ body::before{
   box-shadow:0 0 10px rgba(0,229,255,0.4);
 }
 .btn-selecionar.selecionado{
-  background:linear-gradient(135deg, var(--verde), #00cc66);
-  box-shadow:0 0 15px rgba(57,255,136,0.6);
+  background:linear-gradient(135deg, var(--violeta), #c084ff);
+  box-shadow:0 0 15px rgba(139,47,255,0.65);
   padding:8px 22px;
 }
 .btn-selecionar.selecionado::after{content:" ✓"}
+.btn-selecionar.flash-roxo{
+  background:linear-gradient(135deg, var(--violeta), #c084ff) !important;
+  color:#fff !important;
+  box-shadow:
+    0 0 22px rgba(139,47,255,1),
+    0 0 40px rgba(139,47,255,0.75) !important;
+  transition:all .06s ease-out;
+}
+.item.flash-roxo{
+  border-color:#c084ff !important;
+  box-shadow:
+    0 0 22px rgba(139,47,255,0.9),
+    inset 0 0 18px rgba(139,47,255,0.25) !important;
+  transition:all .06s ease-out;
+}
 .quantidade-controle{
   display:flex;
   align-items:center;
@@ -294,8 +309,8 @@ body::before{
   font-family:var(--mono);
   font-size:19px;
   font-weight:700;
-  color:var(--verde);
-  text-shadow:0 0 8px rgba(57,255,136,0.5);
+  color:var(--violeta);
+  text-shadow:0 0 8px rgba(139,47,255,0.6);
 }
 .carrinho-itens{
   font-size:11px;
@@ -400,13 +415,13 @@ body::before{
   display:flex;
   justify-content:space-between;
   padding:15px 0 5px;
-  border-top:1px solid var(--verde);
+  border-top:1px solid var(--violeta);
   margin-top:10px;
   font-family:var(--mono);
   font-size:18px;
   font-weight:bold;
-  color:var(--verde);
-  text-shadow:0 0 6px rgba(57,255,136,0.5);
+  color:var(--violeta);
+  text-shadow:0 0 6px rgba(139,47,255,0.6);
 }
 .modal-botoes{display:flex;gap:10px;margin-top:15px}
 .modal-btn-cancelar{
@@ -641,7 +656,7 @@ function renderizarCardapio(){
         '</div>' +
         '<div class="item-descricao">' + (item.descricao || '') + '</div>' +
         '<div class="item-baixo">' +
-          '<button class="btn-selecionar ' + (selecionado ? 'selecionado' : '') + '" onclick="alternarItem(\'' + item.id + '\')">' +
+          '<button class="btn-selecionar ' + (selecionado ? 'selecionado' : '') + '" onclick="flashSelecionar(this, \'' + item.id + '\')">' +
             (selecionado ? 'Selecionado' : 'Selecionar') +
           '</button>' +
           '<div class="quantidade-controle">' +
@@ -699,6 +714,20 @@ function configurarCategorias(){
       }, 140);
     });
   });
+}
+
+function flashSelecionar(botao, id){
+  tocarCliqueSistema();
+
+  botao.classList.add('flash-roxo');
+  const card = botao.closest('.item');
+  if(card) card.classList.add('flash-roxo');
+
+  setTimeout(function(){
+    botao.classList.remove('flash-roxo');
+    if(card) card.classList.remove('flash-roxo');
+    alternarItem(id);
+  }, 140);
 }
 
 function alternarItem(id){
