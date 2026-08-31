@@ -50,6 +50,33 @@
             padding-bottom: 8px;
         }
 
+        /* ==================================================
+           SEÇÕES RETRÁTEIS (minimizar/expandir)
+        ================================================== */
+        .secao-titulo {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .seta {
+            display: inline-block;
+            font-size: 14px;
+            transition: transform 0.2s ease;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+
+        .secao-conteudo {
+            overflow: hidden;
+        }
+
+        .secao-conteudo.colapsado {
+            display: none;
+        }
+
         .formulario,
         .whatsapp-box,
         .aparencia-box {
@@ -308,6 +335,104 @@
             cursor: pointer;
         }
 
+        /* ==================================================
+           PEDIDOS
+        ================================================== */
+        .pedido {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .pedido.pendente {
+            border-color: #ff9d00;
+            box-shadow: 0 0 12px rgba(255, 157, 0, 0.25);
+        }
+
+        .pedido.aceito {
+            border-color: #00a85a;
+            box-shadow: 0 0 12px rgba(0, 168, 90, 0.2);
+        }
+
+        .pedido-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .pedido-numero {
+            font-weight: bold;
+            color: #168cff;
+        }
+
+        .pedido-badge {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .pedido-badge.pendente {
+            background: rgba(255, 157, 0, 0.15);
+            color: #ff9d00;
+        }
+
+        .pedido-badge.aceito {
+            background: rgba(0, 168, 90, 0.15);
+            color: #00e08a;
+        }
+
+        .pedido-info {
+            color: #bbb;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .pedido-itens {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #333;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .pedido-frete-linha {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .pedido-frete-linha input {
+            flex: 1;
+        }
+
+        .btn-aceitar {
+            width: 100%;
+            padding: 11px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 9px;
+            background: #00a85a;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-copiar-msg {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 9px;
+            background: #168cff;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         .produtos {
             margin-top: 25px;
         }
@@ -505,9 +630,12 @@
             <!-- ==================================================
                  WHATSAPP
             ================================================== -->
-            <h2 class="titulo">📲 WhatsApp dos Pedidos</h2>
+            <h2 class="titulo secao-titulo" onclick="toggleSecao('secaoWhatsapp')">
+                📲 WhatsApp dos Pedidos
+                <span class="seta" id="setaSecaoWhatsapp">▼</span>
+            </h2>
 
-            <div class="whatsapp-box">
+            <div class="whatsapp-box secao-conteudo" id="secaoWhatsapp">
                 <div class="whatsapp-opcao" id="opcao1">
                     <div class="whatsapp-numero">📱 14 99661-9487</div>
                     <div class="whatsapp-tipo">WhatsApp Principal</div>
@@ -532,9 +660,12 @@
             <!-- ==================================================
                  STATUS DA LOJA
             ================================================== -->
-            <h2 class="titulo">🚦 Status da Loja</h2>
+            <h2 class="titulo secao-titulo" onclick="toggleSecao('secaoStatusLoja')">
+                🚦 Status da Loja
+                <span class="seta" id="setaSecaoStatusLoja">▼</span>
+            </h2>
 
-            <div class="whatsapp-box">
+            <div class="whatsapp-box secao-conteudo" id="secaoStatusLoja">
                 <div class="status-opcao" id="statusOpcaoAuto">
                     <div class="status-opcao-titulo">🕒 Automático</div>
                     <div class="whatsapp-tipo">Segue o horário de funcionamento (19h às 23:59)</div>
@@ -565,11 +696,26 @@
             </div>
 
             <!-- ==================================================
+                 PEDIDOS
+            ================================================== -->
+            <h2 class="titulo secao-titulo" onclick="toggleSecao('secaoPedidos')">
+                📦 Pedidos
+                <span class="seta" id="setaSecaoPedidos">▼</span>
+            </h2>
+
+            <div class="whatsapp-box secao-conteudo" id="secaoPedidos">
+                <div id="listaPedidos">Carregando pedidos...</div>
+            </div>
+
+            <!-- ==================================================
                  APARÊNCIA
             ================================================== -->
-            <h2 class="titulo">🎨 Aparência do Monstro Burguer</h2>
+            <h2 class="titulo secao-titulo" onclick="toggleSecao('secaoAparencia')">
+                🎨 Aparência do Monstro Burguer
+                <span class="seta" id="setaSecaoAparencia">▼</span>
+            </h2>
 
-            <div class="aparencia-box">
+            <div class="aparencia-box secao-conteudo" id="secaoAparencia">
                 <div class="aparencia-item">
                     <div class="aparencia-titulo">🖼️ Logo do Monstro Burguer</div>
                     <input type="file" id="logoADM" accept="image/*" onchange="selecionarLogo(event)">
@@ -598,9 +744,12 @@
             <!-- ==================================================
                  PRODUTOS
             ================================================== -->
-            <h2 class="titulo">🍔 Cadastro de Produto</h2>
+            <h2 class="titulo secao-titulo" onclick="toggleSecao('secaoCadastroProduto')">
+                🍔 Cadastro de Produto
+                <span class="seta" id="setaSecaoCadastroProduto">▼</span>
+            </h2>
 
-            <div class="formulario">
+            <div class="formulario secao-conteudo" id="secaoCadastroProduto">
                 <input type="hidden" id="produtoId">
 
                 <label>Nome do produto</label>
@@ -637,8 +786,13 @@
                 <button class="btn btn-limpar" onclick="limparFormulario()">LIMPAR</button>
             </div>
 
-            <h2 class="titulo">📋 Produtos cadastrados</h2>
-            <div id="listaProdutos" class="produtos"></div>
+            <h2 class="titulo secao-titulo" onclick="toggleSecao('secaoListaProdutos')">
+                📋 Produtos cadastrados
+                <span class="seta" id="setaSecaoListaProdutos">▼</span>
+            </h2>
+            <div id="secaoListaProdutos" class="secao-conteudo">
+                <div id="listaProdutos" class="produtos"></div>
+            </div>
 
         </div>
 
@@ -681,6 +835,39 @@
             document.getElementById("telaSenha").style.display = "none";
             document.getElementById("painelProtegido").style.display = "block";
         }
+
+        /* ==================================================
+           SEÇÕES RETRÁTEIS
+           Cada bloco pode ser minimizado/expandido individualmente
+           clicando no título. O estado fica salvo no navegador
+           (sessionStorage) pra não perder ao interagir com a página.
+        ================================================== */
+        function toggleSecao(id) {
+            let conteudo = document.getElementById(id);
+            let seta = document.getElementById("seta" + id);
+
+            let estaColapsado = conteudo.classList.toggle("colapsado");
+            seta.style.transform = estaColapsado ? "rotate(-90deg)" : "rotate(0deg)";
+
+            sessionStorage.setItem("secaoColapsada_" + id, estaColapsado ? "sim" : "nao");
+        }
+
+        // Restaura o estado (aberto/fechado) de cada seção salvo anteriormente
+        [
+            "secaoWhatsapp",
+            "secaoStatusLoja",
+            "secaoPedidos",
+            "secaoAparencia",
+            "secaoCadastroProduto",
+            "secaoListaProdutos"
+        ].forEach(function(id) {
+            if (sessionStorage.getItem("secaoColapsada_" + id) === "sim") {
+                let conteudo = document.getElementById(id);
+                let seta = document.getElementById("seta" + id);
+                conteudo.classList.add("colapsado");
+                seta.style.transform = "rotate(-90deg)";
+            }
+        });
 
         /* ==================================================
            CONFIG DA LOJA (Firestore: config/loja)
@@ -906,6 +1093,153 @@
                 .catch(function(erro) {
                     mostrarMensagem("Erro ao remover: " + erro.message);
                 });
+        }
+
+        /* ==================================================
+           PEDIDOS (Firestore: coleção "pedidos")
+           Mostra os últimos pedidos recebidos pelo cardápio.
+           Pendente + Entrega: loja digita o frete e aceita.
+           Pendente + Retirada: loja só aceita (sem frete).
+           Depois de aceitar, dá pra copiar uma mensagem
+           pronta pra colar na conversa do WhatsApp do cliente
+           (o número do cliente só existe dentro do próprio
+           WhatsApp, então a confirmação é colada manualmente).
+        ================================================== */
+        const pedidosRef = db.collection("pedidos");
+        let pedidos = [];
+
+        pedidosRef.orderBy("criadoEm", "desc").limit(20).onSnapshot(function(snapshot) {
+            pedidos = [];
+            snapshot.forEach(function(doc) {
+                pedidos.push(Object.assign({ id: doc.id }, doc.data()));
+            });
+            mostrarPedidos();
+        }, function(erro) {
+            document.getElementById("listaPedidos").innerText = "Erro ao carregar pedidos: " + erro.message;
+        });
+
+        function mostrarPedidos() {
+            let lista = document.getElementById("listaPedidos");
+
+            if (pedidos.length === 0) {
+                lista.innerHTML = "Nenhum pedido recebido ainda.";
+                return;
+            }
+
+            lista.innerHTML = "";
+
+            pedidos.forEach(function(pedido) {
+                let div = document.createElement("div");
+                let status = pedido.status || "pendente";
+                div.className = "pedido " + status;
+
+                let itensTexto = (pedido.itens || []).map(function(i) {
+                    return i.quantidade + "x " + i.nome;
+                }).join(", ");
+
+                let enderecoLinha = pedido.tipo === "Entrega" && pedido.endereco
+                    ? "Endereço: " + pedido.endereco + "<br>"
+                    : "";
+
+                let corpo = `
+                    <div class="pedido-topo">
+                        <span class="pedido-numero">Nº ${pedido.numero || pedido.id}</span>
+                        <span class="pedido-badge ${status}">${status === "aceito" ? "✅ ACEITO" : "🕒 PENDENTE"}</span>
+                    </div>
+                    <div class="pedido-info">
+                        Cliente: ${pedido.cliente || "-"}<br>
+                        Tipo: ${pedido.tipo || "-"}<br>
+                        ${enderecoLinha}
+                        Pagamento: ${pedido.pagamento || "-"}${pedido.trocoInfo ? " (" + pedido.trocoInfo + ")" : ""}<br>
+                        Total: R$ ${Number(pedido.total || 0).toFixed(2).replace(".", ",")}
+                        ${status === "aceito" && pedido.tipo === "Entrega" ? "<br>Frete: R$ " + Number(pedido.frete || 0).toFixed(2).replace(".", ",") : ""}
+                    </div>
+                    <div class="pedido-itens">${itensTexto}</div>
+                `;
+
+                if (status === "pendente") {
+                    if (pedido.tipo === "Entrega") {
+                        corpo += `
+                            <div class="pedido-frete-linha">
+                                <input type="number" step="0.01" min="0" placeholder="Valor do frete" id="frete-${pedido.id}">
+                            </div>
+                            <button class="btn-aceitar" onclick="aceitarPedido('${pedido.id}', true)">✅ ACEITAR COM FRETE</button>
+                        `;
+                    } else {
+                        corpo += `<button class="btn-aceitar" onclick="aceitarPedido('${pedido.id}', false)">✅ ACEITAR PEDIDO</button>`;
+                    }
+                } else {
+                    corpo += `<button class="btn-copiar-msg" onclick="copiarMensagemConfirmacao('${pedido.id}')">📋 COPIAR MENSAGEM PRO CLIENTE</button>`;
+                }
+
+                div.innerHTML = corpo;
+                lista.appendChild(div);
+            });
+        }
+
+        function aceitarPedido(id, temFrete) {
+            let dados = {
+                status: "aceito",
+                aceitoEm: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            if (temFrete) {
+                let campoFrete = document.getElementById("frete-" + id);
+                let frete = parseFloat(campoFrete.value);
+
+                if (isNaN(frete) || frete < 0) {
+                    mostrarMensagem("Digite um valor de frete válido.");
+                    return;
+                }
+
+                dados.frete = frete;
+            } else {
+                dados.frete = 0;
+            }
+
+            pedidosRef.doc(id).update(dados)
+                .then(function() {
+                    mostrarMensagem("Pedido aceito!");
+                })
+                .catch(function(erro) {
+                    mostrarMensagem("Erro ao aceitar pedido: " + erro.message);
+                });
+        }
+
+        function copiarMensagemConfirmacao(id) {
+            let pedido = pedidos.find(function(p) { return p.id === id; });
+            if (!pedido) return;
+
+            let total = Number(pedido.total || 0);
+            let frete = Number(pedido.frete || 0);
+            let totalComFrete = total + frete;
+
+            let texto = "Seu pedido Nº " + (pedido.numero || pedido.id) + " foi confirmado! ✅\n\n";
+
+            if (pedido.tipo === "Entrega") {
+                texto += "Frete: R$ " + frete.toFixed(2).replace(".", ",") + "\n";
+                texto += "Total com frete: R$ " + totalComFrete.toFixed(2).replace(".", ",") + "\n\n";
+                texto += "Já vamos preparar e sair pra entrega!";
+            } else {
+                texto += "Já vamos preparar, pode vir buscar no horário combinado!";
+            }
+
+            let campoTemporario = document.createElement("textarea");
+            campoTemporario.value = texto;
+            campoTemporario.style.position = "fixed";
+            campoTemporario.style.opacity = "0";
+            document.body.appendChild(campoTemporario);
+            campoTemporario.select();
+            campoTemporario.setSelectionRange(0, 99999);
+
+            try {
+                navigator.clipboard.writeText(texto);
+            } catch (e) {
+                document.execCommand("copy");
+            }
+
+            document.body.removeChild(campoTemporario);
+            mostrarMensagem("Mensagem copiada! Cole na conversa do WhatsApp do cliente.");
         }
 
         /* ==================================================
