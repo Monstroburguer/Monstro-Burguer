@@ -38,7 +38,6 @@
   --verde: #39ff88;
   --vermelho: #ff3b5c;
   --dourado: #ffc93c;
-  --laranja: #ff7a1a;
   --texto: #eaf6ff;
   --card: #0b0f1c;
   --mono: 'JetBrains Mono', monospace;
@@ -70,15 +69,20 @@ body::before{
   box-shadow:0 0 16px rgba(0,229,255,0.35), inset 0 -8px 16px -12px rgba(0,229,255,0.4);
 }
 .cabecalho h1{
-  font-size:15px;
+  font-size:24px;
   font-weight:700;
-  letter-spacing:1px;
+  letter-spacing:2px;
   color:var(--texto);
   text-transform:uppercase;
+  animation:pulsarTitulo 3.5s ease-in-out infinite;
 }
 .cabecalho h1 span{
   color:var(--ciano);
   text-shadow:0 0 8px var(--ciano), 0 0 20px var(--ciano);
+}
+@keyframes pulsarTitulo{
+  0%, 100% { text-shadow:0 0 6px rgba(0,229,255,0.25); }
+  50% { text-shadow:0 0 16px rgba(0,229,255,0.55), 0 0 28px rgba(139,47,255,0.25); }
 }
 .voltar{
   position:absolute;
@@ -162,15 +166,8 @@ body::before{
   transition:all .3s;
 }
 .item.selecionado{
-  border-color:var(--violeta);
-  box-shadow:0 0 18px rgba(139,47,255,0.45), inset 0 0 14px rgba(139,47,255,0.10);
-}
-.item.flash-selecionar{
-  border-color:#ffffff !important;
-  box-shadow:
-    0 0 30px rgba(139,47,255,1),
-    0 0 55px rgba(139,47,255,0.75) !important;
-  transition: none !important;
+  border-color:var(--verde);
+  box-shadow:0 0 18px rgba(57,255,136,0.35), inset 0 0 14px rgba(57,255,136,0.06);
 }
 .item-foto{
   width:100%;
@@ -201,18 +198,6 @@ body::before{
   text-shadow:0 0 6px rgba(57,255,136,0.5);
   white-space:nowrap;
 }
-.item-preco.preco-promocao{
-  color:var(--laranja);
-  text-shadow:
-    0 0 8px rgba(255,122,26,0.95),
-    0 0 18px rgba(255,122,26,0.65),
-    0 0 30px rgba(255,122,26,0.35);
-  animation: pulsarPromo 1.4s ease-in-out infinite;
-}
-@keyframes pulsarPromo {
-  0%, 100% { text-shadow: 0 0 8px rgba(255,122,26,0.95), 0 0 18px rgba(255,122,26,0.65), 0 0 30px rgba(255,122,26,0.35); }
-  50% { text-shadow: 0 0 12px rgba(255,122,26,1), 0 0 26px rgba(255,122,26,0.85), 0 0 42px rgba(255,122,26,0.55); }
-}
 .item-descricao{
   font-size:13px;
   color:rgba(234,246,255,0.55);
@@ -240,20 +225,11 @@ body::before{
   box-shadow:0 0 10px rgba(0,229,255,0.4);
 }
 .btn-selecionar.selecionado{
-  background:linear-gradient(135deg, var(--violeta), #6a1fd9);
-  box-shadow:0 0 15px rgba(139,47,255,0.65);
+  background:linear-gradient(135deg, var(--verde), #00cc66);
+  box-shadow:0 0 15px rgba(57,255,136,0.6);
   padding:8px 22px;
 }
 .btn-selecionar.selecionado::after{content:" ✓"}
-.btn-selecionar.clicado{
-  background:linear-gradient(135deg, rgba(139,47,255,1), rgba(90,20,200,0.95)) !important;
-  color:#ffffff !important;
-  box-shadow:
-    0 0 26px rgba(139,47,255,1),
-    0 0 50px rgba(139,47,255,0.90),
-    0 0 70px rgba(139,47,255,0.50) !important;
-  transition: none !important;
-}
 .quantidade-controle{
   display:flex;
   align-items:center;
@@ -278,14 +254,14 @@ body::before{
   justify-content:center;
 }
 .qtd-btn.menos{border-color:var(--vermelho);color:var(--vermelho)}
-.qtd-btn.mais{border-color:var(--violeta);color:var(--violeta)}
+.qtd-btn.mais{border-color:var(--verde);color:var(--verde)}
 .qtd-num{
   font-family:var(--mono);
   font-size:16px;
   font-weight:bold;
   min-width:26px;
   text-align:center;
-  color:var(--violeta);
+  color:var(--verde);
 }
 
 .carrinho-barra{
@@ -457,25 +433,6 @@ body::before{
   font-size:24px;
   cursor:pointer;
 }
-.pix-texto{
-  font-family:var(--mono);
-  font-size:13px;
-  color:rgba(234,246,255,0.8);
-  text-align:center;
-  margin-bottom:14px;
-}
-.pix-codigo{
-  background:rgba(0,0,0,0.5);
-  border:1px solid var(--violeta-dim);
-  border-radius:8px;
-  padding:12px;
-  font-family:var(--mono);
-  font-size:12px;
-  color:var(--verde);
-  word-break:break-all;
-  max-height:120px;
-  overflow-y:auto;
-}
 </style>
 </head>
 <body>
@@ -486,7 +443,6 @@ body::before{
 </div>
 
 <div class="categorias">
-  <button class="cat-btn" data-cat="Todos">🍔 Todos</button>
   <button class="cat-btn ativo" data-cat="Lanches">🍔 Lanches</button>
   <button class="cat-btn" data-cat="Bebidas">🥤 Bebidas</button>
   <button class="cat-btn" data-cat="Adicionais">➕ Adicionais</button>
@@ -518,14 +474,6 @@ body::before{
       <input type="text" id="cliente-nome" placeholder="Seu nome completo">
     </div>
     <div class="modal-campo">
-      <label>Tipo de pedido *</label>
-      <select id="cliente-tipo-pedido" onchange="alternarCampoEndereco()">
-        <option value="">Selecione...</option>
-        <option value="Entrega">🛵 Entrega (Delivery)</option>
-        <option value="Retirada">🏠 Retirar no local</option>
-      </select>
-    </div>
-    <div class="modal-campo" id="campo-endereco">
       <label>Endereço de entrega *</label>
       <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro">
     </div>
@@ -564,71 +512,40 @@ body::before{
   </div>
 </div>
 
-<div class="modal-fundo" id="modal-pix">
-  <div class="modal">
-    <button class="fechar-modal" onclick="fecharModalPix()">×</button>
-    <h2>💠 Pagamento via Pix</h2>
-    <p class="pix-texto">Copie o código abaixo e cole no Pix Copia e Cola do seu banco:</p>
-    <div class="pix-codigo" id="pix-codigo-texto"></div>
-    <p class="pix-texto" style="margin-top:14px;margin-bottom:0;color:var(--verde)">⚠️ Depois de pagar, envie o comprovante aqui no WhatsApp junto com o pedido!</p>
-    <div class="modal-botoes">
-      <button class="modal-btn-whatsapp" style="flex:1" onclick="copiarCodigoPix()">📋 Copiar código Pix</button>
-    </div>
-    <div class="modal-botoes">
-      <button class="modal-btn-cancelar" style="flex:1" onclick="fecharModalPix()">Fechar</button>
-    </div>
-  </div>
-</div>
-
 <script>
 /* ==================================================
-   WHATSAPP DOS PEDIDOS (Firestore: config/loja)
-   Começa com o número principal como padrão e é
-   atualizado em tempo real se o admin trocar.
+   WHATSAPP + STATUS DA LOJA (Firestore: config/loja)
+   Usa a mesma lógica do index.html (horário automático
+   + status forçado pelo admin), pra travar o envio de
+   pedido quando a loja estiver fechada, mesmo que o
+   cliente entre direto no cardápio sem passar pela home.
 ================================================== */
 let whatsappPedidos = "5514996619487";
 
-/* ==================================================
-   STATUS DA LOJA (Firestore: config/loja)
-   Mesma lógica do index.html: respeita o status
-   forçado pelo admin (aberto/fechado/auto) e,
-   em modo automático, considera o horário 19h-24h.
-================================================== */
 const horaAbertura = 19;
 const horaFechamento = 24;
+
 let statusForcado = "auto";
-let lojaAberta = true;
+let lojaFechada = false;
 
-function atualizarStatusLoja(){
+function calcularLojaFechada(){
   if(statusForcado === "aberto"){
-    lojaAberta = true;
-  } else if(statusForcado === "fechado"){
-    lojaAberta = false;
-  } else {
-    const agora = new Date();
-    const hora = agora.getHours();
-    const minuto = agora.getMinutes();
-    const horarioAtual = hora + (minuto / 60);
-    lojaAberta = horarioAtual >= horaAbertura && horarioAtual < horaFechamento;
+    lojaFechada = false;
+    return;
   }
-  atualizarBotaoEnviar();
+  if(statusForcado === "fechado"){
+    lojaFechada = true;
+    return;
+  }
+
+  const agora = new Date();
+  const horarioAtual = agora.getHours() + (agora.getMinutes() / 60);
+  const aberto = horarioAtual >= horaAbertura && horarioAtual < horaFechamento;
+  lojaFechada = !aberto;
 }
 
-function atualizarBotaoEnviar(){
-  const btn = document.getElementById('btn-enviar-whatsapp');
-  if(!btn) return;
-
-  if(!lojaAberta){
-    btn.disabled = true;
-    btn.textContent = '🔒 Loja Fechada';
-  } else {
-    btn.disabled = false;
-    btn.textContent = '📱 Enviar Pedido';
-  }
-}
-
-atualizarStatusLoja();
-setInterval(atualizarStatusLoja, 60000);
+calcularLojaFechada();
+setInterval(calcularLojaFechada, 60000);
 
 db.collection("config").doc("loja").onSnapshot(function(doc) {
   if (doc.exists) {
@@ -639,7 +556,7 @@ db.collection("config").doc("loja").onSnapshot(function(doc) {
     }
 
     statusForcado = dados.statusLoja || "auto";
-    atualizarStatusLoja();
+    calcularLojaFechada();
   }
 });
 
@@ -651,7 +568,6 @@ let carrinho = [];
 let categoriaAtiva = 'Lanches';
 
 const nomesCategoria = {
-  Todos: '🍔 Todos os Produtos',
   Lanches: '🍔 Lanches',
   Bebidas: '🥤 Bebidas',
   Adicionais: '➕ Adicionais',
@@ -687,9 +603,7 @@ window.onload = function(){
 
 function renderizarCardapio(){
   const container = document.getElementById('cardapio');
-  const itens = categoriaAtiva === 'Todos'
-    ? todosProdutos
-    : todosProdutos.filter(function(p){ return p.categoria === categoriaAtiva; });
+  const itens = todosProdutos.filter(function(p){ return p.categoria === categoriaAtiva; });
 
   const titulo = nomesCategoria[categoriaAtiva] || categoriaAtiva;
 
@@ -708,20 +622,17 @@ function renderizarCardapio(){
     const qtd = noCarrinho ? noCarrinho.quantidade : 0;
     const selecionado = qtd > 0;
     const preco = Number(item.preco) || 0;
-    const emPromocao = item.promocao === true;
-    const classePreco = emPromocao ? 'item-preco preco-promocao' : 'item-preco';
-    const prefixoPreco = emPromocao ? '🔥 ' : '';
     const fotoHTML = item.foto ? '<img src="' + item.foto + '" class="item-foto" alt="' + item.nome + '">' : '';
 
     html += '<div class="item ' + (selecionado ? 'selecionado' : '') + '">' +
         fotoHTML +
         '<div class="item-cima">' +
           '<div class="item-nome">' + item.nome + '</div>' +
-          '<div class="' + classePreco + '">' + prefixoPreco + 'R$ ' + preco.toFixed(2).replace('.',',') + '</div>' +
+          '<div class="item-preco">R$ ' + preco.toFixed(2).replace('.',',') + '</div>' +
         '</div>' +
         '<div class="item-descricao">' + (item.descricao || '') + '</div>' +
         '<div class="item-baixo">' +
-          '<button id="btn-sel-' + item.id + '" class="btn-selecionar ' + (selecionado ? 'selecionado' : '') + '" onclick="clicarSelecionar(\'' + item.id + '\')">' +
+          '<button class="btn-selecionar ' + (selecionado ? 'selecionado' : '') + '" onclick="alternarItem(\'' + item.id + '\')">' +
             (selecionado ? 'Selecionado' : 'Selecionar') +
           '</button>' +
           '<div class="quantidade-controle">' +
@@ -762,56 +673,6 @@ function alternarItem(id){
   renderizarCardapio();
 }
 
-/* ==================================================
-   SOM DE CLIQUE (igual ao da tela inicial)
-================================================== */
-function tocarCliqueSistema() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(1300, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(420, ctx.currentTime + 0.09);
-
-    gain.gain.setValueAtTime(0.18, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.10);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start();
-    osc.stop(ctx.currentTime + 0.11);
-  } catch (e) {
-    /* Áudio bloqueado pelo navegador, segue sem som */
-  }
-}
-
-/* ==================================================
-   CLIQUE NO BOTÃO SELECIONAR: som + flash neon
-   O brilho fica aceso por ~0.65s antes de apagar.
-================================================== */
-function clicarSelecionar(id){
-  tocarCliqueSistema();
-  alternarItem(id);
-
-  const btn = document.getElementById('btn-sel-' + id);
-  if(btn){
-    btn.classList.add('clicado');
-    const itemEl = btn.closest('.item');
-    if(itemEl){
-      itemEl.classList.add('flash-selecionar');
-    }
-    setTimeout(function(){
-      btn.classList.remove('clicado');
-      if(itemEl){
-        itemEl.classList.remove('flash-selecionar');
-      }
-    }, 250);
-  }
-}
-
 function alterarQtd(id, delta){
   const item = carrinho.find(function(i){ return i.id === id; });
   if(!item) return;
@@ -849,29 +710,11 @@ function abrirModal(){
   document.getElementById('campo-troco-valor').style.display = 'none';
   document.getElementById('cliente-troco').value = '';
   document.getElementById('cliente-troco-valor').value = '';
-  document.getElementById('cliente-tipo-pedido').value = '';
-  document.getElementById('campo-endereco').style.display = 'block';
-  atualizarBotaoEnviar();
   document.getElementById('modal').classList.add('modal-aberto');
 }
 
 function fecharModal(){
   document.getElementById('modal').classList.remove('modal-aberto');
-}
-
-/* ==================================================
-   TIPO DE PEDIDO (endereço só é obrigatório na Entrega)
-================================================== */
-function alternarCampoEndereco(){
-  const tipo = document.getElementById('cliente-tipo-pedido').value;
-  const campoEndereco = document.getElementById('campo-endereco');
-
-  if(tipo === 'Retirada'){
-    campoEndereco.style.display = 'none';
-    document.getElementById('cliente-endereco').value = '';
-  } else {
-    campoEndereco.style.display = 'block';
-  }
 }
 
 /* ==================================================
@@ -890,85 +733,7 @@ function alternarCampoTroco(){
     document.getElementById('cliente-troco').value = '';
     document.getElementById('cliente-troco-valor').value = '';
   }
-
-  if(pagamento === 'Pix'){
-    abrirModalPix();
-  }
 }
-
-/* ==================================================
-   PIX COPIA E COLA (payload estático, padrão Banco Central)
-   Chave: CNPJ do Monstro Burguer
-================================================== */
-function emvCampo(id, valor){
-  const tamanho = String(valor.length).padStart(2,'0');
-  return id + tamanho + valor;
-}
-
-function crc16Pix(payload){
-  let resultado = 0xFFFF;
-  for(let i = 0; i < payload.length; i++){
-    resultado ^= (payload.charCodeAt(i) << 8);
-    for(let j = 0; j < 8; j++){
-      if((resultado & 0x8000) !== 0){
-        resultado = ((resultado << 1) ^ 0x1021) & 0xFFFF;
-      } else {
-        resultado = (resultado << 1) & 0xFFFF;
-      }
-    }
-  }
-  return resultado.toString(16).toUpperCase().padStart(4,'0');
-}
-
-function gerarPayloadPix(valorTotal){
-  const chavePix = '67672694000184'; // CNPJ Monstro Burguer, sem pontuação
-  const nomeBeneficiario = 'MONSTRO BURGUER';
-  const cidade = 'OURINHOS';
-  const valorFormatado = valorTotal.toFixed(2);
-
-  const merchantAccountInfo = emvCampo('26',
-    emvCampo('00', 'br.gov.bcb.pix') + emvCampo('01', chavePix)
-  );
-  const additionalData = emvCampo('62', emvCampo('05', '***'));
-
-  let payload =
-    emvCampo('00', '01') +
-    merchantAccountInfo +
-    emvCampo('52', '0000') +
-    emvCampo('53', '986') +
-    emvCampo('54', valorFormatado) +
-    emvCampo('58', 'BR') +
-    emvCampo('59', nomeBeneficiario) +
-    emvCampo('60', cidade) +
-    additionalData +
-    '6304';
-
-  return payload + crc16Pix(payload);
-}
-
-function abrirModalPix(){
-  const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
-  const codigoPix = gerarPayloadPix(total);
-  document.getElementById('pix-codigo-texto').textContent = codigoPix;
-  document.getElementById('modal-pix').classList.add('modal-aberto');
-}
-
-function fecharModalPix(){
-  document.getElementById('modal-pix').classList.remove('modal-aberto');
-}
-
-function copiarCodigoPix(){
-  const codigo = document.getElementById('pix-codigo-texto').textContent;
-  navigator.clipboard.writeText(codigo).then(function(){
-    alert('Código Pix copiado! Agora é só colar no app do seu banco.');
-  }).catch(function(){
-    alert('Não foi possível copiar automaticamente. Toque e segure no código pra selecionar e copiar manualmente.');
-  });
-}
-
-document.getElementById('modal-pix').addEventListener('click', function(e){
-  if(e.target === this) fecharModalPix();
-});
 
 function alternarCampoTrocoValor(){
   const troco = document.getElementById('cliente-troco').value;
@@ -1005,13 +770,12 @@ function proximoNumeroPedido(){
 function enviarWhatsApp(){
   if(carrinho.length === 0) return;
 
-  if(!lojaAberta){
-    alert('A loja está fechada no momento. Não é possível enviar pedidos.');
+  if(lojaFechada){
+    alert('Atenção, a loja já está fechada.');
     return;
   }
 
   const nome = document.getElementById('cliente-nome').value.trim();
-  const tipoPedido = document.getElementById('cliente-tipo-pedido').value;
   const endereco = document.getElementById('cliente-endereco').value.trim();
   const pagamento = document.getElementById('cliente-pagamento').value;
 
@@ -1019,11 +783,7 @@ function enviarWhatsApp(){
     alert('Por favor, preencha seu nome.');
     return;
   }
-  if(!tipoPedido){
-    alert('Por favor, escolha se é entrega ou retirada no local.');
-    return;
-  }
-  if(tipoPedido === 'Entrega' && !endereco){
+  if(!endereco){
     alert('Por favor, preencha o endereço de entrega.');
     return;
   }
@@ -1061,21 +821,12 @@ function enviarWhatsApp(){
   proximoNumeroPedido().then(function(numero){
     const numeroFormatado = String(numero).padStart(4, '0');
 
-    // Data e hora do pedido (usadas para conferir o Pix no extrato do banco)
-    const agora = new Date();
-    const horaFormatada = String(agora.getHours()).padStart(2, '0') + ':' + String(agora.getMinutes()).padStart(2, '0');
-    const dataFormatada = String(agora.getDate()).padStart(2, '0') + '/' + String(agora.getMonth() + 1).padStart(2, '0') + '/' + agora.getFullYear();
-
     let texto = '━━━━━━━━━━━━━━\n';
     texto += '*MONSTRO BURGUER* — Nº ' + numeroFormatado + '\n';
     texto += '━━━━━━━━━━━━━━\n\n';
 
-    texto += 'DATA: ' + dataFormatada + ' às ' + horaFormatada + '\n';
     texto += 'CLIENTE: ' + nome + '\n';
-    texto += 'TIPO: ' + (tipoPedido === 'Retirada' ? 'Retirar no local' : 'Entrega (Delivery)') + '\n';
-    if(tipoPedido === 'Entrega'){
-      texto += 'ENDEREÇO: ' + endereco + '\n';
-    }
+    texto += 'ENDEREÇO: ' + endereco + '\n';
     texto += 'FORMA DE PAGAMENTO: ' + pagamento + '\n';
     if(trocoInfo){
       texto += trocoInfo + '\n';
