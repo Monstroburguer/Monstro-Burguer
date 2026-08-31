@@ -135,6 +135,15 @@ body::before{
   box-shadow:0 0 16px rgba(0,229,255,0.55);
   font-weight:700;
 }
+.cat-btn.clicado{
+  background:linear-gradient(135deg, var(--violeta), #c084ff) !important;
+  color:#fff !important;
+  border-color:#c084ff !important;
+  box-shadow:
+    0 0 22px rgba(139,47,255,1),
+    0 0 40px rgba(139,47,255,0.75) !important;
+  transition:all .06s ease-out;
+}
 
 .container{padding:0 15px 30px;position:relative;z-index:1}
 .categoria-titulo{
@@ -648,14 +657,46 @@ function renderizarCardapio(){
   atualizarCarrinho();
 }
 
+function tocarCliqueSistema() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(1300, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(420, ctx.currentTime + 0.09);
+
+    gain.gain.setValueAtTime(0.18, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.10);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.stop(ctx.currentTime + 0.11);
+  } catch (e) {
+    /* Áudio bloqueado pelo navegador, segue sem som */
+  }
+}
+
 function configurarCategorias(){
   document.querySelectorAll('.cat-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
-      document.querySelectorAll('.cat-btn').forEach(function(b){ b.classList.remove('ativo'); });
-      this.classList.add('ativo');
-      categoriaAtiva = this.dataset.cat;
-      renderizarCardapio();
-      window.scrollTo({top:0, behavior:'smooth'});
+      const el = this;
+
+      tocarCliqueSistema();
+      el.classList.add('clicado');
+
+      setTimeout(function(){
+        el.classList.remove('clicado');
+
+        document.querySelectorAll('.cat-btn').forEach(function(b){ b.classList.remove('ativo'); });
+        el.classList.add('ativo');
+        categoriaAtiva = el.dataset.cat;
+        renderizarCardapio();
+        window.scrollTo({top:0, behavior:'smooth'});
+      }, 140);
     });
   });
 }
