@@ -38,6 +38,7 @@
   --verde: #39ff88;
   --vermelho: #ff3b5c;
   --dourado: #ffc93c;
+  --laranja: #ff8c1a;
   --texto: #eaf6ff;
   --card: #0b0f1c;
   --mono: 'JetBrains Mono', monospace;
@@ -177,6 +178,28 @@ body::before{
 .item.selecionado{
   border-color:var(--violeta);
   box-shadow:0 0 18px rgba(139,47,255,0.45), inset 0 0 14px rgba(139,47,255,0.08);
+}
+.item.promocao{
+  border-color:var(--laranja);
+  box-shadow:0 0 16px rgba(255,140,26,0.4), inset 0 0 12px rgba(255,140,26,0.08);
+}
+.item.promocao.selecionado{
+  border-color:var(--laranja);
+  box-shadow:0 0 20px rgba(255,140,26,0.6), inset 0 0 14px rgba(255,140,26,0.12);
+}
+.selo-promocao{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.5px;
+  color:var(--laranja);
+  text-shadow:0 0 8px rgba(255,140,26,0.9);
+  margin-bottom:6px;
+}
+.item-preco.promocao{
+  color:var(--laranja) !important;
+  text-shadow:0 0 8px rgba(255,140,26,0.9) !important;
 }
 .item-foto{
   width:100%;
@@ -645,14 +668,17 @@ function renderizarCardapio(){
     const noCarrinho = carrinho.find(function(i){ return i.id === item.id; });
     const qtd = noCarrinho ? noCarrinho.quantidade : 0;
     const selecionado = qtd > 0;
+    const emPromocao = !!item.promocao;
     const preco = Number(item.preco) || 0;
     const fotoHTML = item.foto ? '<img src="' + item.foto + '" class="item-foto" alt="' + item.nome + '">' : '';
+    const seloHTML = emPromocao ? '<div class="selo-promocao">🔥 PROMOÇÃO</div>' : '';
 
-    html += '<div class="item ' + (selecionado ? 'selecionado' : '') + '">' +
+    html += '<div class="item ' + (selecionado ? 'selecionado' : '') + (emPromocao ? ' promocao' : '') + '">' +
         fotoHTML +
+        seloHTML +
         '<div class="item-cima">' +
           '<div class="item-nome">' + item.nome + '</div>' +
-          '<div class="item-preco">R$ ' + preco.toFixed(2).replace('.',',') + '</div>' +
+          '<div class="item-preco' + (emPromocao ? ' promocao' : '') + '">R$ ' + preco.toFixed(2).replace('.',',') + '</div>' +
         '</div>' +
         '<div class="item-descricao">' + (item.descricao || '') + '</div>' +
         '<div class="item-baixo">' +
