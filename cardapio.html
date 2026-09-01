@@ -477,6 +477,13 @@ body::before{
   font-size:24px;
   cursor:pointer;
 }
+.info-frete{
+  font-family:var(--mono);
+  font-size:11px;
+  margin-top:6px;
+  min-height:14px;
+  line-height:1.4;
+}
 
 /* ==================================================
    ACOMPANHAMENTO DO PEDIDO (status ao vivo via Firestore)
@@ -578,8 +585,9 @@ body::before{
     </div>
 
     <div class="modal-campo" id="campo-endereco">
-      <label>Endereço de entrega *</label>
-      <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro">
+      <label>Endereço de entrega * (inclua "Ourinhos")</label>
+      <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro, Ourinhos" onblur="calcularFreteEntrega()">
+      <div class="info-frete" id="info-frete"></div>
     </div>
     <div class="modal-campo">
       <label>Forma de pagamento *</label>
@@ -669,6 +677,119 @@ db.collection("config").doc("loja").onSnapshot(function(doc) {
     calcularLojaFechada();
   }
 });
+
+/* ==================================================
+   FRETE AUTOMÁTICO (OpenRouteService)
+   Só entrega em Ourinhos - SP. O frete é calculado
+   pela distância real entre a loja e o endereço do
+   cliente: R$ 5,00 (base) + R$ 1,50 por km.
+================================================== */
+const ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjNhNWJmMDc0NThiMzRhNmU5MTg4ZDRkODM0Y2ZhZThhIiwiaCI6Im11cm11cjY0In0=";
+const ORIGEM_LOJA = { lat: -22.944301, lng: -49.8857998 }; // Monstro Burguer
+const FRETE_BASE = 5.00;
+const FRETE_POR_KM = 1.50;
+
+let freteCalculado = null;
+let calculandoFrete = false;
+
+function enderecoContemOurinhos(endereco){
+  return endereco.toLowerCase().includes('ourinhos');
+}
+
+async function geocodificarEndereco(enderecoTexto){
+  let texto = enderecoTexto;
+  if(!enderecoContemOurinhos(texto)){
+    texto += ', Ourinhos - SP';
+  }
+
+  const url = 'https://api.openrouteservice.org/geocode/search?api_key=' + ORS_API_KEY + '&text=' + encodeURIComponent(texto);
+  const resposta = await fetch(url);
+  const dados = await resposta.json();
+
+  if(!dados.features || dados.features.length === 0){
+    throw new Error('Endereço não encontrado');
+  }
+
+  const coordenadas = dados.features[0].geometry.coordinates;
+  return { lat: coordenadas[1], lng: coordenadas[0] };
+}
+
+async function calcularDistanciaKm(destino){
+  const url = 'https://api.openrouteservice.org/v2/directions/driving-car?api_key=' + ORS_API_KEY +
+    '&start=' + ORIGEM_LOJA.lng + ',' + ORIGEM_LOJA.lat +
+    '&end=' + destino.lng + ',' + destino.lat;
+
+  const resposta = await fetch(url);
+  const dados = await resposta.json();
+
+  const metros = dados.features[0].properties.summary.distance;
+  return metros / 1000;
+}
+
+function calcularValorFrete(distanciaKm){
+  const valor = FRETE_BASE + (distanciaKm * FRETE_POR_KM);
+  return Math.round(valor * 100) / 100;
+}
+
+async function calcularFreteEntrega(){
+  const tipoPedido = document.getElementById('cliente-tipo-pedido').value;
+  if(tipoPedido !== 'Entrega') return;
+
+  const endereco = document.getElementById('cliente-endereco').value.trim();
+  const infoFrete = document.getElementById('info-frete');
+
+  if(!endereco){
+    freteCalculado = null;
+    infoFrete.textContent = '';
+    atualizarTotalModal();
+    return;
+  }
+
+  if(!enderecoContemOurinhos(endereco)){
+    freteCalculado = null;
+    infoFrete.style.color = 'var(--vermelho)';
+    infoFrete.textContent = '⚠️ Só entregamos em Ourinhos - SP.';
+    atualizarTotalModal();
+    return;
+  }
+
+  calculandoFrete = true;
+  freteCalculado = null;
+  infoFrete.style.color = 'rgba(234,246,255,0.55)';
+  infoFrete.textContent = 'Calculando frete...';
+  atualizarTotalModal();
+
+  try{
+    const destino = await geocodificarEndereco(endereco);
+    const distanciaKm = await calcularDistanciaKm(destino);
+    const valorFrete = calcularValorFrete(distanciaKm);
+
+    freteCalculado = valorFrete;
+    infoFrete.style.color = 'var(--verde)';
+    infoFrete.textContent = 'Frete: R$ ' + valorFrete.toFixed(2).replace('.',',') + ' (' + distanciaKm.toFixed(1).replace('.',',') + ' km)';
+  } catch(erro){
+    freteCalculado = null;
+    infoFrete.style.color = 'var(--vermelho)';
+    infoFrete.textContent = 'Não foi possível calcular o frete. Verifique o endereço.';
+  }
+
+  calculandoFrete = false;
+  atualizarTotalModal();
+}
+
+function atualizarTotalModal(){
+  const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
+  const tipoPedido = document.getElementById('cliente-tipo-pedido').value;
+  const modalTotal = document.getElementById('modal-total');
+
+  if(tipoPedido === 'Entrega' && freteCalculado !== null){
+    const totalComFrete = total + freteCalculado;
+    modalTotal.innerHTML = '<strong>TOTAL: R$ ' + totalComFrete.toFixed(2).replace('.',',') +
+      ' (produtos R$ ' + total.toFixed(2).replace('.',',') + ' + frete R$ ' + freteCalculado.toFixed(2).replace('.',',') + ')</strong>';
+  } else {
+    modalTotal.innerHTML = '<strong>TOTAL: R$ ' + total.toFixed(2).replace('.',',') + '</strong>';
+  }
+}
 
 /* ==================================================
    PRODUTOS (Firestore: coleção "produtos")
@@ -856,14 +977,12 @@ function atualizarCarrinho(){
 function abrirModal(){
   if(carrinho.length === 0) return;
   const itensDiv = document.getElementById('modal-itens');
-  const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
 
   itensDiv.innerHTML = carrinho.map(function(i){
     return '<div class="modal-item"><span>' + i.quantidade + 'x ' + i.nome + '</span>' +
            '<span>R$ ' + (i.preco * i.quantidade).toFixed(2).replace('.',',') + '</span></div>';
   }).join('');
 
-  document.getElementById('modal-total').innerHTML = '<strong>TOTAL: R$ ' + total.toFixed(2).replace('.',',') + '</strong>';
   document.getElementById('campo-troco').style.display = 'none';
   document.getElementById('campo-troco-valor').style.display = 'none';
   document.getElementById('cliente-troco').value = '';
@@ -871,9 +990,16 @@ function abrirModal(){
   document.getElementById('campo-pix').style.display = 'none';
   document.getElementById('pix-codigo').value = '';
   document.getElementById('cliente-tipo-pedido').value = '';
+  document.getElementById('cliente-endereco').value = '';
   document.getElementById('aviso-entrega-minima').style.display = 'none';
   document.getElementById('campo-endereco').style.display = 'block';
+  document.getElementById('info-frete').textContent = '';
+
+  freteCalculado = null;
+  calculandoFrete = false;
+
   atualizarOpcaoEntrega();
+  atualizarTotalModal();
   document.getElementById('modal').classList.add('modal-aberto');
 }
 
@@ -915,9 +1041,17 @@ function alternarTipoPedido(){
   if(tipo === 'Retirada'){
     campoEndereco.style.display = 'none';
     document.getElementById('cliente-endereco').value = '';
+    document.getElementById('info-frete').textContent = '';
+    freteCalculado = null;
   } else {
     campoEndereco.style.display = 'block';
+    const endereco = document.getElementById('cliente-endereco').value.trim();
+    if(endereco){
+      calcularFreteEntrega();
+    }
   }
+
+  atualizarTotalModal();
 }
 
 /* ==================================================
@@ -1051,9 +1185,9 @@ function proximoNumeroPedido(){
 
 /* ==================================================
    PEDIDOS (Firestore: coleção "pedidos")
-   Salva o pedido pra loja poder aceitar (com frete
-   manual, se for entrega) e o cliente acompanhar o
-   status ao vivo aqui na mesma página.
+   Salva o pedido pra loja poder aceitar (com o frete já
+   calculado automaticamente, quando for entrega) e o
+   cliente acompanhar o status ao vivo aqui na mesma página.
 ================================================== */
 const pedidosRef = db.collection('pedidos');
 let pedidoAtualId = null;
@@ -1150,6 +1284,22 @@ function enviarWhatsApp(){
     alert('Por favor, preencha o endereço de entrega.');
     return;
   }
+
+  if(tipoPedido === 'Entrega'){
+    if(!enderecoContemOurinhos(endereco)){
+      alert('Desculpe, só entregamos em Ourinhos - SP.');
+      return;
+    }
+    if(calculandoFrete){
+      alert('Aguarde, ainda estamos calculando o frete...');
+      return;
+    }
+    if(freteCalculado === null){
+      alert('Não foi possível calcular o frete para esse endereço. Verifique e tente novamente.');
+      return;
+    }
+  }
+
   if(!pagamento){
     alert('Por favor, escolha a forma de pagamento.');
     return;
@@ -1175,6 +1325,8 @@ function enviarWhatsApp(){
   }
 
   const total = carrinho.reduce(function(s, i){ return s + (i.preco * i.quantidade); }, 0);
+  const freteFinal = (tipoPedido === 'Entrega') ? freteCalculado : 0;
+  const totalComFrete = total + freteFinal;
   const obs = document.getElementById('observacao-pedido').value.trim();
 
   const btnEnviar = document.getElementById('btn-enviar-whatsapp');
@@ -1192,6 +1344,7 @@ function enviarWhatsApp(){
     texto += 'TIPO DE PEDIDO: ' + (tipoPedido === 'Entrega' ? 'Entrega' : 'Retirada no local') + '\n';
     if(tipoPedido === 'Entrega'){
       texto += 'ENDEREÇO: ' + endereco + '\n';
+      texto += 'FRETE: R$ ' + freteFinal.toFixed(2).replace('.',',') + '\n';
     }
     texto += 'FORMA DE PAGAMENTO: ' + pagamento + '\n';
     if(trocoInfo){
@@ -1209,13 +1362,19 @@ function enviarWhatsApp(){
       texto += '\nOBSERVAÇÕES:\n' + obs + '\n';
     }
 
-    texto += '\nTOTAL: R$ ' + total.toFixed(2).replace('.',',') + '\n\n';
+    texto += '\nTOTAL PRODUTOS: R$ ' + total.toFixed(2).replace('.',',') + '\n';
+    if(tipoPedido === 'Entrega'){
+      texto += 'TOTAL COM FRETE: R$ ' + totalComFrete.toFixed(2).replace('.',',') + '\n\n';
+    } else {
+      texto += '\n';
+    }
     texto += 'Pode me chamar pra confirmar! Obrigado!';
 
     salvarPedidoFirestore(numeroFormatado, {
       cliente: nome,
       tipo: tipoPedido,
       endereco: tipoPedido === 'Entrega' ? endereco : '',
+      frete: freteFinal,
       pagamento: pagamento,
       trocoInfo: trocoInfo,
       itens: carrinho.map(function(i){
