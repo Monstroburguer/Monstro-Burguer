@@ -484,6 +484,20 @@ body::before{
   min-height:14px;
   line-height:1.4;
 }
+.cidade-fixa{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(0,229,255,0.08);
+  border:1px solid var(--ciano-dim);
+  border-radius:8px;
+  padding:9px 10px;
+  margin-bottom:8px;
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--ciano);
+  letter-spacing:0.3px;
+}
 
 /* ==================================================
    ACOMPANHAMENTO DO PEDIDO (status ao vivo via Firestore)
@@ -585,8 +599,9 @@ body::before{
     </div>
 
     <div class="modal-campo" id="campo-endereco">
-      <label>Endereço de entrega * (inclua "Ourinhos")</label>
-      <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro, Ourinhos" onblur="calcularFreteEntrega()">
+      <label>Endereço de entrega *</label>
+      <div class="cidade-fixa">📍 Cidade: Ourinhos - SP</div>
+      <input type="text" id="cliente-endereco" placeholder="Rua, número, bairro" onblur="calcularFreteEntrega()">
       <div class="info-frete" id="info-frete"></div>
     </div>
     <div class="modal-campo">
@@ -680,37 +695,64 @@ db.collection("config").doc("loja").onSnapshot(function(doc) {
 
 /* ==================================================
    FRETE AUTOMÁTICO (OpenRouteService)
-   Só entrega em Ourinhos - SP. O frete é calculado
-   pela distância real entre a loja e o endereço do
-   cliente: R$ 5,00 (base) + R$ 1,50 por km.
+   Cidade travada como "Ourinhos - SP": o cliente só
+   digita rua/número/bairro. O texto vai para a busca
+   estruturada da API já fixando locality/region/country,
+   e o endereço só é aceito se o RESULTADO retornado pela
+   API confirmar que ficou dentro de Ourinhos - SP (nunca
+   pelo texto digitado). O frete é calculado pela distância
+   real entre a loja e o endereço do cliente:
+   R$ 5,00 (base) + R$ 1,50 por km.
 ================================================== */
 const ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjNhNWJmMDc0NThiMzRhNmU5MTg4ZDRkODM0Y2ZhZThhIiwiaCI6Im11cm11cjY0In0=";
 const ORIGEM_LOJA = { lat: -22.944301, lng: -49.8857998 }; // Monstro Burguer
 const FRETE_BASE = 5.00;
 const FRETE_POR_KM = 1.50;
+const CIDADE_ENTREGA = 'Ourinhos';
+const REGIAO_ENTREGA = 'São Paulo';
 
 let freteCalculado = null;
 let calculandoFrete = false;
 
-function enderecoContemOurinhos(endereco){
-  return endereco.toLowerCase().includes('ourinhos');
+function normalizarTexto(texto){
+  return (texto || '')
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
 }
 
-async function geocodificarEndereco(enderecoTexto){
-  let texto = enderecoTexto;
-  if(!enderecoContemOurinhos(texto)){
-    texto += ', Ourinhos - SP';
-  }
+async function geocodificarEndereco(enderecoRua){
+  const url = 'https://api.openrouteservice.org/geocode/search/structured'
+    + '?api_key=' + ORS_API_KEY
+    + '&address=' + encodeURIComponent(enderecoRua)
+    + '&locality=' + encodeURIComponent(CIDADE_ENTREGA)
+    + '&region=' + encodeURIComponent(REGIAO_ENTREGA)
+    + '&country=BR';
 
-  const url = 'https://api.openrouteservice.org/geocode/search?api_key=' + ORS_API_KEY + '&text=' + encodeURIComponent(texto);
   const resposta = await fetch(url);
   const dados = await resposta.json();
 
   if(!dados.features || dados.features.length === 0){
-    throw new Error('Endereço não encontrado');
+    throw new Error('nao_encontrado');
   }
 
-  const coordenadas = dados.features[0].geometry.coordinates;
+  const resultado = dados.features[0];
+  const props = resultado.properties || {};
+
+  // Validação pelo RESULTADO real devolvido pela API (não pelo texto digitado):
+  // confere se o local que a API encontrou de fato fica em Ourinhos - SP.
+  const localidadeRetornada = normalizarTexto(props.locality || props.county || '');
+  const regiaoRetornada = normalizarTexto(props.region || props.region_a || '');
+
+  const localidadeValida = localidadeRetornada.includes(normalizarTexto(CIDADE_ENTREGA));
+  const regiaoValida = regiaoRetornada.includes('sao paulo') || regiaoRetornada === 'sp';
+
+  if(!localidadeValida || !regiaoValida){
+    throw new Error('fora_da_cidade');
+  }
+
+  const coordenadas = resultado.geometry.coordinates;
   return { lat: coordenadas[1], lng: coordenadas[0] };
 }
 
@@ -745,14 +787,6 @@ async function calcularFreteEntrega(){
     return;
   }
 
-  if(!enderecoContemOurinhos(endereco)){
-    freteCalculado = null;
-    infoFrete.style.color = 'var(--vermelho)';
-    infoFrete.textContent = '⚠️ Só entregamos em Ourinhos - SP.';
-    atualizarTotalModal();
-    return;
-  }
-
   calculandoFrete = true;
   freteCalculado = null;
   infoFrete.style.color = 'rgba(234,246,255,0.55)';
@@ -770,7 +804,12 @@ async function calcularFreteEntrega(){
   } catch(erro){
     freteCalculado = null;
     infoFrete.style.color = 'var(--vermelho)';
-    infoFrete.textContent = 'Não foi possível calcular o frete. Verifique o endereço.';
+
+    if(erro && erro.message === 'fora_da_cidade'){
+      infoFrete.textContent = '⚠️ Esse endereço não foi confirmado em Ourinhos - SP. Confira a rua/bairro digitados.';
+    } else {
+      infoFrete.textContent = 'Não foi possível calcular o frete. Verifique o endereço.';
+    }
   }
 
   calculandoFrete = false;
@@ -1286,16 +1325,15 @@ function enviarWhatsApp(){
   }
 
   if(tipoPedido === 'Entrega'){
-    if(!enderecoContemOurinhos(endereco)){
-      alert('Desculpe, só entregamos em Ourinhos - SP.');
-      return;
-    }
     if(calculandoFrete){
       alert('Aguarde, ainda estamos calculando o frete...');
       return;
     }
+    // A validação de que o endereço está em Ourinhos - SP já foi feita
+    // pelo RESULTADO da API em calcularFreteEntrega(). Se freteCalculado
+    // continua nulo aqui, é porque o endereço não foi confirmado.
     if(freteCalculado === null){
-      alert('Não foi possível calcular o frete para esse endereço. Verifique e tente novamente.');
+      alert('Não foi possível confirmar esse endereço em Ourinhos - SP. Verifique e tente novamente.');
       return;
     }
   }
@@ -1328,6 +1366,7 @@ function enviarWhatsApp(){
   const freteFinal = (tipoPedido === 'Entrega') ? freteCalculado : 0;
   const totalComFrete = total + freteFinal;
   const obs = document.getElementById('observacao-pedido').value.trim();
+  const enderecoCompleto = endereco ? (endereco + ' — Ourinhos - SP') : '';
 
   const btnEnviar = document.getElementById('btn-enviar-whatsapp');
   btnEnviar.disabled = true;
@@ -1343,7 +1382,7 @@ function enviarWhatsApp(){
     texto += 'CLIENTE: ' + nome + '\n';
     texto += 'TIPO DE PEDIDO: ' + (tipoPedido === 'Entrega' ? 'Entrega' : 'Retirada no local') + '\n';
     if(tipoPedido === 'Entrega'){
-      texto += 'ENDEREÇO: ' + endereco + '\n';
+      texto += 'ENDEREÇO: ' + enderecoCompleto + '\n';
       texto += 'FRETE: R$ ' + freteFinal.toFixed(2).replace('.',',') + '\n';
     }
     texto += 'FORMA DE PAGAMENTO: ' + pagamento + '\n';
@@ -1373,7 +1412,7 @@ function enviarWhatsApp(){
     salvarPedidoFirestore(numeroFormatado, {
       cliente: nome,
       tipo: tipoPedido,
-      endereco: tipoPedido === 'Entrega' ? endereco : '',
+      endereco: tipoPedido === 'Entrega' ? enderecoCompleto : '',
       frete: freteFinal,
       pagamento: pagamento,
       trocoInfo: trocoInfo,
