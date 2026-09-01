@@ -1298,6 +1298,16 @@ function fecharAcompanhamento(){
   pedidoAtualId = null;
 }
 
+function formatarDataHora(){
+  const agora = new Date();
+  const dia = String(agora.getDate()).padStart(2, '0');
+  const mes = String(agora.getMonth() + 1).padStart(2, '0');
+  const ano = agora.getFullYear();
+  const hora = String(agora.getHours()).padStart(2, '0');
+  const minuto = String(agora.getMinutes()).padStart(2, '0');
+  return dia + '/' + mes + '/' + ano + ' às ' + hora + ':' + minuto;
+}
+
 function enviarWhatsApp(){
   if(carrinho.length === 0) return;
 
@@ -1379,6 +1389,7 @@ function enviarWhatsApp(){
     texto += '*MONSTRO BURGUER* — Nº ' + numeroFormatado + '\n';
     texto += '━━━━━━━━━━━━━━\n\n';
 
+    texto += 'DATA: ' + formatarDataHora() + '\n';
     texto += 'CLIENTE: ' + nome + '\n';
     texto += 'TIPO DE PEDIDO: ' + (tipoPedido === 'Entrega' ? 'Entrega' : 'Retirada no local') + '\n';
     if(tipoPedido === 'Entrega'){
