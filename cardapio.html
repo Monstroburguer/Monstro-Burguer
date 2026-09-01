@@ -723,12 +723,14 @@ function normalizarTexto(texto){
 }
 
 async function geocodificarEndereco(enderecoRua){
-  const url = 'https://api.openrouteservice.org/geocode/search/structured'
+  const textoBusca = enderecoRua + ', ' + CIDADE_ENTREGA + ' - SP, Brasil';
+
+  const url = 'https://api.openrouteservice.org/geocode/search'
     + '?api_key=' + ORS_API_KEY
-    + '&address=' + encodeURIComponent(enderecoRua)
-    + '&locality=' + encodeURIComponent(CIDADE_ENTREGA)
-    + '&region=' + encodeURIComponent(REGIAO_ENTREGA)
-    + '&country=BR';
+    + '&text=' + encodeURIComponent(textoBusca)
+    + '&boundary.country=BR'
+    + '&focus.point.lon=' + ORIGEM_LOJA.lng
+    + '&focus.point.lat=' + ORIGEM_LOJA.lat;
 
   const resposta = await fetch(url);
   const dados = await resposta.json();
