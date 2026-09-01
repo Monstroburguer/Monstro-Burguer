@@ -483,6 +483,7 @@ body::before{
   margin-top:6px;
   min-height:14px;
   line-height:1.4;
+  white-space:pre-line;
 }
 .cidade-fixa{
   display:flex;
@@ -755,7 +756,12 @@ async function geocodificarEndereco(enderecoRua){
   }
 
   const coordenadas = resultado.geometry.coordinates;
-  return { lat: coordenadas[1], lng: coordenadas[0] };
+  return {
+    lat: coordenadas[1],
+    lng: coordenadas[0],
+    label: props.label || props.name || '',
+    confidence: (typeof props.confidence === 'number') ? props.confidence : null
+  };
 }
 
 async function calcularDistanciaKm(destino){
@@ -801,8 +807,25 @@ async function calcularFreteEntrega(){
     const valorFrete = calcularValorFrete(distanciaKm);
 
     freteCalculado = valorFrete;
-    infoFrete.style.color = 'var(--verde)';
-    infoFrete.textContent = 'Frete: R$ ' + valorFrete.toFixed(2).replace('.',',') + ' (' + distanciaKm.toFixed(1).replace('.',',') + ' km)';
+
+    console.log('[frete] endereço digitado:', endereco);
+    console.log('[frete] endereço encontrado pela API:', destino.label, '| confiança:', destino.confidence);
+    console.log('[frete] coordenadas:', destino.lat, destino.lng);
+    console.log('[frete] distância calculada:', distanciaKm.toFixed(3), 'km');
+
+    let textoFrete = 'Frete: R$ ' + valorFrete.toFixed(2).replace('.',',') + ' (' + distanciaKm.toFixed(1).replace('.',',') + ' km)';
+    if(destino.label){
+      textoFrete += '\nEndereço encontrado: ' + destino.label;
+    }
+
+    if(destino.confidence !== null && destino.confidence < 0.6){
+      infoFrete.style.color = 'var(--dourado)';
+      textoFrete += '\n⚠️ Confiança baixa nesse resultado — confira se bate com o endereço certo antes de confirmar.';
+    } else {
+      infoFrete.style.color = 'var(--verde)';
+    }
+
+    infoFrete.textContent = textoFrete;
   } catch(erro){
     freteCalculado = null;
     infoFrete.style.color = 'var(--vermelho)';
