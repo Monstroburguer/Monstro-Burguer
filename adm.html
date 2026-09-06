@@ -433,6 +433,79 @@
             cursor: pointer;
         }
 
+        .cliente {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .cliente.promo-sim {
+            border-color: #00c96b;
+            box-shadow: 0 0 12px rgba(0, 201, 107, 0.2);
+        }
+
+        .cliente-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .cliente-nome {
+            font-weight: bold;
+            color: #168cff;
+            font-size: 16px;
+        }
+
+        .cliente-badge {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 9px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .cliente-badge.sim {
+            background: rgba(0, 201, 107, 0.15);
+            color: #00e08a;
+        }
+
+        .cliente-badge.nao {
+            background: rgba(255, 255, 255, 0.08);
+            color: #999;
+        }
+
+        .cliente-info {
+            color: #bbb;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .cliente-filtro {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .cliente-filtro input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            accent-color: #00c96b;
+            cursor: pointer;
+        }
+
+        .cliente-contador {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
         .produtos {
             margin-top: 25px;
         }
@@ -722,6 +795,24 @@
             </div>
 
             <!-- ==================================================
+                 CLIENTES
+            ================================================== -->
+            <h2 class="titulo secao-titulo" onclick="toggleSecao('secaoClientes')">
+                👥 Clientes
+                <span class="seta" id="setaSecaoClientes">▼</span>
+            </h2>
+
+            <div class="whatsapp-box secao-conteudo" id="secaoClientes">
+                <div class="cliente-filtro">
+                    <input type="checkbox" id="filtroSoPromocao" onchange="mostrarClientes()">
+                    <label for="filtroSoPromocao">Mostrar só quem autorizou promoção</label>
+                </div>
+                <div class="cliente-contador" id="clienteContador"></div>
+                <button class="btn btn-salvar" onclick="copiarContatosPromocao()">📋 COPIAR TELEFONES AUTORIZADOS</button>
+                <div id="listaClientes" style="margin-top:15px">Carregando clientes...</div>
+            </div>
+
+            <!-- ==================================================
                  APARÊNCIA
             ================================================== -->
             <h2 class="titulo secao-titulo" onclick="toggleSecao('secaoAparencia')">
@@ -875,6 +966,7 @@
             "secaoWhatsapp",
             "secaoStatusLoja",
             "secaoPedidos",
+            "secaoClientes",
             "secaoAparencia",
             "secaoCadastroProduto",
             "secaoListaProdutos"
@@ -1258,6 +1350,101 @@
 
             document.body.removeChild(campoTemporario);
             mostrarMensagem("Mensagem copiada! Cole na conversa do WhatsApp do cliente.");
+        }
+
+        /* ==================================================
+           CLIENTES (Firestore: coleção "clientes")
+           Cada cliente é criado/atualizado automaticamente
+           pelo cardapio.html quando finaliza um pedido
+           (documento indexado pelo telefone, só números).
+           Aqui a loja só visualiza e pode filtrar quem
+           autorizou receber promoção/novidades.
+        ================================================== */
+        const clientesRef = db.collection("clientes");
+        let clientes = [];
+
+        clientesRef.orderBy("ultimoPedidoEm", "desc").limit(200).onSnapshot(function(snapshot) {
+            clientes = [];
+            snapshot.forEach(function(doc) {
+                clientes.push(Object.assign({ id: doc.id }, doc.data()));
+            });
+            mostrarClientes();
+        }, function(erro) {
+            document.getElementById("listaClientes").innerText = "Erro ao carregar clientes: " + erro.message;
+        });
+
+        function mostrarClientes() {
+            let lista = document.getElementById("listaClientes");
+            let contador = document.getElementById("clienteContador");
+            let soPromocao = document.getElementById("filtroSoPromocao").checked;
+
+            if (clientes.length === 0) {
+                lista.innerHTML = "Nenhum cliente cadastrado ainda.";
+                contador.innerText = "";
+                return;
+            }
+
+            let listaFiltrada = soPromocao
+                ? clientes.filter(function(c) { return c.aceitaPromocao; })
+                : clientes;
+
+            let totalAutorizaram = clientes.filter(function(c) { return c.aceitaPromocao; }).length;
+            contador.innerText = clientes.length + " cliente(s) no total • " + totalAutorizaram + " autorizaram promoção";
+
+            if (listaFiltrada.length === 0) {
+                lista.innerHTML = `<div class="cliente">Nenhum cliente encontrado com esse filtro.</div>`;
+                return;
+            }
+
+            lista.innerHTML = "";
+
+            listaFiltrada.forEach(function(cliente) {
+                let div = document.createElement("div");
+                let autorizou = !!cliente.aceitaPromocao;
+                div.className = "cliente " + (autorizou ? "promo-sim" : "");
+
+                div.innerHTML = `
+                    <div class="cliente-topo">
+                        <span class="cliente-nome">${cliente.nome || "-"}</span>
+                        <span class="cliente-badge ${autorizou ? 'sim' : 'nao'}">${autorizou ? '📩 AUTORIZOU' : 'SEM PROMOÇÃO'}</span>
+                    </div>
+                    <div class="cliente-info">
+                        Telefone: ${cliente.telefone || "-"}<br>
+                        ${cliente.endereco ? "Último endereço: " + cliente.endereco + "<br>" : ""}
+                        Pedidos feitos: ${cliente.totalPedidos || 1}
+                    </div>
+                `;
+
+                lista.appendChild(div);
+            });
+        }
+
+        function copiarContatosPromocao() {
+            let autorizados = clientes.filter(function(c) { return c.aceitaPromocao && c.telefone; });
+
+            if (autorizados.length === 0) {
+                mostrarMensagem("Nenhum cliente autorizou promoção ainda.");
+                return;
+            }
+
+            let texto = autorizados.map(function(c) { return c.telefone; }).join(", ");
+
+            let campoTemporario = document.createElement("textarea");
+            campoTemporario.value = texto;
+            campoTemporario.style.position = "fixed";
+            campoTemporario.style.opacity = "0";
+            document.body.appendChild(campoTemporario);
+            campoTemporario.select();
+            campoTemporario.setSelectionRange(0, 99999);
+
+            try {
+                navigator.clipboard.writeText(texto);
+            } catch (e) {
+                document.execCommand("copy");
+            }
+
+            document.body.removeChild(campoTemporario);
+            mostrarMensagem(autorizados.length + " telefone(s) copiado(s)!");
         }
 
         /* ==================================================
