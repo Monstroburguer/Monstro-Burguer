@@ -406,6 +406,30 @@ body::before{
 .modal-campo input:focus,
 .modal-campo select:focus{outline:none;border-color:var(--violeta)}
 .modal-campo select{appearance:none;-webkit-appearance:none}
+.modal-campo-checkbox{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:14px;
+  padding:10px 12px;
+  border:1px solid var(--violeta-dim);
+  border-radius:8px;
+  background:rgba(0,0,0,0.3);
+}
+.modal-campo-checkbox input[type="checkbox"]{
+  width:20px;
+  height:20px;
+  flex-shrink:0;
+  accent-color:var(--verde);
+  cursor:pointer;
+}
+.modal-campo-checkbox label{
+  margin:0;
+  font-size:12.5px;
+  color:var(--texto);
+  cursor:pointer;
+  line-height:1.35;
+}
 .modal-obs{margin-top:14px}
 .modal-obs textarea{
   width:100%;
@@ -586,6 +610,14 @@ body::before{
     <div class="modal-campo">
       <label>Nome do cliente *</label>
       <input type="text" id="cliente-nome" placeholder="Seu nome completo">
+    </div>
+    <div class="modal-campo">
+      <label>Telefone / WhatsApp *</label>
+      <input type="tel" id="cliente-telefone" placeholder="(14) 99999-9999">
+    </div>
+    <div class="modal-campo-checkbox">
+      <input type="checkbox" id="cliente-aceita-promo">
+      <label for="cliente-aceita-promo">📩 Quero receber promoções e novidades em primeira mão no WhatsApp</label>
     </div>
     <div class="modal-campo">
       <label>Tipo de pedido *</label>
@@ -1266,6 +1298,36 @@ function salvarPedidoFirestore(numeroFormatado, dados){
   }, dados));
 }
 
+/* ==================================================
+   CLIENTES (Firestore: coleção "clientes")
+   Cada pedido também atualiza (ou cria) um cadastro do
+   cliente, usando o telefone (só números) como ID do
+   documento. Assim a loja acumula uma base organizada
+   sem precisar copiar contato por contato manualmente.
+   "aceitaPromocao" só fica true se o cliente marcar o
+   checkbox de opt-in no momento do pedido.
+================================================== */
+function salvarClienteFirestore(telefoneDigits, dados){
+  const clienteRef = db.collection('clientes').doc(telefoneDigits);
+
+  return clienteRef.get().then(function(doc){
+    const dadosCliente = {
+      nome: dados.nome,
+      telefone: dados.telefone,
+      endereco: dados.endereco || '',
+      aceitaPromocao: dados.aceitaPromocao,
+      totalPedidos: firebase.firestore.FieldValue.increment(1),
+      ultimoPedidoEm: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    if(!doc.exists){
+      dadosCliente.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+    }
+
+    return clienteRef.set(dadosCliente, { merge: true });
+  });
+}
+
 function acompanharPedido(id){
   pedidoAtualId = id;
   sessionStorage.setItem('pedidoAcompanhado', id);
@@ -1342,12 +1404,19 @@ function enviarWhatsApp(){
   }
 
   const nome = document.getElementById('cliente-nome').value.trim();
+  const telefone = document.getElementById('cliente-telefone').value.trim();
+  const telefoneDigits = telefone.replace(/\D/g, '');
+  const aceitaPromocao = document.getElementById('cliente-aceita-promo').checked;
   const tipoPedido = document.getElementById('cliente-tipo-pedido').value;
   const endereco = document.getElementById('cliente-endereco').value.trim();
   const pagamento = document.getElementById('cliente-pagamento').value;
 
   if(!nome){
     alert('Por favor, preencha seu nome.');
+    return;
+  }
+  if(!telefone || telefoneDigits.length < 10){
+    alert('Por favor, preencha um telefone/WhatsApp válido (com DDD).');
     return;
   }
   if(!tipoPedido){
@@ -1416,6 +1485,7 @@ function enviarWhatsApp(){
 
     texto += 'DATA: ' + formatarDataHora() + '\n';
     texto += 'CLIENTE: ' + nome + '\n';
+    texto += 'TELEFONE: ' + telefone + '\n';
     texto += 'TIPO DE PEDIDO: ' + (tipoPedido === 'Entrega' ? 'Entrega' : 'Retirada no local') + '\n';
     if(tipoPedido === 'Entrega'){
       texto += 'ENDEREÇO: ' + enderecoCompleto + '\n';
@@ -1447,6 +1517,8 @@ function enviarWhatsApp(){
 
     salvarPedidoFirestore(numeroFormatado, {
       cliente: nome,
+      telefone: telefone,
+      aceitaPromocao: aceitaPromocao,
       tipo: tipoPedido,
       endereco: tipoPedido === 'Entrega' ? enderecoCompleto : '',
       frete: freteFinal,
@@ -1461,6 +1533,15 @@ function enviarWhatsApp(){
       acompanharPedido(numeroFormatado);
     }).catch(function(){
       /* Se salvar o pedido falhar, o pedido ainda é enviado por WhatsApp normalmente */
+    });
+
+    salvarClienteFirestore(telefoneDigits, {
+      nome: nome,
+      telefone: telefone,
+      endereco: tipoPedido === 'Entrega' ? enderecoCompleto : '',
+      aceitaPromocao: aceitaPromocao
+    }).catch(function(){
+      /* Se o cadastro do cliente falhar, o pedido em si já foi enviado normalmente */
     });
 
     const url = 'https://wa.me/' + whatsappPedidos + '?text=' + encodeURIComponent(texto);
