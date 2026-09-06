@@ -437,6 +437,20 @@
             margin-top: 25px;
         }
 
+        .busca-produtos {
+            margin-bottom: 15px;
+        }
+
+        .busca-produtos input {
+            border-color: #168cff;
+        }
+
+        .busca-produtos-info {
+            color: #888;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
         .produto {
             background: #111;
             border: 1px solid #333;
@@ -791,6 +805,10 @@
                 <span class="seta" id="setaSecaoListaProdutos">▼</span>
             </h2>
             <div id="secaoListaProdutos" class="secao-conteudo">
+                <div class="busca-produtos">
+                    <input type="text" id="buscaProduto" placeholder="🔎 Buscar produto pelo nome ou categoria..." oninput="filtrarProdutos()">
+                    <div class="busca-produtos-info" id="buscaProdutoInfo"></div>
+                </div>
                 <div id="listaProdutos" class="produtos"></div>
             </div>
 
@@ -1248,6 +1266,7 @@
         const produtosRef = db.collection("produtos");
         let produtos = [];
         let fotoSelecionada = "";
+        let filtroProduto = "";
 
         produtosRef.orderBy("criadoEm", "desc").onSnapshot(function(snapshot) {
             produtos = [];
@@ -1352,16 +1371,52 @@
             }
         }
 
+        // Normaliza texto (remove acentos e caixa) pra busca mais tolerante
+        function normalizarTexto(texto) {
+            return (texto || "")
+                .toString()
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function filtrarProdutos() {
+            filtroProduto = document.getElementById("buscaProduto").value;
+            mostrarProdutos();
+        }
+
         function mostrarProdutos() {
             let lista = document.getElementById("listaProdutos");
+            let infoBusca = document.getElementById("buscaProdutoInfo");
             lista.innerHTML = "";
 
             if (produtos.length === 0) {
                 lista.innerHTML = `<div class="produto">Nenhum produto cadastrado ainda.</div>`;
+                infoBusca.innerText = "";
                 return;
             }
 
-            produtos.forEach(function(produto) {
+            let termo = normalizarTexto(filtroProduto).trim();
+
+            let produtosFiltrados = termo
+                ? produtos.filter(function(produto) {
+                    return normalizarTexto(produto.nome).includes(termo) ||
+                           normalizarTexto(produto.categoria).includes(termo);
+                })
+                : produtos;
+
+            if (termo) {
+                infoBusca.innerText = produtosFiltrados.length + " produto(s) encontrado(s) para \"" + filtroProduto + "\"";
+            } else {
+                infoBusca.innerText = "";
+            }
+
+            if (produtosFiltrados.length === 0) {
+                lista.innerHTML = `<div class="produto">Nenhum produto encontrado para essa busca.</div>`;
+                return;
+            }
+
+            produtosFiltrados.forEach(function(produto) {
                 let div = document.createElement("div");
                 div.className = "produto";
 
